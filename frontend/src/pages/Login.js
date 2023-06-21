@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './css/Login.css';
 import logoAsset from './Assets/logoAsset.png';
+import { Link } from 'react-router-dom';
 
 
 
@@ -47,6 +48,12 @@ const LoginPage = () => {
                 <td>
                   <input type="password" value={password} onChange={handlePasswordChange} />
                 </td>
+              </tr>
+              <tr>
+                <td colSpan="2">
+                  <Link to="/register" className='registerHere'>No account? Register here</Link>
+                </td>
+                
               </tr>
               <tr>
                 <td colSpan="2">
