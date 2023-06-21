@@ -1,12 +1,17 @@
 package com.avensys.CVparserApplication.resume;
 
 import com.avensys.CVparserApplication.company.Company;
+import com.avensys.CVparserApplication.company.CompanyRepository;
+import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
+import com.avensys.CVparserApplication.exceptions.UploadFileException;
 import com.avensys.CVparserApplication.openai.ChatGPTMappedDTO;
 import com.avensys.CVparserApplication.openai.ChatGPTRequestDTO;
 import com.avensys.CVparserApplication.openai.ChatGPTResponseDTO;
 import com.avensys.CVparserApplication.skill.Skill;
+import com.avensys.CVparserApplication.skill.SkillRepository;
 import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
+import com.avensys.CVparserApplication.utility.FileUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tika.metadata.Metadata;
@@ -18,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +37,8 @@ import java.util.stream.Collectors;
 public class ResumeService {
     public final UserRepository userRepository;
     public final ResumeRepository resumeRepository;
+    public final SkillRepository skillRepository;
+    public final CompanyRepository companyRepository;
     public final RestTemplate restTemplate;
 
     @Value("${openai.model}")
@@ -39,9 +47,11 @@ public class ResumeService {
     @Value("${openai.api.url}")
     private String openAiUrl;
 
-    public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, RestTemplate restTemplate) {
+    public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
+        this.skillRepository = skillRepository;
+        this.companyRepository = companyRepository;
         this.restTemplate = restTemplate;
     }
 
@@ -55,6 +65,11 @@ public class ResumeService {
     }
 
     public ResumeCreateResponseDTO parseAndCreateResume(ResumeCreateRequestDTO resumeCreateRequest) {
+
+        if (!FileUtil.checkFileIsDocument(resumeCreateRequest.file().getOriginalFilename())) {
+            throw new UploadFileException("Incorrect file extension");
+        }
+
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(principal.getName());
         if (!user.isPresent()) {
@@ -125,6 +140,56 @@ public class ResumeService {
         return chatGPTResponseToResumeCreateResponse(savedResume);
     }
 
+    @Transactional
+    public ResumeUpdateResponseDTO updateResume(ResumeUpdateRequestDTO resumeUpdateRequest) {
+        Optional<Resume> resumeUpdated = resumeRepository.findById(resumeUpdateRequest.id());
+        if (!resumeUpdated.isPresent()){
+            throw new ResourceNotFoundException("Resource not found");
+        }
+
+        resumeUpdated.get().setFileName(resumeUpdateRequest.fileName());
+        resumeUpdated.get().setName(resumeUpdateRequest.name());
+        resumeUpdated.get().setEmail(resumeUpdateRequest.email());
+        resumeUpdated.get().setMobile(resumeUpdateRequest.mobile());
+        resumeUpdated.get().setYearsOfExperience(resumeUpdateRequest.yearsOfExperience());
+
+        // Update Skills & Companies
+        resumeUpdated.get().getSkills().clear();
+        resumeUpdated.get().getCompanies().clear();
+        skillRepository.deleteByResumeId(resumeUpdateRequest.id());
+        companyRepository.deleteByResumeId(resumeUpdateRequest.id());
+
+        for (String skill : resumeUpdateRequest.skills()) {
+            resumeUpdated.get().addSkill(new Skill(skill));
+        }
+
+        for (String company : resumeUpdateRequest.companies()) {
+            resumeUpdated.get().addCompany(new Company(company));
+        }
+
+        Resume savedResume = resumeRepository.save(resumeUpdated.get());
+
+        return resumeToResumeUpdateResponseDTO(savedResume);
+    }
+
+    public void deleteResume(long id) {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(principal.getName());
+        Optional<Resume> resume = resumeRepository.findById(id);
+
+        if (!resume.isPresent()){
+            throw new ResourceNotFoundException("Resource not found");
+        }
+
+        if (!user.isPresent()){
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        user.get().getResumes().remove(resume.get());
+        userRepository.save(user.get());
+        resumeRepository.delete(resume.get());
+    }
+
 
     private String extractTextFromFile(MultipartFile file) {
         try {
@@ -158,6 +223,22 @@ public class ResumeService {
         List<String> companies = resume.getCompanies().stream().map(Company::getName).toList();
 
         return new ResumeCreateResponseDTO(
+                resume.getId(),
+                resume.getFileName(),
+                resume.getName(),
+                resume.getEmail(),
+                resume.getMobile(),
+                resume.getYearsOfExperience(),
+                skills,
+                companies);
+    }
+
+    private ResumeUpdateResponseDTO resumeToResumeUpdateResponseDTO(Resume resume){
+
+        List<String> skills = resume.getSkills().stream().map(Skill::getName).toList();
+        List<String> companies = resume.getCompanies().stream().map(Company::getName).toList();
+
+        return new ResumeUpdateResponseDTO(
                 resume.getId(),
                 resume.getFileName(),
                 resume.getName(),
