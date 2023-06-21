@@ -7,7 +7,13 @@ import java.io.IOException;
 
 public class FileUtil {
 
-
+    public static boolean checkFileIsDocument(String fileName) {
+        String ext = getFileExtension(fileName);
+        if (ext.equals(".doc") || ext.equals(".docx") || ext.equals(".pdf")) {
+            return true;
+        }
+        return false;
+    }
     public static String getFileTypeMimeType(MultipartFile file) throws IOException {
         Tika tika = new Tika();
         String mimeType = tika.detect(file.getInputStream());
@@ -40,5 +46,6 @@ public class FileUtil {
         }
         return fileName.substring(dotIndex);
     }
+
 
 }

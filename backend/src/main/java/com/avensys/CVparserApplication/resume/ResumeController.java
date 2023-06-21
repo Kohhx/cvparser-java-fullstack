@@ -1,5 +1,6 @@
 package com.avensys.CVparserApplication.resume;
 
+import com.avensys.CVparserApplication.response.CustomResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,18 @@ public class ResumeController {
         System.out.println("OUT");
         System.out.println(chatResponse);
         return new ResponseEntity<ResumeCreateResponseDTO>(chatResponse, HttpStatus.OK);
+    }
+
+    @PatchMapping("resumes/{id}")
+    public ResponseEntity<ResumeUpdateResponseDTO> updateResume(@RequestBody ResumeUpdateRequestDTO resumeUpdateRequest) {
+        ResumeUpdateResponseDTO resumeUpdateResponse =  resumeService.updateResume(resumeUpdateRequest);
+        return new ResponseEntity<ResumeUpdateResponseDTO>(resumeUpdateResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("resumes/{id}")
+    public ResponseEntity<CustomResponse> deleteResume(@PathVariable long id) {
+        resumeService.deleteResume(id);
+        return new ResponseEntity<CustomResponse>(new CustomResponse("Resume deleted successfully"), HttpStatus.OK);
     }
 
 }
