@@ -23,10 +23,11 @@ public class Resume {
     @Column(name = "filename", nullable = false)
     private String fileName;
 
+    private String name;
 
     private String email;
 
-    private String mobileNumber;
+    private String mobile;
 
     private int yearsOfExperience;
 
@@ -48,19 +49,21 @@ public class Resume {
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Company> companies = new ArrayList<>();
 
-
     public Resume() {
     }
 
-    public Resume(long id, String fileName, String email, String mobileNumber, int yearsOfExperience, LocalDateTime createdAt, LocalDateTime updatedAt, User user) {
+    public Resume(long id, String fileName, String name, String email, String mobile, int yearsOfExperience, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies) {
         this.id = id;
         this.fileName = fileName;
+        this.name = name;
         this.email = email;
-        this.mobileNumber = mobileNumber;
+        this.mobile = mobile;
         this.yearsOfExperience = yearsOfExperience;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.user = user;
+        this.skills = skills;
+        this.companies = companies;
     }
 
     public long getId() {
@@ -79,6 +82,14 @@ public class Resume {
         this.fileName = fileName;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -87,12 +98,12 @@ public class Resume {
         this.email = email;
     }
 
-    public String getMobileNumber() {
-        return mobileNumber;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public int getYearsOfExperience() {
@@ -162,4 +173,22 @@ public class Resume {
             this.companies.add(company);
         });
     }
+
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
+
+    public List<Company> getCompanies() {
+        return companies;
+    }
+
+    public void setCompanies(List<Company> companies) {
+        this.companies = companies;
+    }
+
+
 }
