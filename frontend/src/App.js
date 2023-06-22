@@ -6,12 +6,17 @@ import Upload from './pages/Upload';
 import Register from './pages/Register';
 import UserResumes from './pages/UserResumes';
 import UserDetails from './pages/UserDetails';
+import NavBar from './components/shared/NavBar';
 import './App.css';
 
 function App() {
+    const isUserLoggedIn = () => {
+        //leave for Hexiang
+    };
+  
     return (
         <Router>
-            {/* <Navbar /> */}
+            {isUserLoggedIn() && <NavBar />}
             <Routes>
                 <Route path='/' element={<Login />} />
                 <Route path ='/login' element = {<Login />}/> 
