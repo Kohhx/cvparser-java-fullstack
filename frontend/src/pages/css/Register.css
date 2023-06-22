@@ -1,9 +1,8 @@
 .container {
     display: flex;
     height: 100vh;
-    background-color: #0077b6; /* Dark Blue */
     color: white;
-    font-size:10px;
+    font-size:18px; 
     
 }
 
