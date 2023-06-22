@@ -128,4 +128,7 @@ public class User {
         this.resumes.add(resume);
     }
 
+    public List<Resume> getResumes() {
+        return resumes;
+    }
 }

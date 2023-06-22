@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './css/Upload.css';
-import { DocViewer } from 'react-doc-viewer';
-import NavBar from '../component/NavBar';
+import DocViewer from 'react-doc-viewer';
 
 
 
@@ -40,44 +39,38 @@ const Upload = () => {
   
 
   return (
-    <div>
-        
-        <div className="container">
-        
-        <div className="left-side">
-        
-          <form onSubmit={handleSubmit}>
-              <table className="upload-table">
-                  <tbody>
-                  <tr>
-                      <td>
-                      <label>Select a file:</label>
-                      </td>
-                      <td>
-                      <input type="file" onChange={handleFileChange} required />
-  
-                      </td>
-                  </tr>
-                  <tr>
-                      <td colSpan="2">
-                      <button type="submit">Upload</button>
-                      </td>
-                  </tr>
-                  </tbody>
-              </table>
-              </form>
-        </div>
-        <div className="right-side">
-          { filePreview && 
-            <DocViewer
-              documents={docs}
-              activeDocument={activeDocument}
-              />
-          }
-        </div>
+    <div className="container">
+      <div className="left-side">
+        <form onSubmit={handleSubmit}>
+            <table className="upload-table">
+                <tbody>
+                <tr>
+                    <td>
+                    <label>Select a file:</label>
+                    </td>
+                    <td>
+                    <input type="file" onChange={handleFileChange} required />
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colSpan="2">
+                    <button type="submit">Upload</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            </form>
+      </div>
+      <div className="right-side">
+        { filePreview && 
+          <DocViewer
+            documents={docs}
+            activeDocument={activeDocument}
+            />
+        }
       </div>
     </div>
-   
   );
 }
 

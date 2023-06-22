@@ -6,24 +6,18 @@ import Upload from './pages/Upload';
 import Register from './pages/Register';
 
 import NavBar from './component/NavBar';
-import ResumeUser from './pages/ResumeUser';
+import UserResumes from './pages/UserResumes';
 
 function App() {
     return (
         <Router>
-        
-          <NavBar />
-          <Routes>
+            <NavBar/>
+            <Routes>
                 <Route path='/' element={<Login />} />
                 <Route path ='/upload' element = {<Upload />}/>
                 <Route path = '/register' element = {<Register />}/>
-                <Route path = '/resumeuser' element = {<ResumeUser />}/>
+                <Route path = '/userresumes' element = {<UserResumes/>}/>
             </Routes>
-            {/* <div style={{ marginTop: '80px' }}>
-            
-            </div> */}
-            
-            
         </Router>
     )
 }

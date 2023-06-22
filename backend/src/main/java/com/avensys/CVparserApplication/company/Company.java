@@ -20,6 +20,10 @@ public class Company {
     public Company() {
     }
 
+    public Company(String name) {
+        this.name = name;
+    }
+
     public Company(long id, String name, Resume resume) {
         this.id = id;
         this.name = name;
