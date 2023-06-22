@@ -4,10 +4,9 @@
     align-items: center;
     justify-content: center;
     height: 60px;
-    padding: 0 80px;
-    margin: 0 100px 0px 100px;
+    padding: 0 80px;    
     background-color: #3cb371;
-    z-index: 1000;
+    
   }
   
   .left-side img {
