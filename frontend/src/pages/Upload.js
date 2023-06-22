@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './css/Upload.css';
-import { DocViewer } from 'react-doc-viewer';
+import DocViewer from 'react-doc-viewer';
 
 
 

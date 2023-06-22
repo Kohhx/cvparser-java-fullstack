@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login'
 import Upload from './pages/Upload';
 import Register from './pages/Register';
+import UserResumes from './pages/UserResumes';
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                 <Route path='/' element={<Login />} />
                 <Route path ='/upload' element = {<Upload />}/>
                 <Route path = '/register' element = {<Register />}/>
+                <Route path = '/userresumes' element = {<UserResumes/>}/>
             </Routes>
         </Router>
     )
