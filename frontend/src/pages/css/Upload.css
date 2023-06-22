@@ -1,0 +1,43 @@
+/* Upload.css */
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 50px;
+    background-color: #0077b6; /* Dark Blue */
+  }
+  
+  .left-side {
+    border-radius: 15px 0px 0px 15px;
+    flex-basis: 50%;
+  }
+  
+  .right-side {
+    border-radius: 0px 15px 15px 0px;
+    flex-basis: 50%;
+  }
+  
+  .upload-table {
+    width: 100%;
+    margin: 20px 0;
+  }
+  
+  .upload-table td {
+    padding: 10px;
+  }
+  
+  .upload-table button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .upload-table button:hover {
+    background-color: #0056b3;
+  }
+  
