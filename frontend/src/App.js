@@ -1,5 +1,9 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React,{ useContext, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { UserContext } from "./context/userContext";
+
 // Components
 import Login from './pages/Login'
 import Upload from './pages/Upload';
@@ -10,23 +14,29 @@ import NavBar from './components/shared/NavBar';
 import './App.css';
 
 function App() {
-    const isUserLoggedIn = () => {
-        //leave for Hexiang
-    };
-  
-    return (
+  const ctx = useContext(UserContext);
+  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  console.log(ctx.isUserLoggedIn());
+  return (
+    <>
+      <ToastContainer />
+      {/* <UserContext.Provider value={value}> */}
+      {/* <NavBar /> */}
+      {/* {ctx.isUserLoggedIn() && <NavBar />} */}
         <Router>
-            {isUserLoggedIn() && <NavBar />}
+        {ctx.isUserLoggedIn() && <NavBar />}
             <Routes>
                 <Route path='/' element={<Login />} />
-                <Route path ='/login' element = {<Login />}/> 
+                <Route path ='/login' element = {<Login />}/>
                 <Route path ='/upload' element = {<Upload />}/>
                 <Route path = '/register' element = {<Register />}/>
-                <Route path = '/userresumes' element = {<UserResumes/>}/>
+                <Route path = '/users/:id/resumes' element = {<UserResumes/>}/>
                 <Route path = '/userdetails' element = {<UserDetails/>}/>
             </Routes>
         </Router>
-    )
+      {/* </UserContext.Provider> */}
+    </>
+  );
 }
 
 export default App;
