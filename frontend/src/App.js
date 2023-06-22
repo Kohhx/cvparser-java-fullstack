@@ -7,6 +7,8 @@ import Register from './pages/Register';
 
 import NavBar from './component/NavBar';
 import UserResumes from './pages/UserResumes';
+import UserDetails from './pages/UserDetails';
+import './App.css';
 
 function App() {
     return (
@@ -14,9 +16,11 @@ function App() {
             <NavBar/>
             <Routes>
                 <Route path='/' element={<Login />} />
+                <Route path ='/login' element = {<Login />}/> 
                 <Route path ='/upload' element = {<Upload />}/>
                 <Route path = '/register' element = {<Register />}/>
                 <Route path = '/userresumes' element = {<UserResumes/>}/>
+                <Route path = '/userdetails' element = {<UserDetails/>}/>
             </Routes>
         </Router>
     )
