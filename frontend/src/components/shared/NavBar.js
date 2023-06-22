@@ -4,13 +4,28 @@ import './NavBar.css';
 import navbarAsset from './navbarAsset.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { authenticationAPI } from '../../api/authenticationAPI';
+import { toast } from "react-toastify";
+import { Navigate } from 'react-router-dom';
+
 
 function NavBar() {
   const handleLogout = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    Navigate('/login')
   };
+
+  const handleUpgrade = () => {
+    console.log("inside handleupgrade")
+    //patchmapping to upgrade user account
+    const regData = {role:"ROLE_PAID"};
+
+    // userAPI.upgrade(regData).then((res)=>{
+    // toast.success("Now a paid user!");
+    // Navigate('/upload');
+    // })
+  }
 
   const isUserLoggedIn = () => {
     return localStorage.getItem('username') || localStorage.getItem('user');
@@ -28,13 +43,17 @@ function NavBar() {
         <div className="navbar-nav">
           <Link className="nav-item nav-link btn btn-outline-primary my-2 my-sm-0 border-0" to="/upload">Upload</Link>
           <Link className="nav-item nav-link btn btn-outline-primary my-2 my-sm-0 border-0" to="/userresumes">Your Resume</Link>
+          <button onClick={handleUpgrade}> Upgrade User</button>
         </div>
+        
         {isUserLoggedIn() && (
-          <div className="dropdown" style={{ paddingRight: '30px' }}>
+        /* {( */
+          <div className="dropdown">
             <button className="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               UserName
             </button>
             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <button className="dropdown-item"> Upgrade User</button>
               <button className="dropdown-item" onClick={handleLogout}>Logout</button>
             </div>
           </div>
