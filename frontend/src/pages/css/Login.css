@@ -1,8 +1,9 @@
 .container {
     display: flex;
     height: 100vh;
-    background-color: #03045e; /* Dark Blue */
+    background-color: #0077b6; /* Dark Blue */
     color: white;
+    
 }
 
 .left-side {
@@ -12,8 +13,9 @@
     justify-content: center;
     align-items: center;
     border-right: 1px solid #03045e; /* Light Blue */
+    border-radius: 15px 0px 0px 15px;
     padding: 0 50px;
-    background-color: #28666e; /* Light Blue */
+    background-color: #00b4d8; /* Light Blue */
   }
   
 .left-side img {
@@ -26,8 +28,9 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-radius: 0px 15px 15px 0px;
     padding: 0 50px;
-    background-color: #7c9885; /* Bright Blue */
+    background-color: #caf0f8; /* Bright Blue */
 }
 
 .login-table {
@@ -50,4 +53,8 @@
     background-color: #0c7b93; /* Button with deep blue background */
     border: none; /* No border for button */
     padding: 10px; /* Some padding for button */
+}
+
+.registerHere{
+    font-size:13px;
 }
