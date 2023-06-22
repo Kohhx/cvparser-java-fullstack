@@ -4,3 +4,4 @@ node_modules
 backend/src/main/resources/application.properties
 backend/target/classes/application.properties
 target
+new 1.txt
