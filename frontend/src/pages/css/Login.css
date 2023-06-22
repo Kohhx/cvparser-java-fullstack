@@ -1,7 +1,6 @@
 .container {
     display: flex;
     height: 100vh;
-    background-color: #0077b6; /* Dark Blue */
     color: white;
     
 }
