@@ -1,3 +1,9 @@
 body{
-    background-color: #0077b6;
+    background-color: rgb(11,25,48)
+}
+
+.container-origin {
+  display: flex;
+  height: 100vh;
+  color: white;
 }

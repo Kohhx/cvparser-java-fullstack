@@ -86,11 +86,11 @@
         </dependency>
 
 <!--        Chat gpt dependency-->
-        <dependency>
-            <groupId>ai.openai.gpt</groupId>
-            <artifactId>gpt</artifactId>
-            <version>3.5.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>ai.openai.gpt</groupId>-->
+<!--            <artifactId>gpt</artifactId>-->
+<!--            <version>3.5.0</version>-->
+<!--        </dependency>-->
 
         <!--		<dependency>-->
         <!--			<groupId>org.apache.tika</groupId>-->

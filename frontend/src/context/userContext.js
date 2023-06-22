@@ -3,12 +3,17 @@ import { createContext } from "react";
 export const UserContext = createContext();
 
 function isUserloggedIn() {
-  return localStorage.getItem("token") &&  localStorage.getItem('authenticatedUser') ? true : false;
+  return sessionStorage.getItem("token") &&  localStorage.getItem('authenticatedUser') ? true : false;
 }
 
 function getUserRole() {
-  console.log(localStorage.getItem("role"));
-  return localStorage.getItem("role");
+  console.log(sessionStorage.getItem("role"));
+  return sessionStorage.getItem("role");
 }
 
-export const value = { isUserloggedIn, getUserRole };
+function getUserId() {
+  console.log(sessionStorage.getItem("id"));
+  return sessionStorage.getItem("id");
+}
+
+export const value = { isUserloggedIn, getUserRole, getUserId };

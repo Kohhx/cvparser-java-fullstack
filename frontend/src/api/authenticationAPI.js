@@ -30,11 +30,12 @@ export const authenticationAPI = {
       const data = res.data;
       let token = TOKEN_PREFIX + data.token;
       setSessionStorage(data.id, data.email, token, data.role);
-      console.log("Login Successful")
+      toast.success("Login Successful")
       return res;
     })
     .catch((err) => {
       console.log(err);
+      toast.error("Error in login. Please try again.")
     });
   }
 };

@@ -40,7 +40,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container-origin">
       <div className="left-side">
         <img src={logoAsset} alt="Logo" />
         <h1>Resume parsing website</h1>

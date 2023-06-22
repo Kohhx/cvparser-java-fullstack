@@ -14,7 +14,7 @@ export const resumeAPI = {
         toast.error("Error in uploading resume. Please try again.")
       });
   },
-  getUserResumes: async () => {
-      // Write logic
+  getUserResumes: async (userId) => {
+      return axiosInstance.get(`users/${userId}/resumes`);
   }
 };
