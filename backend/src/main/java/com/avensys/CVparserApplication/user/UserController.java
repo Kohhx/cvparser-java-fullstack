@@ -25,8 +25,8 @@ public class UserController {
 	
 	//Upload Page (#3 - Get)
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> GetUserForUpload (@PathVariable long user_id){
-		User user = userService.getUserById(user_id);
+	public ResponseEntity<User> GetUserForUpload (@PathVariable long id){
+		User user = userService.getUserById(id);
 		if(user != null) {
 			return new ResponseEntity<>(user,HttpStatus.OK);
 		}
@@ -39,8 +39,8 @@ public class UserController {
 	//	1. Role (Free -> Paid)
 	@PatchMapping("/users/{id}")
 	public ResponseEntity<UserRoleResponseDTO> PatchUserRoleForUpload 
-	(@PathVariable long user_id){
-			UserRoleResponseDTO userResponse = userService.updateUserRole(user_id);
+	(@PathVariable long id){
+			UserRoleResponseDTO userResponse = userService.updateUserRole(id);
 			return new ResponseEntity<>(userResponse,HttpStatus.OK);
 	}
 }
