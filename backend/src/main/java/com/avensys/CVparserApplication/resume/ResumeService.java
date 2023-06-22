@@ -12,6 +12,7 @@ import com.avensys.CVparserApplication.skill.SkillRepository;
 import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
 import com.avensys.CVparserApplication.utility.FileUtil;
+import com.avensys.CVparserApplication.utility.GPTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tika.metadata.Metadata;
@@ -46,6 +47,7 @@ public class ResumeService {
 
     @Value("${openai.api.url}")
     private String openAiUrl;
+    private String extractText;
 
     public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, RestTemplate restTemplate) {
         this.userRepository = userRepository;
@@ -62,6 +64,18 @@ public class ResumeService {
         }
         List<Resume> resumeList = resumeRepository.findByUser(user.get());
         return mapToResumeCreateResponseDTOList(resumeList);
+    }
+
+    public void resumeTest(ResumeCreateRequestDTO resumeCreateRequest) {
+        System.out.println("Hello World");
+        if (!FileUtil.checkFileIsDocument(resumeCreateRequest.file().getOriginalFilename())) {
+            throw new UploadFileException("Incorrect file extension");
+        }
+        StringBuilder sb = new StringBuilder();
+        String extractText = extractTextFromFile(resumeCreateRequest.file());
+        System.out.println( GPTUtil.countTokens(extractText));
+        System.out.println(GPTUtil.countTokens(GPTUtil.truncateString(extractText,3000)));
+        System.out.println(GPTUtil.truncateString(extractText,3500));
     }
 
     public ResumeCreateResponseDTO parseAndCreateResume(ResumeCreateRequestDTO resumeCreateRequest) {
@@ -91,7 +105,18 @@ public class ResumeService {
                                 
                 """);
         sb.append("\n");
-        sb.append(extractText);
+//        String replaceString=extractText.replace(" ","");
+//        sb.append(replaceString);
+//        extractText.replaceAll("\\s+","");
+//        extractText.replaceAll("((\r\n)|\n)[\\s\t ]*(\\1)+", "$1");
+
+//        sb.append(extractText);
+        if (GPTUtil.countTokens(extractText) > 3200 ) {
+            System.out.println("Truncating...");
+            sb.append(GPTUtil.truncateString(extractText, 3200));
+        } else {
+            sb.append(extractText);
+        }
 //        sb.append("""
 //                Koh He Xiang
 //                Email: k@gmail.com
@@ -264,4 +289,6 @@ public class ResumeService {
                     companies);
         }).collect(Collectors.toList());
     }
+
+
 }

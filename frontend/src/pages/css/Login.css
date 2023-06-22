@@ -1,10 +1,8 @@
-.container {
+/* .container {
     display: flex;
     height: 100vh;
-    background-color: #0077b6; /* Dark Blue */
     color: white;
-    
-}
+} */
 
 .left-side {
     flex: 1;
@@ -17,7 +15,7 @@
     padding: 0 50px;
     background-color: #00b4d8; /* Light Blue */
   }
-  
+
 .left-side img {
   max-width: 100%;
   max-height: 150px; /* Adjust the height as desired */
@@ -39,7 +37,7 @@
     width: 80%;
     background-color: #caf0f8; /* Very light blue */
     color: #000; /* Black color text */
-    
+
 }
 
 /* .login-table td {

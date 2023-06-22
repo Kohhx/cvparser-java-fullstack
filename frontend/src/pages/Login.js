@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import './css/Login.css';
 import logoAsset from './Assets/logoAsset.png';
 import { Link } from 'react-router-dom';
+import { authenticationAPI } from "../api/authenticationAPI";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import 'bootstrap/dist/css/bootstrap.css';
 
+
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [usernameValid, setUsernameValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
     setUsernameValid(e.target.value.length > 0);
   };
 
@@ -22,11 +27,21 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(`Logging in with username: ${username} and password: ${password}`);
+    console.log(`Logging in with username: ${email} and password: ${password}`);
+
+    const userLoginDetail = {
+      email,
+      password,
+    }
+
+    authenticationAPI.login(userLoginDetail).then(() => {
+      navigate("/upload");
+    })
+
   };
 
   return (
-    <div className="container">
+    <div className="container-origin">
       <div className="left-side">
         <img src={logoAsset} alt="Logo" />
         <h1>Resume parsing website</h1>
@@ -39,15 +54,15 @@ const LoginPage = () => {
             <tbody>
               <tr>
                 <td>
-                  <label htmlFor="validationCustom01" className="form-label">Username:</label>
+                  <label htmlFor="validationCustom01" className="form-label">Email:</label>
                 </td>
                 <td>
                   <input
                     type="text"
                     className={`form-control ${usernameValid ? 'is-valid' : 'is-invalid'}`}
                     id="validationCustom01"
-                    value={username}
-                    onChange={handleUsernameChange}
+                    value={email}
+                    onChange={handleEmailChange}
                     required
                   />
                   {usernameValid ? (
