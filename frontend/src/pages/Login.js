@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'bootstrap/dist/css/bootstrap.css';
 
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
