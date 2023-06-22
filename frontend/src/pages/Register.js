@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
   const navigate = useNavigate();
   const ctx = useContext(UserContext);
-  console.log(ctx.isUserloggedIn());
   // const [username, setUsername] = useState('');
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState({
@@ -78,7 +77,7 @@ const Register = () => {
   // };
 
   return (
-    <div className="container">
+    <div className="container-origin">
       <div className="left-side">
         <img src={logoAsset} alt="Logo" />
         <h1>Resume parsing website</h1>

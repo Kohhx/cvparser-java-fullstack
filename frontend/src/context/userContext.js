@@ -2,8 +2,8 @@ import { createContext } from "react";
 
 export const UserContext = createContext();
 
-function isUserloggedIn() {
-  return sessionStorage.getItem("token") &&  localStorage.getItem('authenticatedUser') ? true : false;
+function isUserLoggedIn() {
+  return sessionStorage.getItem("token") && sessionStorage.getItem('authenticatedUser') ? true : false;
 }
 
 function getUserRole() {
@@ -16,4 +16,4 @@ function getUserId() {
   return sessionStorage.getItem("id");
 }
 
-export const value = { isUserloggedIn, getUserRole, getUserId };
+export const value = { isUserLoggedIn, getUserRole, getUserId };

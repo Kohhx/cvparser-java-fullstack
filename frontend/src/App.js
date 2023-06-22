@@ -1,4 +1,4 @@
-import React,{ useContext } from "react";
+import React,{ useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,17 +15,16 @@ import './App.css';
 
 function App() {
   const ctx = useContext(UserContext);
+  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  console.log(ctx.isUserLoggedIn());
   return (
     <>
       <ToastContainer />
       {/* <UserContext.Provider value={value}> */}
-
-    {/* const isUserLoggedIn = () => {
-        //leave for Hexiang
-    }; */}
-
+      {/* <NavBar /> */}
+      {/* {ctx.isUserLoggedIn() && <NavBar />} */}
         <Router>
-            {ctx.isUserLoggedIn() && <NavBar />}
+        {ctx.isUserLoggedIn() && <NavBar />}
             <Routes>
                 <Route path='/' element={<Login />} />
                 <Route path ='/login' element = {<Login />}/>
