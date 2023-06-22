@@ -31,6 +31,13 @@ public class ResumeController {
         return new ResponseEntity<ResumeCreateResponseDTO>(chatResponse, HttpStatus.OK);
     }
 
+    @PostMapping("resumes/test")
+    public String createResumeTest(@ModelAttribute ResumeCreateRequestDTO resumeCreateRequest) {
+        resumeService.resumeTest(resumeCreateRequest);
+        System.out.println("OUT");
+        return "HELLO";
+    }
+
     @PatchMapping("resumes/{id}")
     public ResponseEntity<ResumeUpdateResponseDTO> updateResume(@RequestBody ResumeUpdateRequestDTO resumeUpdateRequest) {
         ResumeUpdateResponseDTO resumeUpdateResponse =  resumeService.updateResume(resumeUpdateRequest);
