@@ -133,7 +133,7 @@ const UserResumes = () => {
 
   return (
     <div className="container" >
-      <div className="ml-auto" style={{ marginTop: '80px' }}>
+      <div className="ml-auto">
         <table className="table">
           <tbody>
             <tr>
@@ -217,18 +217,5 @@ const UserResumes = () => {
     </div>
   );
 };
-
-
-
-                            // <tr>
-                            // <td>
-                            //     <label>Date: </label>
-                            // </td>
-                            // <td>
-                            //     <input type="text" placeholder="Search by Date" value={searchDate} onChange={e => setSearchDate(e.target.value)} />
-                            // </td>
-
-                            // </tr>
-
 
 export default UserResumes;
