@@ -106,6 +106,7 @@ const Upload = () => {
                 </tr>
               )}
               <tr>
+
                 <td colSpan="2">
                   <button disabled={!isValidAttachment} type="submit">
                     Upload
