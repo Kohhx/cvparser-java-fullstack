@@ -70,7 +70,7 @@ function NavBar() {
             className="nav-item nav-link btn btn-outline-primary my-2 my-sm-0 border-0"
             to={`/users/${ctx.getUserId()}/resumes`}
           >
-            Your Resume
+            Your Resumes
           </Link>
         </div>
         <span onClick={handleLogout}>Logout</span>

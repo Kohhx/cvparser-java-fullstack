@@ -134,42 +134,43 @@ const UserResumes = () => {
         <input type="text" className="form-control" placeholder="Search by Name"/>
       </div>
 
-      <table className="table table-bordered">
-        <thead>
-          <tr className="table-active table-primary">
-            <th scope="col">Candidate</th>
-            <th scope="col">Skills</th>
-            <th scope="col">Created on</th>
-            <th scope="col">User details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredCandidates
-            .slice(offset, offset + PER_PAGE)
-            .map((candidate) => (
-              <tr key={candidate.name}>
-                <th scope="row">{candidate.name}</th>
-                <td>{candidate.skills}</td>
-                <td>{candidate.created}</td>
-                <td>
-                  <a href={candidate.details}>Details</a>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-
-      <ReactPaginate
-        previousLabel={"←"}
-        nextLabel={"→"}
-        pageCount={pageCount}
-        onPageChange={handlePageClick}
-        containerClassName={"pagination"}
-        previousLinkClassName={"pagination__link"}
-        nextLinkClassName={"pagination__link"}
-        disabledClassName={"pagination__link--disabled"}
-        activeClassName={"pagination__link--active"}
-      />
+            <div className='row d-flex justify-content-center left-side'>
+                <div class="col-auto">
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr className="table-active table-primary">
+                                <th scope="col">Candidate</th>
+                                <th scope="col">Skills</th>
+                                <th scope="col">Created on</th>
+                                <th scope="col">User details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredCandidates
+                                .slice(offset, offset + PER_PAGE)
+                                .map(candidate => (
+                                <tr key={candidate.name}>
+                                    <th scope="row">{candidate.name}</th>
+                                    <td>{candidate.skills}</td>
+                                    <td>{candidate.created}</td>
+                                    <td><a href={candidate.details}>Details</a></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <ReactPaginate
+                    previousLabel={"←"}
+                    nextLabel={"→"}
+                    pageCount={pageCount}
+                    onPageChange={handlePageClick}
+                    containerClassName={"pagination"}
+                    previousLinkClassName={"pagination__link"}
+                    nextLinkClassName={"pagination__link"}
+                    disabledClassName={"pagination__link--disabled"}
+                    activeClassName={"pagination__link--active"}
+                />
+            </div>
 
       {/* <div className="ml-auto right-side">
                 <table className="table">

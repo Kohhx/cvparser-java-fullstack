@@ -23,6 +23,40 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
+  const [firstNameTouched, setFirstNameTouched] = useState(false);
+  const [lastNameTouched, setLastNameTouched] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [usernameTouched, setUsernameTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
+
+  const handleFirstNameBlur = (e) => {
+    setFirstNameTouched(true);
+  };
+
+  const handleLastNameBlur = (e) => {
+    setLastNameTouched(true);
+  };
+
+  const handleEmailBlur = (e) => {
+    setEmailTouched(true);
+  };
+
+  const handleUsernameBlur = (e) => {
+    setUsernameTouched(true);
+  };
+
+  const handlePasswordBlur = (e) => {
+    setPasswordTouched(true);
+  };
+
+  const handleConfirmPasswordBlur = (e) => {
+    setConfirmPasswordTouched(true);
+  };
+
+
+
+
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
   };
@@ -77,10 +111,9 @@ const Register = () => {
   // };
 
   return (
-    <div className="container-origin">
+    <div className="container d-flex">
       <div className="left-side">
         <img src={logoAsset} alt="Logo" />
-        <h1>Resume parsing website</h1>
       </div>
       <div className="right-side">
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
@@ -91,22 +124,19 @@ const Register = () => {
                   <label htmlFor="firstNameInput">First Name:</label>
                 </td>
                 <td>
-                  <input
+                <input
                     type="text"
-                    className={`form-control ${
-                      firstName.length > 0 ? "is-valid" : "is-invalid"
-                    }`}
+                    className={`form-control ${firstNameTouched && (firstName.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="firstNameInput"
                     value={firstName}
                     onChange={handleFirstNameChange}
+                    onBlur={handleFirstNameBlur}
                     required
                   />
                   {firstName.length > 0 ? (
                     <div className="valid-feedback">Looks good!</div>
                   ) : (
-                    <div className="invalid-feedback">
-                      Please provide a first name.
-                    </div>
+                    firstNameTouched && <div className="invalid-feedback">Please provide a first name.</div>
                   )}
                 </td>
               </tr>
@@ -117,20 +147,17 @@ const Register = () => {
                 <td>
                   <input
                     type="text"
-                    className={`form-control ${
-                      lastName.length > 0 ? "is-valid" : "is-invalid"
-                    }`}
+                    className={`form-control ${lastNameTouched && (lastName.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="lastNameInput"
                     value={lastName}
                     onChange={handleLastNameChange}
+                    onBlur={handleLastNameBlur}
                     required
                   />
                   {lastName.length > 0 ? (
                     <div className="valid-feedback">Looks good!</div>
                   ) : (
-                    <div className="invalid-feedback">
-                      Please provide a last name.
-                    </div>
+                    lastNameTouched && <div className="invalid-feedback">Please provide a last name.</div>
                   )}
                 </td>
               </tr>
@@ -141,20 +168,14 @@ const Register = () => {
                 <td>
                   <input
                     type="email"
-                    className={`form-control
-                    ${email.touched && !email.valid && "is-invalid"}
-                    `}
+                    className={`form-control ${emailTouched && (email.length > 0 && email.includes('.com') && email.includes('@') ? 'is-valid' : 'is-invalid')}`}
                     id="emailInput"
                     value={email.value}
                     onChange={handleEmailChange}
-                    onFocus={() => setEmail({ ...email, touched: true })}
+                    onBlur={handleEmailBlur}
                     required
                   />
-                  {email.touched && !email.valid && (
-                    <div className="invalid-feedback">
-                      Please provide a valid email address.
-                    </div>
-                  )}
+                  {emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>}
                 </td>
               </tr>
               {/* <tr>
@@ -164,16 +185,17 @@ const Register = () => {
                 <td>
                   <input
                     type="text"
-                    className={`form-control ${username.length > 0 ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${usernameTouched && (username.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="usernameInput"
                     value={username}
                     onChange={handleUsernameChange}
+                    onBlur={handleUsernameBlur}
                     required
                   />
                   {username.length > 0 ? (
                     <div className="valid-feedback">Looks good!</div>
                   ) : (
-                    <div className="invalid-feedback">Please provide a username.</div>
+                    usernameTouched && <div className="invalid-feedback">Please provide a username.</div>
                   )}
                 </td>
               </tr> */}
@@ -184,22 +206,17 @@ const Register = () => {
                 <td>
                   <input
                     type="password"
-                    className={`form-control ${
-                      password === confirmPassword && password.length > 0
-                        ? "is-valid"
-                        : "is-invalid"
-                    }`}
+                    className={`form-control ${passwordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="passwordInput"
                     value={password}
                     onChange={handlePasswordChange}
+                    onBlur={handlePasswordBlur}
                     required
                   />
                   {password === confirmPassword ? (
                     <div className="valid-feedback">Passwords match!</div>
                   ) : (
-                    <div className="invalid-feedback">
-                      Passwords do not match.
-                    </div>
+                    passwordTouched && <div className="invalid-feedback">Passwords do not match.</div>
                   )}
                 </td>
               </tr>
@@ -212,22 +229,17 @@ const Register = () => {
                 <td>
                   <input
                     type="password"
-                    className={`form-control ${
-                      password === confirmPassword && password.length > 0
-                        ? "is-valid"
-                        : "is-invalid"
-                    }`}
+                    className={`form-control ${confirmPasswordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="confirmPasswordInput"
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
+                    onBlur={handleConfirmPasswordBlur}
                     required
                   />
                   {password === confirmPassword ? (
                     <div className="valid-feedback">Passwords match!</div>
                   ) : (
-                    <div className="invalid-feedback">
-                      Passwords do not match.
-                    </div>
+                    confirmPasswordTouched && <div className="invalid-feedback">Passwords do not match.</div>
                   )}
                 </td>
               </tr>
