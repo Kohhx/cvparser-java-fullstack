@@ -3,6 +3,7 @@ import "./css/Register.css";
 import logoAsset from "./Assets/logoAsset.png";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { toast } from "react-toastify";
 import { authenticationAPI } from "../api/authenticationAPI";
 import { UserContext } from "../context/userContext";
@@ -117,153 +118,113 @@ const Register = () => {
       </div>
       <div className="right-side">
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-          <table className="table login-table rounded table-responsive-sm">
-            <tbody>
-              <tr>
-                <td>
-                  <label htmlFor="firstNameInput">First Name:</label>
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    className={`form-control ${firstNameTouched && (firstName.length > 0 ? 'is-valid' : 'is-invalid')}`}
-                    id="firstNameInput"
-                    value={firstName}
-                    onChange={handleFirstNameChange}
-                    onBlur={handleFirstNameBlur}
-                    required
-                  />
-                  {firstName.length > 0 ? (
-                    <div className="valid-feedback">Looks good!</div>
-                  ) : (
-                    firstNameTouched && <div className="invalid-feedback">Please provide a first name.</div>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label htmlFor="lastNameInput">Last Name:</label>
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    className={`form-control ${lastNameTouched && (lastName.length > 0 ? 'is-valid' : 'is-invalid')}`}
-                    id="lastNameInput"
-                    value={lastName}
-                    onChange={handleLastNameChange}
-                    onBlur={handleLastNameBlur}
-                    required
-                  />
-                  {lastName.length > 0 ? (
-                    <div className="valid-feedback">Looks good!</div>
-                  ) : (
-                    lastNameTouched && <div className="invalid-feedback">Please provide a last name.</div>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label htmlFor="emailInput">Email:</label>
-                </td>
-                <td>
-                  <input
-                    type="email"
-                    className={`form-control ${emailTouched && (email.valid ? 'is-valid' : 'is-invalid')}`}
-                    id="emailInput"
-                    value={email.value}
-                    onChange={handleEmailChange}
-                    onBlur={handleEmailBlur}
-                    required
-                  />
-                  {email.valid ? (
-                    <div className="valid-feedback">Looks good!</div>
-                  ) : (
-                    emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>
-                  )}
-                </td>
-              </tr>
-              {/* <tr>
-                <td>
-                  <label htmlFor="usernameInput">Username:</label>
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    className={`form-control ${usernameTouched && (username.length > 0 ? 'is-valid' : 'is-invalid')}`}
-                    id="usernameInput"
-                    value={username}
-                    onChange={handleUsernameChange}
-                    onBlur={handleUsernameBlur}
-                    required
-                  />
-                  {username.length > 0 ? (
-                    <div className="valid-feedback">Looks good!</div>
-                  ) : (
-                    usernameTouched && <div className="invalid-feedback">Please provide a username.</div>
-                  )}
-                </td>
-              </tr> */}
-              <tr>
-                <td>
-                  <label htmlFor="passwordInput">Password:</label>
-                </td>
-                <td>
-                  <input
-                    type="password"
-                    className={`form-control ${passwordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
-                    id="passwordInput"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    onBlur={handlePasswordBlur}
-                    required
-                  />
-                  {/* changes made here */}
-                  {password === confirmPassword ? (
-                    <div className="valid-feedback">Passwords match!</div>
-                  ) : (
-                    passwordTouched && <div className="invalid-feedback">Passwords do not match.</div>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label htmlFor="confirmPasswordInput">
-                    Confirm Password:
-                  </label>
-                </td>
-                <td>
-                  <input
-                    type="password"
-                    className={`form-control ${confirmPasswordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
-                    id="confirmPasswordInput"
-                    value={confirmPassword}
-                    onChange={handleConfirmPasswordChange}
-                    onBlur={handleConfirmPasswordBlur}
-                    required
-                  />
-                  {password === confirmPassword ? (
-                    <div className="valid-feedback">Passwords match!</div>
-                  ) : (
-                    confirmPasswordTouched && <div className="invalid-feedback">Passwords do not match.</div>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="2">
-                  <Link to="/" className="registerHere">
-                    Already have an account? Log in here
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="2">
-                  <button type="submit" className="btn btn-primary">
-                    Register
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="form-floating mb-3">
+            <input
+              type="text"
+              className={`form-control ${firstNameTouched && (firstName.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              id="firstNameInput"
+              value={firstName}
+              placeholder = "Silas"
+              onChange={handleFirstNameChange}
+              onBlur={handleFirstNameBlur}
+              required
+            />
+            <label htmlFor="firstNameInput">First Name:</label>
+            {firstName.length > 0 ? (
+              <div className="valid-feedback">Looks good!</div>
+            ) : (
+              firstNameTouched && <div className="invalid-feedback">Please provide a first name.</div>
+            )}
+          </div>
+
+          <div className="form-floating mb-3">
+            <input
+              type="text"
+              className={`form-control ${lastNameTouched && (lastName.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              id="lastNameInput"
+              value={lastName}
+              placeholder = "Yeak"
+              onChange={handleLastNameChange}
+              onBlur={handleLastNameBlur}
+              required
+            />
+            <label htmlFor="lastNameInput">Last Name:</label>
+            {lastName.length > 0 ? (
+              <div className="valid-feedback">Looks good!</div>
+            ) : (
+              lastNameTouched && <div className="invalid-feedback">Please provide a last name.</div>
+            )}
+          </div>
+
+          <div className="form-floating mb-3">
+            <input
+              type="email"
+              className={`form-control ${emailTouched && (email.valid ? 'is-valid' : 'is-invalid')}`}
+              id="emailInput"
+              value={email.value}
+              placeholder = "silasyeak@gmail.com"
+              onChange={handleEmailChange}
+              onBlur={handleEmailBlur}
+              required
+            />
+            <label htmlFor="emailInput">Email:</label>
+            {email.valid ? (
+              <div className="valid-feedback">Looks good!</div>
+            ) : (
+              emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>
+            )}
+          </div>
+
+          <div className="form-floating mb-3">
+            <input
+              type="password"
+              className={`form-control ${passwordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              id="passwordInput"
+              placeholder = "password"
+              value={password}
+              onChange={handlePasswordChange}
+              onBlur={handlePasswordBlur}
+              required
+            />
+            <label htmlFor="passwordInput">Password:</label>
+            {password === confirmPassword ? (
+              <div className="valid-feedback">Passwords match!</div>
+            ) : (
+              passwordTouched && <div className="invalid-feedback">Passwords do not match.</div>
+            )}
+          </div>
+
+          <div className="form-floating mb-3">
+            <input
+              type="password"
+              className={`form-control ${confirmPasswordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              id="confirmPasswordInput"
+              placeholder = "password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              onBlur={handleConfirmPasswordBlur}
+              required
+            />
+            <label htmlFor="confirmPasswordInput">Confirm Password:</label>
+            {password === confirmPassword ? (
+              <div className="valid-feedback">Passwords match!</div>
+            ) : (
+              confirmPasswordTouched && <div className="invalid-feedback">Passwords do not match.</div>
+            )}
+          </div>
+
+          <div className="mb-3">
+            <Link to="/" className="registerHere">
+              Already have an account? Log in here
+            </Link>
+          </div>
+          
+          <div className="mb-3">
+            <button type="submit" className="btn btn-primary w-100">
+              Register
+            </button>
+          </div>
+
         </form>
       </div>
     </div>

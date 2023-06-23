@@ -1,6 +1,5 @@
 .container {
     height: 100vh;
-    color: white;
     justify-content: space-between;
     padding: 50px;
 } 
@@ -29,7 +28,7 @@
     justify-content: center;
     border-radius: 15px 15px 15px 15px;
     padding: 0 50px;
-    background-color: #caf0f8; /* Bright Blue */
+    background-color: #DDE6ED; /* Bright Blue */
 }
 
 .login-table {
