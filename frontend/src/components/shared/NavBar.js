@@ -68,7 +68,7 @@ function NavBar() {
           </Link>
           <Link
             className="nav-item nav-link btn btn-outline-primary my-2 my-sm-0 border-0"
-            to="/userresumes"
+            to={`/users/${ctx.getUserId()}/resumes`}
           >
             Your Resume
           </Link>

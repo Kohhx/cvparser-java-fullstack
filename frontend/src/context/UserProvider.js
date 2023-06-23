@@ -59,6 +59,11 @@ const UserProvider = ({ children }) => {
   }
 
 
+  function getUserId() {
+    return sessionStorage.getItem("id");
+  }
+
+
   return (
     <UserContext.Provider
       value={{
@@ -69,7 +74,8 @@ const UserProvider = ({ children }) => {
         loginUserDetails,
         logoutUserDetails,
         isUserLoggedIn,
-        getUserRole
+        getUserRole,
+        getUserId
       }}
     >
       {children}
