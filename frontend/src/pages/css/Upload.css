@@ -22,3 +22,7 @@
 .upload-table button:hover {
   background-color: #0056b3;
 }
+
+.upload-container{
+  color:white;
+}

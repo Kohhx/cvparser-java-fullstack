@@ -79,7 +79,7 @@ const Upload = () => {
   };
 
   return (
-    <div className="container-origin">
+    <div className="upload-container d-flex vh-100">
       <div className="left-side">
         <form onSubmit={handleSubmit}>
           <table className="upload-table">
