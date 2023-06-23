@@ -1,22 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./css/Upload.css";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import { toast } from "react-toastify";
 import { resumeAPI } from "../api/resumeAPI";
 import { Document, Page } from "react-pdf";
 import { pdfjs } from "react-pdf";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/userContext";
 
-// pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-// pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   'pdfjs-dist/build/pdf.worker.min.js',
-//   import.meta.url,
-// ).toString();
-// console.log(pdfjs.version)
-
 const Upload = () => {
+  const ctx = useContext(UserContext);
+  const navigate = useNavigate();
   console.log(DocViewer);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -78,6 +74,7 @@ const Upload = () => {
 
     resumeAPI.uploadResume(formData).then((res) => {
       toast.success("File uploaded, navigate to list page.");
+      navigate(`/users/${ctx.getUserId()}/resumes/${+res.data.id}`)
     });
   };
 
