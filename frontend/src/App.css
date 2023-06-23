@@ -1,11 +1,5 @@
 body{
-    background-color: rgb(11,25,48)
-}
-
-.container-origin {
-  display: flex;
-  height: 100vh;
-  color: white;
+    background-color: #0077b6;
 }
 
 .main-container {

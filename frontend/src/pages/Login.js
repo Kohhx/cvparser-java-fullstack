@@ -14,17 +14,23 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [usernameValid, setUsernameValid] = useState(false);
-  const [passwordValid, setPasswordValid] = useState(false);
+  const [usernameTouched, setUsernameTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    setUsernameValid(e.target.value.length > 0);
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleUsernameBlur = (e) => {
+    setUsernameTouched(true);
   };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-    setPasswordValid(e.target.value.length > 0);
+  };
+
+  const handlePasswordBlur = (e) => {
+    setPasswordTouched(true);
   };
 
   const handleSubmit = (e) => {
@@ -46,10 +52,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container-origin">
+    <div className="container d-flex">
       <div className="left-side">
         <img src={logoAsset} alt="Logo" />
-        <h1>Resume parsing website</h1>
       </div>
       <div className="right-side">
       <div className="d-flex justify-content-center">
@@ -64,17 +69,18 @@ const LoginPage = () => {
                 <td>
                   <input
                     type="text"
-                    className={`form-control ${usernameValid ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${usernameTouched && (username.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="validationCustom01"
-                    value={email}
-                    onChange={handleEmailChange}
+                    value={username}
+                    onChange={handleUsernameChange}
+                    onBlur={handleUsernameBlur}
                     required
                   />
-                  {usernameValid ? (
+                  {usernameTouched && (username.length > 0 ? (
                     <div className="valid-feedback">Looks good!</div>
                   ) : (
                     <div className="invalid-feedback">Please type a username.</div>
-                  )}
+                  ))}
                 </td>
               </tr>
               <tr>
@@ -84,13 +90,14 @@ const LoginPage = () => {
                 <td>
                   <input
                     type="password"
-                    className={`form-control ${passwordValid ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${passwordTouched && (password.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="validationServer02"
                     value={password}
                     onChange={handlePasswordChange}
+                    onBlur={handlePasswordBlur}
                     required
                   />
-                  <div className="invalid-feedback">Please provide a password.</div>
+                  {passwordTouched && <div className="invalid-feedback">Please provide a password.</div>}
                 </td>
               </tr>
               <tr>
