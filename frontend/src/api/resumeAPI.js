@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 export const resumeAPI = {
   uploadResume: async (resumeDetails) => {
-    axiosInstance
+     return axiosInstance
       .post("resumes", resumeDetails)
       .then((res) => {
         toast.success("Resume uploaded successfully.");

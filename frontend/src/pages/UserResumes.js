@@ -14,8 +14,8 @@ const UserResumes = () => {
   const [userId, setUserId] = useState();
 
   useEffect(() => {
-    console.log(ctx.getUserId());
-    setUserId(ctx.getUserId());
+    // console.log(ctx.getUserId());
+    setUserId(ctx.userDetails.id);
     resumeAPI.getUserResumes(ctx.getUserId()).then((res) => {
       console.log(res.data);
     });
