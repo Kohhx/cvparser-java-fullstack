@@ -113,7 +113,7 @@ public class ResumeService {
 //        sb.append(extractText);
         if (GPTUtil.countTokens(extractText) > 3200 ) {
             System.out.println("Truncating...");
-            sb.append(GPTUtil.truncateString(extractText, 3200));
+            sb.append(GPTUtil.truncateString(extractText, 3000));
         } else {
             sb.append(extractText);
         }

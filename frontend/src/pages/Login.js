@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './css/Login.css';
 import logoAsset from './Assets/logoAsset.png';
 import { Link } from 'react-router-dom';
@@ -6,9 +6,11 @@ import { authenticationAPI } from "../api/authenticationAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'bootstrap/dist/css/bootstrap.css';
+import { UserContext } from '../context/userContext';
 
 
 const LoginPage = () => {
+  const ctx = useContext(UserContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,6 +37,9 @@ const LoginPage = () => {
     }
 
     authenticationAPI.login(userLoginDetail).then(() => {
+      console.log("2")
+      ctx.loginUserDetails();
+      console.log(ctx.userDetails);
       navigate("/upload");
     })
 

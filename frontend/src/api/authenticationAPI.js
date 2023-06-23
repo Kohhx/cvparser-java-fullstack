@@ -23,7 +23,7 @@ export const authenticationAPI = {
       });
   },
   login: async (userLoginDetails) => {
-    axiosInstance
+    return axiosInstance
     .post("login", userLoginDetails)
     .then((res) => {
       removeSessionStorage();
@@ -31,12 +31,14 @@ export const authenticationAPI = {
       let token = TOKEN_PREFIX + data.token;
       setSessionStorage(data.id, data.email, token, data.role);
       toast.success("Login Successful")
-      return res;
     })
     .catch((err) => {
       console.log(err);
       toast.error("Error in login. Please try again.")
     });
+  },
+  logout: () => {
+    removeSessionStorage();
   }
 };
 
@@ -53,6 +55,7 @@ function setSessionStorage(
 }
 
 function removeSessionStorage() {
+  sessionStorage.removeItem(AUTH_ID_KEY);
   sessionStorage.removeItem(AUTH_USER_KEY);
   sessionStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(ROLE_KEY);

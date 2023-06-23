@@ -1,10 +1,10 @@
-.container {
+/* .container {
     display: flex;
     height: 100vh;
     color: white;
     font-size:18px; 
     
-}
+} */
 
 .left-side {
     flex: 1;
