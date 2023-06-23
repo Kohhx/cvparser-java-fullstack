@@ -17,6 +17,7 @@ import LogoutGuard from "./guards/LogoutGuard";
 import FreePaidGuard from "./guards/FreePaidGuard";
 import "./App.css";
 import { pdfjs } from "react-pdf";
+import Resume from "./pages/Resume";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 function App() {
   const ctx = useContext(UserContext);
@@ -39,7 +40,8 @@ function App() {
             {/* Routes protected by FreePaid Guard */}
             <Route element={<FreePaidGuard />}>
               <Route path="/upload" element={<Upload />} />
-              <Route path="/users/:id/resumes" element={<UserResumes />} />
+              <Route path="/users/:userId/resumes/:resumeId" element={<Resume />} />
+              <Route path="/users/:userId/resumes" element={<UserResumes />} />
               <Route path="/userdetails" element={<UserDetails />} />
             </Route>
           </Routes>
