@@ -27,7 +27,7 @@ function NavBar() {
       <div className="collapse navbar-collapse justify-content-between" id="navbarNav">
         <div className="navbar-nav">
           <Link className="nav-item nav-link btn btn-outline-primary my-2 my-sm-0 border-0" to="/upload">Upload</Link>
-          <Link className="nav-item nav-link btn btn-outline-primary my-2 my-sm-0 border-0" to="/userresumes">Your Resume</Link>
+          <Link className="nav-item nav-link btn btn-outline-primary my-2 my-sm-0 border-0" to="/userresumes">Your Resumes</Link>
         </div>
         {isUserLoggedIn() && (
           <div className="dropdown" style={{ paddingRight: '30px' }}>

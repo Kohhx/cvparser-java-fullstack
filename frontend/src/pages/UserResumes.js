@@ -48,7 +48,7 @@ const UserResumes = () => {
     return (
         <div className="container d-flex flex-row">
 
-            <div className='row d-flex justify-content-start left-side'>
+            <div className='row d-flex justify-content-center left-side'>
                 <div class="col-auto">
                     <table className="table table-bordered">
                         <thead>

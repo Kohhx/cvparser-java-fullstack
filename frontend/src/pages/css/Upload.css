@@ -1,21 +1,4 @@
 /* Upload.css */
-
-.container {
-    display: flex;
-    justify-content: space-between;
-    padding: 50px;
-  }
-  
-  .left-side {
-    border-radius: 15px 0px 0px 15px;
-    flex-basis: 50%;
-  }
-  
-  .right-side {
-    border-radius: 0px 15px 15px 0px;
-    flex-basis: 50%;
-  }
-  
   .upload-table {
     width: 100%;
     margin: 20px 0;
