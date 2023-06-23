@@ -1,0 +1,118 @@
+.resume-container {
+  color:white;
+}
+
+input {
+  width:100%;
+}
+
+input:disabled {
+  color: rgb(81, 81, 81);
+  background-color: transparent;
+  /* background-color: rgb(193, 193, 193); */
+}
+
+.resume-filename-section{
+  margin-bottom: 1.5rem;
+  margin-top: 6rem;
+  border-radius: 20px;
+  background-color: rgb(214,223,232);
+  padding: 2rem;
+  color:rgb(67, 67, 67);
+}
+
+.resume-filename-section input{
+  font-size: 1rem;
+  padding:5px;
+  padding-left: 1rem;
+  border-radius: 100vh;
+  border: none;
+  outline: none;
+}
+
+.resume-main-section {
+  border-radius: 20px;
+  background-color: rgb(214,223,232);
+  padding: 2rem;
+  color:rgb(67, 67, 67);
+}
+
+.resume-personal-details-section{
+
+}
+
+.resume-personal-details-section input{
+  font-size: 1rem;
+  padding:5px;
+  padding-left: 1rem;
+  border-radius: 100vh;
+  border: none;
+  outline: none;
+}
+
+
+.resume-details-part {
+  margin-bottom: 1rem;
+}
+
+.resume-skills-section{
+
+}
+
+.resume-skills-section input{
+  font-size: 1rem;
+  padding:5px;
+  padding-left: 1rem;
+  border-radius: 100vh;
+  border: none;
+  outline: none;
+}
+
+.resume-companies-section{
+
+}
+
+.edit-icons-lg {
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+.edit-icons-md {
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.edit-icons:hover{
+  color: rgb(187, 176, 161);
+}
+
+.skill-list {
+  display: flex;
+}
+
+.skill-item {
+  padding: 4px 10px 4px 10px;
+  background-color: aliceblue;
+  display: inline-block;
+  border-radius: 100vh;
+}
+
+.skill-delete-icon {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.resume-companies-section input{
+  font-size: 1rem;
+  padding:5px;
+  padding-left: 1rem;
+  border-radius: 100vh;
+  border: none;
+  outline: none;
+}
+
+.list-index {
+  font-size: 1.2rem;
+  margin-left: 1rem;
+  font-weight: bold;
+}
