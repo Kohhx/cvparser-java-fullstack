@@ -24,5 +24,61 @@
 }
 
 .upload-container{
+  display: flex;
   color:white;
+  height: 100vh;
+  gap:3rem;
+}
+
+.viewer-container {
+background-color: rgb(205, 216, 226);
+width:600px;
+height: 100%;
+padding:30px;
+border-radius: 20px;
+}
+
+.upload-left-section{
+  width: 50%;
+  /* width:1000px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-right-section{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding:40px;
+  padding-top: 100px;
+}
+
+.drop-outer-border{
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+  color:gray;
+}
+
+.drop-inner-border{
+  border:2px grey dashed;
+  height:100%;
+  border-radius: 10px;
+  padding:100px 150px 100px 150px;
+}
+
+.upload-icon {
+  font-size: 5rem;
+}
+
+.upload-icon-success {
+  font-size: 5rem;
+  color: green;
+}
+
+
+
+.drag-over{
+ background-color: rgba(253, 253, 253, 0.9);
 }
