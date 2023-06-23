@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
-import './css/Register.css';
-import logoAsset from './Assets/logoAsset.png';
-import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.css';
+import React, { useState, useContext } from "react";
+import "./css/Register.css";
+import logoAsset from "./Assets/logoAsset.png";
+import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
+import { toast } from "react-toastify";
+import { authenticationAPI } from "../api/authenticationAPI";
+import { UserContext } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const navigate = useNavigate();
+  const ctx = useContext(UserContext);
+  // const [username, setUsername] = useState('');
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState({
+    value: "",
+    touched: false,
+    valid: false,
+  });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const [firstNameTouched, setFirstNameTouched] = useState(false);
   const [lastNameTouched, setLastNameTouched] = useState(false);
@@ -56,12 +66,19 @@ const Register = () => {
   };
 
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+    if (
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(e.target.value) &&
+      e.target.value.length > 0
+    ) {
+      setEmail({ ...email, value: e.target.value, valid: true });
+      return;
+    }
+    setEmail({ ...email, value: e.target.value, valid: false });
   };
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
-  };
+  // const handleUsernameChange = (e) => {
+  //   setUsername(e.target.value);
+  // };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -73,13 +90,25 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === confirmPassword) {
-      console.log(`Registering with username: ${username} and password: ${password}`);
-      // Proceed with registration...
-    } else {
-      console.log('Passwords do not match.');
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
     }
+
+    const regData = {
+      firstName,
+      lastName,
+      email: email.value,
+      password,
+      role: "ROLE_FREE",
+    };
+
+    authenticationAPI.signup(regData).then((res) => {
+      toast.success("Registration successful.");
+      navigate("/upload");
+    });
   };
+
+  // };
 
   return (
     <div className="container d-flex">
@@ -90,12 +119,12 @@ const Register = () => {
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <table className="table login-table rounded table-responsive-sm">
             <tbody>
-            <tr>
+              <tr>
                 <td>
                   <label htmlFor="firstNameInput">First Name:</label>
                 </td>
                 <td>
-                <input
+                  <input
                     type="text"
                     className={`form-control ${firstNameTouched && (firstName.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="firstNameInput"
@@ -139,17 +168,21 @@ const Register = () => {
                 <td>
                   <input
                     type="email"
-                    className={`form-control ${emailTouched && (email.length > 0 && email.includes('.com') && email.includes('@') ? 'is-valid' : 'is-invalid')}`}
+                    className={`form-control ${emailTouched && (email.valid ? 'is-valid' : 'is-invalid')}`}
                     id="emailInput"
-                    value={email}
+                    value={email.value}
                     onChange={handleEmailChange}
                     onBlur={handleEmailBlur}
                     required
                   />
-                  {emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>}
+                  {email.valid ? (
+                    <div className="valid-feedback">Looks good!</div>
+                  ) : (
+                    emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>
+                  )}
                 </td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td>
                   <label htmlFor="usernameInput">Username:</label>
                 </td>
@@ -169,7 +202,7 @@ const Register = () => {
                     usernameTouched && <div className="invalid-feedback">Please provide a username.</div>
                   )}
                 </td>
-              </tr>
+              </tr> */}
               <tr>
                 <td>
                   <label htmlFor="passwordInput">Password:</label>
@@ -193,7 +226,9 @@ const Register = () => {
               </tr>
               <tr>
                 <td>
-                  <label htmlFor="confirmPasswordInput">Confirm Password:</label>
+                  <label htmlFor="confirmPasswordInput">
+                    Confirm Password:
+                  </label>
                 </td>
                 <td>
                   <input
@@ -214,12 +249,16 @@ const Register = () => {
               </tr>
               <tr>
                 <td colSpan="2">
-                  <Link to="/" className="registerHere">Already have an account? Log in here</Link>
+                  <Link to="/" className="registerHere">
+                    Already have an account? Log in here
+                  </Link>
                 </td>
               </tr>
               <tr>
                 <td colSpan="2">
-                  <button type="submit" className="btn btn-primary">Register</button>
+                  <button type="submit" className="btn btn-primary">
+                    Register
+                  </button>
                 </td>
               </tr>
             </tbody>

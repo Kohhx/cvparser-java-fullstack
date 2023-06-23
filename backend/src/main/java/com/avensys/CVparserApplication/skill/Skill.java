@@ -20,6 +20,10 @@ public class Skill {
     public Skill() {
     }
 
+    public Skill(String name) {
+        this.name = name;
+    }
+
     public Skill(long id, String name, Resume resume) {
         this.id = id;
         this.name = name;
