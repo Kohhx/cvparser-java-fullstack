@@ -17,6 +17,12 @@ public class ResumeController {
         this.resumeService = resumeService;
     }
 
+    @GetMapping("/users/{userId}/resumes/{resumeId}")
+    public ResponseEntity<ResumeUpdateResponseDTO> getResume(@PathVariable long userId, @PathVariable long resumeId) {
+        ResumeUpdateResponseDTO resumeResponse = resumeService.getResume(userId, resumeId);
+        return new ResponseEntity<ResumeUpdateResponseDTO>(resumeResponse, HttpStatus.OK);
+    }
+
     @GetMapping("/users/{id}/resumes")
     public ResponseEntity<List<ResumeCreateResponseDTO>> getResumesByUserId(@PathVariable long id) {
         List<ResumeCreateResponseDTO> resumeListResponseDTO = resumeService.getResumesByUserId(id);

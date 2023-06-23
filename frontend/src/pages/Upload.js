@@ -24,8 +24,8 @@ const Upload = () => {
   const [fileUrl, setFileUrl] = useState("");
 
   const handleFileChange = (event) => {
-    setFileUrl("");
-    console.log(fileUrl);
+    // setFileUrl("");
+    // console.log(fileUrl);
     const file = event.target.files[0];
     // check if file exist
     if (!file) {
@@ -44,14 +44,14 @@ const Upload = () => {
     setIsValidAttachment(true);
 
     // PDF
-    if (selectedFile) {
+    if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setFileUrl(reader.result);
         console.log(fileUrl);
       };
-      setSelectedFile(selectedFile);
-      reader.readAsDataURL(selectedFile);
+      setSelectedFile(file);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -106,6 +106,7 @@ const Upload = () => {
                 </tr>
               )}
               <tr>
+
                 <td colSpan="2">
                   <button disabled={!isValidAttachment} type="submit">
                     Upload
