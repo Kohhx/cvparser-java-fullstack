@@ -26,7 +26,7 @@ const Register = () => {
   const [firstNameTouched, setFirstNameTouched] = useState(false);
   const [lastNameTouched, setLastNameTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
-  const [usernameTouched, setUsernameTouched] = useState(false);
+  // const [usernameTouched, setUsernameTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
@@ -42,9 +42,9 @@ const Register = () => {
     setEmailTouched(true);
   };
 
-  const handleUsernameBlur = (e) => {
-    setUsernameTouched(true);
-  };
+  // const handleUsernameBlur = (e) => {
+  //   setUsernameTouched(true);
+  // };
 
   const handlePasswordBlur = (e) => {
     setPasswordTouched(true);
@@ -105,7 +105,7 @@ const Register = () => {
     authenticationAPI.signup(regData).then((res) => {
       toast.success("Registration successful.");
       navigate("/upload");
-    } );
+    });
   };
 
   // };
@@ -124,7 +124,7 @@ const Register = () => {
                   <label htmlFor="firstNameInput">First Name:</label>
                 </td>
                 <td>
-                <input
+                  <input
                     type="text"
                     className={`form-control ${firstNameTouched && (firstName.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="firstNameInput"
@@ -168,14 +168,18 @@ const Register = () => {
                 <td>
                   <input
                     type="email"
-                    className={`form-control ${emailTouched && (email.length > 0 && email.includes('.com') && email.includes('@') ? 'is-valid' : 'is-invalid')}`}
+                    className={`form-control ${emailTouched && (email.valid ? 'is-valid' : 'is-invalid')}`}
                     id="emailInput"
                     value={email.value}
                     onChange={handleEmailChange}
                     onBlur={handleEmailBlur}
                     required
                   />
-                  {emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>}
+                  {email.valid ? (
+                    <div className="valid-feedback">Looks good!</div>
+                  ) : (
+                    emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>
+                  )}
                 </td>
               </tr>
               {/* <tr>
@@ -213,6 +217,7 @@ const Register = () => {
                     onBlur={handlePasswordBlur}
                     required
                   />
+                  {/* changes made here */}
                   {password === confirmPassword ? (
                     <div className="valid-feedback">Passwords match!</div>
                   ) : (
