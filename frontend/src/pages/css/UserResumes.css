@@ -2,9 +2,23 @@
     margin-bottom: 20px;
 }
 
+.pagination{
+    border-top: 1px solid #dee2e6;
+    margin-top:-20px;
+    background-color: #ffffff;
+    display:flex;
+    justify-content:center;
+    width:auto;
+}
 
 
-/* .container{
-    margin-right: auto;
-    margin-left: auto;
-} */
+.table-fixed {
+    table-layout: fixed;
+  }
+
+  .table-fixed th,
+  .table-fixed td {
+    white-space: normal;
+    word-break: break-word;
+    overflow: hidden;
+}
