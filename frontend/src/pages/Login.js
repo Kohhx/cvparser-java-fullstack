@@ -8,15 +8,15 @@ import 'bootstrap/dist/css/bootstrap.css';
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [usernameTouched, setUsernameTouched] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   };
 
-  const handleUsernameBlur = (e) => {
-    setUsernameTouched(true);
+  const handleEmailBlur = (e) => {
+    setEmailTouched(true);
   };
 
   const handlePasswordChange = (e) => {
@@ -29,7 +29,20 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(`Logging in with username: ${username} and password: ${password}`);
+    console.log(`Logging in with Email: ${email} and password: ${password}`);
+
+    const userLoginDetail = {
+      email,
+      password,
+    }
+
+    authenticationAPI.login(userLoginDetail).then(() => {
+      console.log("2")
+      ctx.loginUserDetails();
+      console.log(ctx.userDetails);
+      navigate("/upload");
+    })
+
   };
 
   return (
@@ -50,17 +63,17 @@ const LoginPage = () => {
                 <td>
                   <input
                     type="text"
-                    className={`form-control ${usernameTouched && (username.length > 0 ? 'is-valid' : 'is-invalid')}`}
+                    className={`form-control ${emailTouched && (email.length > 0 ? 'is-valid' : 'is-invalid')}`}
                     id="validationCustom01"
-                    value={username}
-                    onChange={handleUsernameChange}
-                    onBlur={handleUsernameBlur}
+                    value={email}
+                    onChange={handleEmailChange}
+                    onBlur={handleEmailBlur}
                     required
                   />
-                  {usernameTouched && (username.length > 0 ? (
+                  {emailTouched && (email.length > 0 ? (
                     <div className="valid-feedback">Looks good!</div>
                   ) : (
-                    <div className="invalid-feedback">Please type a username.</div>
+                    <div className="invalid-feedback">Please type a email.</div>
                   ))}
                 </td>
               </tr>

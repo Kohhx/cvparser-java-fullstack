@@ -16,7 +16,7 @@ const Register = () => {
   const [firstNameTouched, setFirstNameTouched] = useState(false);
   const [lastNameTouched, setLastNameTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
-  const [usernameTouched, setUsernameTouched] = useState(false);
+  // const [usernameTouched, setUsernameTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
@@ -32,9 +32,9 @@ const Register = () => {
     setEmailTouched(true);
   };
 
-  const handleUsernameBlur = (e) => {
-    setUsernameTouched(true);
-  };
+  // const handleUsernameBlur = (e) => {
+  //   setUsernameTouched(true);
+  // };
 
   const handlePasswordBlur = (e) => {
     setPasswordTouched(true);
