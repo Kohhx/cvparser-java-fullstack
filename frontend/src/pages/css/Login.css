@@ -4,46 +4,50 @@
     padding: 50px;
 } */
 
-.login-container{
+.login-container {
   height: 100vh;
   /* margin-top:80px; */
 }
 
 .left-side {
-    flex: 1;
-    display: flex;
-    flex-direction: column; /* Set flex-direction to column */
-    justify-content: center;
-    align-items: center;
-    border-right: 1px solid #03045e; /* Light Blue */
-    border-radius: 15px 0px 0px 15px;
-    padding: 0 50px;
-
-  }
+  flex: 1;
+  display: flex;
+  gap:20px;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #03045e; /* Light Blue */
+  border-radius: 15px 0px 0px 15px;
+  padding: 0 50px;
+}
 
 .left-side img {
-  max-width: 100%;
+  max-width: 50%;
   max-height: 300px; /* Adjust the height as desired */
 }
 
 .right-side {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-radius: 15px 15px 15px 15px;
-    padding: 0 50px;
-    background-color: #DDE6ED; /* Bright Blue */
+  flex: 1;
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
 
+  /* padding: 0 50px; */
+  align-items: center;
+}
+
+.right-card{
+  background-color: #dde6ed; /* Bright Blue */
+  border-radius: 25px 25px 25px 25px;
+  padding: 80px 50px;
 }
 
 .login-table {
-    border-radius: 15px solid #0c7b93 !important;
-    margin: auto;
-    width: 80%;
-    background-color: #caf0f8; /* Very light blue */
-    color: #000; /* Black color text */
-
+  border-radius: 15px solid #0c7b93 !important;
+  margin: auto;
+  width: 80%;
+  background-color: #caf0f8; /* Very light blue */
+  color: #000; /* Black color text */
 }
 
 /* .login-table td {
@@ -51,14 +55,71 @@
 } */
 
 .login-table button {
-    cursor: pointer;
-    width: 100%;
-    color: white; /* White color text */
-    background-color: #0c7b93; /* Button with deep blue background */
-    border: none; /* No border for button */
-    padding: 10px; /* Some padding for button */
+  cursor: pointer;
+  width: 100%;
+  color: white; /* White color text */
+  background-color: #0c7b93; /* Button with deep blue background */
+  border: none; /* No border for button */
+  padding: 10px; /* Some padding for button */
 }
 
-.registerHere{
-    font-size:13px;
+.input1 {
+  width: 380px !important;
+}
+
+.btn-rounded-outline {
+  margin-top: 1rem;
+  border-radius: 100vh;
+  border: transparent 1px solid;
+  background: rgb(8, 83, 244);
+  width: 100%;
+  padding: 5px 50px;
+  color: white;
+  transition: all 0.2s ease-in-out;
+  font-size: 1.2rem;
+}
+
+.btn-rounded-outline:hover {
+  border: rgb(8, 83, 244) 1px solid;
+  background: transparent;
+  color: rgb(8, 83, 244);
+}
+
+.login-icon {
+  height: 135px;
+  width: 135px;
+  border-radius: 100%;
+  animation: zoomIn 0.4s 0s ease-in-out forwards;
+  opacity: 0;
+  margin-top:-150px;
+}
+
+@keyframes zoomIn {
+  from {
+      transform: scale(0.3);
+  }
+  to {
+      transform: scale(1);
+      opacity: 1;
+  }
+}
+
+h3 {
+  background: rgb(223, 81, 87);
+  color: white;
+  letter-spacing: 0.5rem;
+  border-radius: 5px;
+  width: fit-content;
+}
+
+.right-header-1 {
+  color: white;
+  font-size: 3.3rem;
+  font-weight: bold;
+}
+
+.right-header-2 {
+  color: rgb(85, 122, 221);
+  font-size: 3rem;
+  font-weight: bold;
 }

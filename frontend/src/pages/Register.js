@@ -3,12 +3,14 @@ import "./css/Register.css";
 import logoAsset from "./Assets/logoAsset.png";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { toast } from "react-toastify";
 import { authenticationAPI } from "../api/authenticationAPI";
 import { UserContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
-
+import RegisterImg from "./Assets/images/register.png";
+import RegisterImg2 from "./Assets/images/register2.png";
+import RegisterImg3 from "./Assets/images/register3.png";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -54,9 +56,6 @@ const Register = () => {
   const handleConfirmPasswordBlur = (e) => {
     setConfirmPasswordTouched(true);
   };
-
-
-
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -112,19 +111,28 @@ const Register = () => {
   // };
 
   return (
-    <div className="container d-flex">
+    <div className="register-container container d-flex">
       <div className="left-side">
-        <img src={logoAsset} alt="Logo" />
+        <img src={RegisterImg} alt="Logo" className="register-img img1"/>
+        <img src={RegisterImg2} alt="Logo" className="register-img img2"/>
+        <img src={RegisterImg3} alt="Logo" className="register-img img3"/>
       </div>
       <div className="right-side">
-        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+        <form
+          onSubmit={handleSubmit}
+          className="right-card needs-validation"
+          noValidate
+        >
           <div className="form-floating mb-3">
             <input
               type="text"
-              className={`form-control ${firstNameTouched && (firstName.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              className={`input1 form-control ${
+                firstNameTouched &&
+                (firstName.length > 0 ? "is-valid" : "is-invalid")
+              }`}
               id="firstNameInput"
               value={firstName}
-              placeholder = "Silas"
+              placeholder="Silas"
               onChange={handleFirstNameChange}
               onBlur={handleFirstNameBlur}
               required
@@ -133,17 +141,24 @@ const Register = () => {
             {firstName.length > 0 ? (
               <div className="valid-feedback">Looks good!</div>
             ) : (
-              firstNameTouched && <div className="invalid-feedback">Please provide a first name.</div>
+              firstNameTouched && (
+                <div className="invalid-feedback">
+                  Please provide a first name.
+                </div>
+              )
             )}
           </div>
 
           <div className="form-floating mb-3">
             <input
               type="text"
-              className={`form-control ${lastNameTouched && (lastName.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              className={`form-control ${
+                lastNameTouched &&
+                (lastName.length > 0 ? "is-valid" : "is-invalid")
+              }`}
               id="lastNameInput"
               value={lastName}
-              placeholder = "Yeak"
+              placeholder="Yeak"
               onChange={handleLastNameChange}
               onBlur={handleLastNameBlur}
               required
@@ -152,17 +167,23 @@ const Register = () => {
             {lastName.length > 0 ? (
               <div className="valid-feedback">Looks good!</div>
             ) : (
-              lastNameTouched && <div className="invalid-feedback">Please provide a last name.</div>
+              lastNameTouched && (
+                <div className="invalid-feedback">
+                  Please provide a last name.
+                </div>
+              )
             )}
           </div>
 
           <div className="form-floating mb-3">
             <input
               type="email"
-              className={`form-control ${emailTouched && (email.valid ? 'is-valid' : 'is-invalid')}`}
+              className={`form-control ${
+                emailTouched && (email.valid ? "is-valid" : "is-invalid")
+              }`}
               id="emailInput"
               value={email.value}
-              placeholder = "silasyeak@gmail.com"
+              placeholder="silasyeak@gmail.com"
               onChange={handleEmailChange}
               onBlur={handleEmailBlur}
               required
@@ -171,16 +192,25 @@ const Register = () => {
             {email.valid ? (
               <div className="valid-feedback">Looks good!</div>
             ) : (
-              emailTouched && <div className="invalid-feedback">Please provide a valid email address.</div>
+              emailTouched && (
+                <div className="invalid-feedback">
+                  Please provide a valid email address.
+                </div>
+              )
             )}
           </div>
 
           <div className="form-floating mb-3">
             <input
               type="password"
-              className={`form-control ${passwordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              className={`form-control ${
+                passwordTouched &&
+                (password === confirmPassword && password.length > 0
+                  ? "is-valid"
+                  : "is-invalid")
+              }`}
               id="passwordInput"
-              placeholder = "password"
+              placeholder="password"
               value={password}
               onChange={handlePasswordChange}
               onBlur={handlePasswordBlur}
@@ -190,16 +220,23 @@ const Register = () => {
             {password === confirmPassword ? (
               <div className="valid-feedback">Passwords match!</div>
             ) : (
-              passwordTouched && <div className="invalid-feedback">Passwords do not match.</div>
+              passwordTouched && (
+                <div className="invalid-feedback">Passwords do not match.</div>
+              )
             )}
           </div>
 
           <div className="form-floating mb-3">
             <input
               type="password"
-              className={`form-control ${confirmPasswordTouched && (password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              className={`form-control ${
+                confirmPasswordTouched &&
+                (password === confirmPassword && password.length > 0
+                  ? "is-valid"
+                  : "is-invalid")
+              }`}
               id="confirmPasswordInput"
-              placeholder = "password"
+              placeholder="password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               onBlur={handleConfirmPasswordBlur}
@@ -209,22 +246,25 @@ const Register = () => {
             {password === confirmPassword ? (
               <div className="valid-feedback">Passwords match!</div>
             ) : (
-              confirmPasswordTouched && <div className="invalid-feedback">Passwords do not match.</div>
+              confirmPasswordTouched && (
+                <div className="invalid-feedback">Passwords do not match.</div>
+              )
             )}
           </div>
 
           <div className="mb-3">
+            <span> Already have an account? Log in </span>
+
             <Link to="/" className="registerHere">
-              Already have an account? Log in here
+              <span>here</span>
             </Link>
           </div>
-          
+
           <div className="mb-3">
             <button type="submit" className="btn btn-primary w-100">
               Register
             </button>
           </div>
-
         </form>
       </div>
     </div>
