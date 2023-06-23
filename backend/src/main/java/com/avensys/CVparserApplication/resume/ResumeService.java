@@ -57,6 +57,18 @@ public class ResumeService {
         this.restTemplate = restTemplate;
     }
 
+    public ResumeUpdateResponseDTO getResume(long UserId, long resumeId) {
+        Optional<User> user = userRepository.findById(UserId);
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        Optional<Resume> resume = resumeRepository.findById(resumeId);
+        if (!resume.isPresent()) {
+            throw new ResourceNotFoundException("Resume not found");
+        }
+        return resumeToResumeUpdateResponseDTO(resume.get());
+    }
+
     public List<ResumeCreateResponseDTO> getResumesByUserId(long id) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
