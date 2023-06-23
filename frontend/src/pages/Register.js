@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
-import './css/Register.css';
-import logoAsset from './Assets/logoAsset.png';
-import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.css';
+import React, { useState, useContext } from "react";
+import "./css/Register.css";
+import logoAsset from "./Assets/logoAsset.png";
+import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
+import { toast } from "react-toastify";
+import { authenticationAPI } from "../api/authenticationAPI";
+import { UserContext } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const navigate = useNavigate();
+  const ctx = useContext(UserContext);
+  // const [username, setUsername] = useState('');
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState({
+    value: "",
+    touched: false,
+    valid: false,
+  });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -22,12 +32,19 @@ const Register = () => {
   };
 
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+    if (
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(e.target.value) &&
+      e.target.value.length > 0
+    ) {
+      setEmail({ ...email, value: e.target.value, valid: true });
+      return;
+    }
+    setEmail({ ...email, value: e.target.value, valid: false });
   };
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
-  };
+  // const handleUsernameChange = (e) => {
+  //   setUsername(e.target.value);
+  // };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -39,16 +56,28 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === confirmPassword) {
-      console.log(`Registering with username: ${username} and password: ${password}`);
-      // Proceed with registration...
-    } else {
-      console.log('Passwords do not match.');
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
     }
+
+    const regData = {
+      firstName,
+      lastName,
+      email: email.value,
+      password,
+      role: "ROLE_FREE",
+    };
+
+    authenticationAPI.signup(regData).then((res) => {
+      toast.success("Registration successful.");
+      navigate("/upload");
+    } );
   };
 
+  // };
+
   return (
-    <div className="container">
+    <div className="container-origin">
       <div className="left-side">
         <img src={logoAsset} alt="Logo" />
         <h1>Resume parsing website</h1>
@@ -57,14 +86,16 @@ const Register = () => {
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <table className="table login-table rounded table-responsive-sm">
             <tbody>
-            <tr>
+              <tr>
                 <td>
                   <label htmlFor="firstNameInput">First Name:</label>
                 </td>
                 <td>
                   <input
                     type="text"
-                    className={`form-control ${firstName.length > 0 ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      firstName.length > 0 ? "is-valid" : "is-invalid"
+                    }`}
                     id="firstNameInput"
                     value={firstName}
                     onChange={handleFirstNameChange}
@@ -73,7 +104,9 @@ const Register = () => {
                   {firstName.length > 0 ? (
                     <div className="valid-feedback">Looks good!</div>
                   ) : (
-                    <div className="invalid-feedback">Please provide a first name.</div>
+                    <div className="invalid-feedback">
+                      Please provide a first name.
+                    </div>
                   )}
                 </td>
               </tr>
@@ -84,7 +117,9 @@ const Register = () => {
                 <td>
                   <input
                     type="text"
-                    className={`form-control ${lastName.length > 0 ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      lastName.length > 0 ? "is-valid" : "is-invalid"
+                    }`}
                     id="lastNameInput"
                     value={lastName}
                     onChange={handleLastNameChange}
@@ -93,7 +128,9 @@ const Register = () => {
                   {lastName.length > 0 ? (
                     <div className="valid-feedback">Looks good!</div>
                   ) : (
-                    <div className="invalid-feedback">Please provide a last name.</div>
+                    <div className="invalid-feedback">
+                      Please provide a last name.
+                    </div>
                   )}
                 </td>
               </tr>
@@ -104,16 +141,23 @@ const Register = () => {
                 <td>
                   <input
                     type="email"
-                    className={`form-control ${email.length > 0 && email.includes('.com') && email.includes('@') ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control
+                    ${email.touched && !email.valid && "is-invalid"}
+                    `}
                     id="emailInput"
-                    value={email}
+                    value={email.value}
                     onChange={handleEmailChange}
+                    onFocus={() => setEmail({ ...email, touched: true })}
                     required
                   />
-                  <div className="invalid-feedback">Please provide a valid email address.</div>
+                  {email.touched && !email.valid && (
+                    <div className="invalid-feedback">
+                      Please provide a valid email address.
+                    </div>
+                  )}
                 </td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td>
                   <label htmlFor="usernameInput">Username:</label>
                 </td>
@@ -132,7 +176,7 @@ const Register = () => {
                     <div className="invalid-feedback">Please provide a username.</div>
                   )}
                 </td>
-              </tr>
+              </tr> */}
               <tr>
                 <td>
                   <label htmlFor="passwordInput">Password:</label>
@@ -140,7 +184,11 @@ const Register = () => {
                 <td>
                   <input
                     type="password"
-                    className={`form-control ${password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      password === confirmPassword && password.length > 0
+                        ? "is-valid"
+                        : "is-invalid"
+                    }`}
                     id="passwordInput"
                     value={password}
                     onChange={handlePasswordChange}
@@ -149,18 +197,26 @@ const Register = () => {
                   {password === confirmPassword ? (
                     <div className="valid-feedback">Passwords match!</div>
                   ) : (
-                    <div className="invalid-feedback">Passwords do not match.</div>
+                    <div className="invalid-feedback">
+                      Passwords do not match.
+                    </div>
                   )}
                 </td>
               </tr>
               <tr>
                 <td>
-                  <label htmlFor="confirmPasswordInput">Confirm Password:</label>
+                  <label htmlFor="confirmPasswordInput">
+                    Confirm Password:
+                  </label>
                 </td>
                 <td>
                   <input
                     type="password"
-                    className={`form-control ${password === confirmPassword && password.length > 0 ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      password === confirmPassword && password.length > 0
+                        ? "is-valid"
+                        : "is-invalid"
+                    }`}
                     id="confirmPasswordInput"
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
@@ -169,18 +225,24 @@ const Register = () => {
                   {password === confirmPassword ? (
                     <div className="valid-feedback">Passwords match!</div>
                   ) : (
-                    <div className="invalid-feedback">Passwords do not match.</div>
+                    <div className="invalid-feedback">
+                      Passwords do not match.
+                    </div>
                   )}
                 </td>
               </tr>
               <tr>
                 <td colSpan="2">
-                  <Link to="/" className="registerHere">Already have an account? Log in here</Link>
+                  <Link to="/" className="registerHere">
+                    Already have an account? Log in here
+                  </Link>
                 </td>
               </tr>
               <tr>
                 <td colSpan="2">
-                  <button type="submit" className="btn btn-primary">Register</button>
+                  <button type="submit" className="btn btn-primary">
+                    Register
+                  </button>
                 </td>
               </tr>
             </tbody>
