@@ -1,13 +1,9 @@
 body{
-    background-color: rgb(11,25,48)
-}
 
-.container-origin {
-  display: flex;
-  height: 100vh;
-  color: white;
+    background-color: #001C30;
+
 }
 
 .main-container {
-  margin-top: 60px !important;
+margin-top: 60px !important;
 }
