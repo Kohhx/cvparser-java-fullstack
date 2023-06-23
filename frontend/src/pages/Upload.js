@@ -74,13 +74,14 @@ const Upload = () => {
 
     resumeAPI.uploadResume(formData).then((res) => {
       toast.success("File uploaded, navigate to list page.");
-      navigate(`/users/${ctx.getUserId()}/resumes/${+res.data.id}`)
+      navigate(`/users/${ctx.getUserId()}/resumes/${+res.data.id}`);
     });
   };
 
   return (
-    <div className="upload-container d-flex vh-100">
-      <div className="left-side">
+    <div className="upload-container">
+      hello
+      <div className="upload-left-section">
         <form onSubmit={handleSubmit}>
           <table className="upload-table">
             <tbody>
@@ -103,7 +104,6 @@ const Upload = () => {
                 </tr>
               )}
               <tr>
-
                 <td colSpan="2">
                   <button disabled={!isValidAttachment} type="submit">
                     Upload
@@ -114,19 +114,17 @@ const Upload = () => {
           </table>
         </form>
       </div>
-      <div className="right-side">
-        {fileUrl && (
-          <object
-            data={fileUrl}
-            type="application/pdf"
-            width="100%"
-            height="100%"
-          ></object>
-        )}
-        {/* <iframe src={fileUrl} title="Document Preview" width="100%" height="500px" /> */}
-        {/* { fileUrl &&
-          <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} />
-} */}
+      <div className="upload-right-section">
+        <div className="viewer-container">
+          {fileUrl && (
+            <object
+              data={fileUrl}
+              type="application/pdf"
+              width="100%"
+              height="100%"
+            ></object>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container d-flex">
+    <div className="login-container container d-flex">
       <div className="left-side">
         <img src={logoAsset} alt="Logo" />
       </div>
