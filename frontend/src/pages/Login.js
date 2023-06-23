@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { UserContext } from '../context/userContext';
 
 
+
 const LoginPage = () => {
   const ctx = useContext(UserContext);
   const navigate = useNavigate();
@@ -61,58 +62,45 @@ const LoginPage = () => {
       <div className="d-flex justify-content-center">
 
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-          <table className="table login-table">
-            <tbody>
-              <tr>
-                <td>
-                  <label htmlFor="validationCustom01" className="form-label">Email:</label>
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    className={`form-control ${emailTouched && (email.length > 0 ? 'is-valid' : 'is-invalid')}`}
-                    id="validationCustom01"
-                    value={email}
-                    onChange={handleEmailChange}
-                    onBlur={handleEmailBlur}
-                    required
-                  />
-                  {emailTouched && (email.length > 0 ? (
-                    <div className="valid-feedback">Looks good!</div>
-                  ) : (
-                    <div className="invalid-feedback">Please type a email.</div>
-                  ))}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label htmlFor="validationServer02" className="form-label">Password:</label>
-                </td>
-                <td>
-                  <input
-                    type="password"
-                    className={`form-control ${passwordTouched && (password.length > 0 ? 'is-valid' : 'is-invalid')}`}
-                    id="validationServer02"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    onBlur={handlePasswordBlur}
-                    required
-                  />
-                  {passwordTouched && <div className="invalid-feedback">Please provide a password.</div>}
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="2">
-                  <Link to="/register" className="registerHere">No account? Register here</Link>
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="2">
-                  <button type="submit" className="btn btn-primary">Log in</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="form-floating mb-3">
+            <input
+              type="email"
+              className={`form-control ${emailTouched && (email.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              id="floatingInput"
+              placeholder="name@example.com"
+              value={email}
+              onChange={handleEmailChange}
+              onBlur={handleEmailBlur}
+              required
+            />
+            
+            <label htmlFor="floatingInput">Email address</label>
+            {emailTouched && (email.length > 0 ? (
+              <div className="valid-feedback">Looks good!</div>
+            ) : (
+              <div className="invalid-feedback">Please type a email.</div>
+            ))}
+          </div>
+          <div className="form-floating mb-3">
+            <input
+              type="password"
+              className={`form-control ${passwordTouched && (password.length > 0 ? 'is-valid' : 'is-invalid')}`}
+              id="floatingPassword"
+              placeholder = "password"
+              value={password}
+              onChange={handlePasswordChange}
+              onBlur={handlePasswordBlur}
+              required
+            />
+            <label htmlFor="floatingPassword">Password</label>
+            {passwordTouched && <div className="invalid-feedback">Please provide a password.</div>}
+          </div>
+          <div className="form-group">
+            <Link to="/register" className="registerHere">No account? Register here</Link>
+          </div>
+          <div className="form-group">
+            <button type="submit" className="btn btn-primary">Log in</button>
+          </div>
         </form>
         </div>
         </div>
