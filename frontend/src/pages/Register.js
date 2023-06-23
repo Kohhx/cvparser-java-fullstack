@@ -217,6 +217,7 @@ const Register = () => {
                     onBlur={handlePasswordBlur}
                     required
                   />
+                  {/* changes made here */}
                   {password === confirmPassword ? (
                     <div className="valid-feedback">Passwords match!</div>
                   ) : (
