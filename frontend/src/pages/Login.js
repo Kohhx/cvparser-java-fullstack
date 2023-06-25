@@ -67,6 +67,7 @@ const LoginPage = () => {
         <div className="right-card">
           <div className="text-center">
             <img src={LoginImg} alt="login" className="login-icon mb-4"/>
+            <h1 className="mb-5">Login</h1>
           </div>
           <form onSubmit={handleSubmit} className="needs-validation" noValidate>
             <div className="form-floating mb-3">

@@ -8,6 +8,7 @@ import { UserContext } from "../context/userContext";
 import { BsFillCloudUploadFill } from "react-icons/bs";
 import { IoIosCloudDone } from "react-icons/io";
 import { MdUploadFile } from "react-icons/md";
+import ClipLoader from "react-spinners/ClipLoader";
 
 
 const Upload = () => {
@@ -22,6 +23,7 @@ const Upload = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragFileAttached, setDragFileAttached] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (event) => {
     // setFileUrl("");
@@ -112,6 +114,7 @@ const Upload = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true)
     if (!selectedFile) {
       toast.error("Please select a file before uploading.");
       return;
@@ -127,9 +130,13 @@ const Upload = () => {
 
     console.log(formData.get("filename"));
 
-    resumeAPI.uploadResume(formData).then((res) => {
-      toast.success("File uploaded, navigate to list page.");
+    resumeAPI.uploadResume2(formData).then((res) => {
+      toast.success("File uploaded successfully.");
+      setIsLoading(false);
       navigate(`/users/${ctx.getUserId()}/resumes/${+res.data.id}`);
+    }).catch((err) => {
+      toast.error("Something went wrong. Please try again.");
+      setIsLoading(false);
     });
   };
 
@@ -171,12 +178,13 @@ const Upload = () => {
             placeHolder="Input resume name"
           />
           <div className="text-center">
+
             <button
-              className="btn btn-warning btn-lg"
+              className="btn btn-warning btn-lg btn-block"
               disabled={!isValidAttachment}
               type="submit"
             >
-              Upload
+              {isLoading ? <ClipLoader color="#007BFF" /> : <span>Upload</span>}
             </button>
           </div>
         </form>

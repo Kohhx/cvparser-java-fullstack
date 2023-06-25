@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import RegisterImg from "./Assets/images/register.png";
 import RegisterImg2 from "./Assets/images/register2.png";
 import RegisterImg3 from "./Assets/images/register3.png";
+import { RiAccountCircleFill } from "react-icons/ri";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -113,9 +114,9 @@ const Register = () => {
   return (
     <div className="register-container container d-flex">
       <div className="left-side">
-        <img src={RegisterImg} alt="Logo" className="register-img img1"/>
-        <img src={RegisterImg2} alt="Logo" className="register-img img2"/>
-        <img src={RegisterImg3} alt="Logo" className="register-img img3"/>
+        <img src={RegisterImg} alt="Logo" className="register-img img1" />
+        <img src={RegisterImg2} alt="Logo" className="register-img img2" />
+        <img src={RegisterImg3} alt="Logo" className="register-img img3" />
       </div>
       <div className="right-side">
         <form
@@ -123,6 +124,11 @@ const Register = () => {
           className="right-card needs-validation"
           noValidate
         >
+          <div className="d-flex gap-3 align-items-center register-form-container justify-content-center mb-4">
+            <h2>Register</h2>
+            <RiAccountCircleFill className="create-account-icon"/>
+          </div>
+
           <div className="form-floating mb-3">
             <input
               type="text"
@@ -261,7 +267,7 @@ const Register = () => {
           </div>
 
           <div className="mb-3">
-            <button type="submit" className="btn btn-primary w-100">
+            <button type="submit" className="btn-rounded-outline w-100">
               Register
             </button>
           </div>

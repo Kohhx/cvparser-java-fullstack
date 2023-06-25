@@ -17,7 +17,8 @@ import { toast } from "react-toastify";
 function NavBar() {
   const ctx = useContext(UserContext);
   const [dropdown, setDropdown] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showDowngradeModal, setShowDowngradeModal] = useState(false);
   const navigate = useNavigate();
   const handleLogout = () => {
     authenticationAPI.logout();
@@ -41,16 +42,32 @@ function NavBar() {
   });
 
   const handleSubscriptionUpgrade = () => {
-    console.log("upgrade")
-    userAPI.updateUserToPaid(ctx.getUserId()).then((res) => {
-      authenticationAPI.changeRole('ROLE_PAID')
-      toast.success("Successfully upgraded to paid subscription");
-      setShowModal(false)
-    })
-    .catch((err) => {
-      toast.error("Error upgrading to paid subscription");
-    })
-  }
+    console.log("upgrade");
+    userAPI
+      .updateUserToPaid(ctx.getUserId())
+      .then((res) => {
+        authenticationAPI.changeRole("ROLE_PAID");
+        toast.success("Successfully upgraded to paid subscription");
+        setShowUpgradeModal(false);
+      })
+      .catch((err) => {
+        toast.error("Error upgrading to paid subscription");
+      });
+  };
+
+  const handleSubscriptionDowngrade = () => {
+    console.log("downgrade");
+    userAPI
+      .updateUserToFree(ctx.getUserId())
+      .then((res) => {
+        authenticationAPI.changeRole("ROLE_FREE");
+        toast.success("Successfully downgraded to free subscription");
+        setShowDowngradeModal(false);
+      })
+      .catch((err) => {
+        toast.error("Error downgrading to free subscription");
+      });
+  };
 
   return (
     <>
@@ -105,7 +122,7 @@ function NavBar() {
               Your Resumes
             </NavLink>
           </div>
-          {ctx.getUserRole() }
+          {ctx.getUserRole()}
           <div className="dropdown" style={{ paddingRight: "30px" }}>
             <div
               className="dropdown-toggle"
@@ -124,9 +141,16 @@ function NavBar() {
                 className="dropdown-content"
                 aria-labelledby="dropdownMenuButton"
               >
-                <div onClick={() => setShowModal(true)}>
-                  Upgrade Subscription
-                </div>
+                {ctx.getUserRole() === "ROLE_FREE" && (
+                  <div onClick={() => setShowUpgradeModal(true)}>
+                    Upgrade Subscription
+                  </div>
+                )}
+                {ctx.getUserRole() === "ROLE_PAID" && (
+                  <div onClick={() => setShowDowngradeModal(true)}>
+                    Downgrade Subscription
+                  </div>
+                )}
                 <div>Manage Resumes</div>
                 <div>Manage Users</div>
                 <div onClick={handleLogout}>Logout</div>
@@ -135,8 +159,16 @@ function NavBar() {
           </div>
         </div>
       </nav>
-      <Modal isOpen={showModal} closeModal={() => setShowModal(false)}>
-        <MdCancel className="cancel-icon" onClick={() => setShowModal(false)}/>
+
+      {/* // Upgrade Subcription */}
+      <Modal
+        isOpen={showUpgradeModal}
+        closeModal={() => setShowUpgradeModal(false)}
+      >
+        <MdCancel
+          className="cancel-icon"
+          onClick={() => setShowUpgradeModal(false)}
+        />
         <div className="subscription-container">
           <h2>Upgrade Subcription</h2>
           <p className="subscription-type">Paid</p>
@@ -151,7 +183,41 @@ function NavBar() {
               <p>Unlimited resume parsing</p>
             </div>
           </div>
-          <button onClick={handleSubscriptionUpgrade} className="btn-rounded-solid mt-4">Upgrade</button>
+          <button
+            onClick={handleSubscriptionUpgrade}
+            className="btn-rounded-solid mt-4"
+          >
+            Upgrade
+          </button>
+        </div>
+      </Modal>
+
+
+    {/* // Downgrade Subcription */}
+      <Modal
+        isOpen={showDowngradeModal}
+        closeModal={() => setShowDowngradeModal(false)}
+      >
+        <MdCancel
+          className="cancel-icon"
+          onClick={() => setShowDowngradeModal(false)}
+        />
+        <div className="subscription-container">
+          <h2>Downgrade Subcription</h2>
+          <p className="subscription-type">Free</p>
+          <p className="subscription-price">$0</p>
+          <div>
+            <div className="d-flex align-items-center">
+              <TiTick className="tick-icon" />
+              <p>Maximum of 5 resumes</p>
+            </div>
+          </div>
+          <button
+            onClick={handleSubscriptionDowngrade}
+            className="btn-rounded-solid mt-4"
+          >
+            Downgrade
+          </button>
         </div>
       </Modal>
     </>
