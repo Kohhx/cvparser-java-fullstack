@@ -85,12 +85,28 @@
             <version>1.28</version>
         </dependency>
 
-<!--        Chat gpt dependency-->
-<!--        <dependency>-->
-<!--            <groupId>ai.openai.gpt</groupId>-->
-<!--            <artifactId>gpt</artifactId>-->
-<!--            <version>3.5.0</version>-->
-<!--        </dependency>-->
+        <!--        //JackSon Dependencies-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.13.0</version> <!-- Replace with the desired version -->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <!--        GSON Dependecies by google-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
+
+        <!--        Chat gpt dependency-->
+        <!--        <dependency>-->
+        <!--            <groupId>ai.openai.gpt</groupId>-->
+        <!--            <artifactId>gpt</artifactId>-->
+        <!--            <version>3.5.0</version>-->
+        <!--        </dependency>-->
 
         <!--		<dependency>-->
         <!--			<groupId>org.apache.tika</groupId>-->

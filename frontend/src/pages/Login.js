@@ -55,17 +55,11 @@ const LoginPage = () => {
     <div className="login-container container d-flex">
       <div className="left-side d-flex">
       <img src={logoAsset} alt="Logo" />
-        <div>
+        <div className="login-main-title">
             <h3>Avensys</h3>
             <div>
                 <span class="right-header-1" id="first-line">CSV Parser</span>
             </div>
-            {/* <div>
-                <span class="right-header-2" id="second-line">Parser</span>
-            </div> */}
-            {/* <div>
-                <span class="right-header-1" id="third-line">Portal</span>
-            </div> */}
         </div>
 
       </div>

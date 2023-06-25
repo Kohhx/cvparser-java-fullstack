@@ -1,5 +1,8 @@
 package com.avensys.CVparserApplication.openai;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChatGPTMappedDTO {
 
     private String name;
@@ -14,15 +17,18 @@ public class ChatGPTMappedDTO {
 
     private String[] companies;
 
+    private List<CompaniesDetails> companiesDetails = new ArrayList<>();
+
     public ChatGPTMappedDTO() {};
 
-    public ChatGPTMappedDTO(String name, String email, String mobile, int yearsOfExperience, String[] skills, String[] companies) {
+    public ChatGPTMappedDTO(String name, String email, String mobile, int yearsOfExperience, String[] skills, String[] companies, List<CompaniesDetails> companiesDetails) {
         this.name = name;
         this.email = email;
         this.mobile = mobile;
         this.yearsOfExperience = yearsOfExperience;
         this.skills = skills;
         this.companies = companies;
+        this.companiesDetails = companiesDetails;
     }
 
     public String getName() {
@@ -72,5 +78,13 @@ public class ChatGPTMappedDTO {
 
     public void setCompanies(String[] companies) {
         this.companies = companies;
+    }
+
+    public List<CompaniesDetails> getCompaniesDetails() {
+        return companiesDetails;
+    }
+
+    public void setCompaniesDetails(List<CompaniesDetails> companiesDetails) {
+        this.companiesDetails = companiesDetails;
     }
 }

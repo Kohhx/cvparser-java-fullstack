@@ -3,13 +3,12 @@ import "./css/Upload.css";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import { toast } from "react-toastify";
 import { resumeAPI } from "../api/resumeAPI";
-import { Document, Page } from "react-pdf";
-import { pdfjs } from "react-pdf";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/userContext";
 import { BsFillCloudUploadFill } from "react-icons/bs";
 import { IoIosCloudDone } from "react-icons/io";
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import { MdUploadFile } from "react-icons/md";
+
 
 const Upload = () => {
   const uploadRef = useRef();
@@ -22,6 +21,7 @@ const Upload = () => {
   const [fileUrl, setFileUrl] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragFileAttached, setDragFileAttached] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState("");
 
   const handleFileChange = (event) => {
     // setFileUrl("");
@@ -53,6 +53,8 @@ const Upload = () => {
       setSelectedFile(file);
       reader.readAsDataURL(file);
     }
+
+
   };
 
   const handleFileName = (e) => {
@@ -133,9 +135,9 @@ const Upload = () => {
 
   return (
     <div className="upload-container">
-      hello
       <div className="upload-left-section">
         <form onSubmit={handleSubmit}>
+          <h1>Upload a Resume <MdUploadFile className="upload-header-icon" /></h1>
           <div
             className={`drop-outer-border ${isDragOver && "drag-over"} mb-3`}
             ref={uploadRef}
@@ -161,7 +163,13 @@ const Upload = () => {
               )}
             </div>
           </div>
-          <input type="text" onChange={handleFileName} required className="form-control mb-3" placeHolder="Input resume name"/>
+          <input
+            type="text"
+            onChange={handleFileName}
+            required
+            className="form-control mb-3"
+            placeHolder="Input resume name"
+          />
           <div className="text-center">
             <button
               className="btn btn-warning btn-lg"
@@ -175,14 +183,23 @@ const Upload = () => {
       </div>
       <div className="upload-right-section">
         <div className="viewer-container">
-          {fileUrl && (
-            <object
-              data={fileUrl}
-              type="application/pdf"
-              width="100%"
-              height="100%"
-            ></object>
-          )}
+            {fileUrl && (
+              <object
+                data={fileUrl}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+              ></object>
+            )}
+{/*
+            {fileUrl && (
+              <object
+                data={fileUrl}
+                type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                width="100%"
+                height="100%"
+              ></object>
+            )} */}
         </div>
       </div>
     </div>

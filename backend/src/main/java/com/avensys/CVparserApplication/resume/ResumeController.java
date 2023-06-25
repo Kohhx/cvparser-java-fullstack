@@ -33,7 +33,7 @@ public class ResumeController {
     public ResponseEntity<ResumeCreateResponseDTO> createResume(@ModelAttribute ResumeCreateRequestDTO resumeCreateRequest) {
         ResumeCreateResponseDTO chatResponse = resumeService.parseAndCreateResume(resumeCreateRequest);
         System.out.println("OUT");
-        System.out.println(chatResponse);
+//        System.out.println(chatResponse);
         return new ResponseEntity<ResumeCreateResponseDTO>(chatResponse, HttpStatus.OK);
     }
 

@@ -1,0 +1,25 @@
+.modal-container {
+  z-index: 500000;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0 0 0 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: absolute;
+  background-color: #f2f2f2;
+  border-radius: 20px;
+  padding: 40px;
+  z-index:100000;
+  display: inline-block;
+  width: fit-content;
+}

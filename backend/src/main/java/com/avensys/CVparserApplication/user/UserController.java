@@ -3,16 +3,10 @@ package com.avensys.CVparserApplication.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
 	@Autowired
@@ -37,10 +31,10 @@ public class UserController {
 	//Upload Page (#4 - Patch)
 	//Overwrites the following
 	//	1. Role (Free -> Paid)
-	@PatchMapping("/users/{id}")
-	public ResponseEntity<UserRoleResponseDTO> PatchUserRoleForUpload 
-	(@PathVariable long id){
-			UserRoleResponseDTO userResponse = userService.updateUserRole(id);
+	@PatchMapping("users/{id}")
+	public ResponseEntity<UserRoleResponseDTO> PatchUserRole
+	(@PathVariable long id, @RequestParam String type){
+			UserRoleResponseDTO userResponse = userService.updateUserRole(id,type);
 			return new ResponseEntity<>(userResponse,HttpStatus.OK);
 	}
 }

@@ -29,7 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,6 +41,8 @@ public class ResumeService {
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
     public final RestTemplate restTemplate;
+    public final double chatGPTTemperature = 0.3;
+
 
     @Value("${openai.model}")
     private String chatModel;
@@ -48,6 +50,64 @@ public class ResumeService {
     @Value("${openai.api.url}")
     private String openAiUrl;
     private String extractText;
+
+    private final String GPTPROMPT1 =
+            """
+                       Please help me extract the following fields from each CV and use the followings as the keys:
+                                name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.
+                                email (string): The email address of the candidate.
+                                mobile (string): The mobile number of the candidate.
+                                skills (array): The skills possessed by the candidate. 
+                                yearsOfExperience (number): The number of years of job experience of the candidate only.Exclude education and trainings. Please calculate the total number of year if he is working till present/current year which is 2023.
+                                companies (array): The names of the recent 3 companies the candidate has worked for.
+                                                
+                                Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid.       
+                                                   
+                    """;
+
+    private final String GPTPROMPT2 =
+            """
+                       Please help me extract the following fields from a part of a CV and use the followings as the keys:
+                                name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase. If not provided, return empty.
+                                email (string): The email address of the candidate. If not provided, return empty.
+                                mobile (string): The mobile number of the candidate. If not provided, return empty.
+                                skills (array): The skills possessed by the candidate.
+                                yearsOfExperience (number): The number of years of job experience.
+                                companies (array): The names of the recent 3 companies the candidate has worked for.
+                                                
+                                Please return only the JSON format. Please do not return any other strings.  
+                                Please return only the JSON format. Please do not return any other strings in the response.  Ensure that the JSON format is valid.
+                                The following text is only a portion of a CV.
+                                            
+                    """;
+
+    private final String GPTPROMPT3 =
+            """
+                    Please help me extract the following fields from each CV and use the followings as the keys:\s
+                                                     name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.\s
+                                                     email (string): The email address of the candidate.\s
+                                                     mobile (string): The mobile number of the candidate.\s
+                                                     skills (array): The skills possessed by the candidate. Both technical skills and soft skills.
+                                                     companiesDetails (array): All the companies the candidate worked with.
+                                                     1)	name:(string) name of the company 
+                                                     2)	startDate: (string) start date 
+                                                     3)	endDate: (string) end date || Jan 2023 || if present, then Jan 2023
+                                                     4)	noOfYears: (decimal) Number of employment years in the company. Else 0.0. If start date is empty, then is 0\s
+                                                     yearsOfExperience (number): Total employment in years based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only. Verify by adding up all the noOfYears from companiesDetails array.
+                                                     1)Exclude education and trainings.\s
+                                                     2) If candidate mention only present date without start date, then calculate years based on the last working date to present.
+                                                     3) If candidate mention start date to present date, then calculate years based on the start date to present date.
+                                                     4) Present year is 2023.
+                                                     5) Employment dates for each position mentioned in your career history. Include the month and year for both the start and end dates of each job.
+                                                     If any positions have unspecified employment dates, please mention that explicitly. Based on these, calculate the number of employment years of the candidate.
+                                                     6) Please return number of years. Not months.
+                                                     7) Always use candidate stated start date to end date first.
+                                                     8) present always refer to end date.
+                                                     companies (array): The names of the recent 3 companies the candidate has worked for.
+                                                     
+                                                     Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid.
+                    """;
+
 
     public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, RestTemplate restTemplate) {
         this.userRepository = userRepository;
@@ -85,9 +145,46 @@ public class ResumeService {
         }
         StringBuilder sb = new StringBuilder();
         String extractText = extractTextFromFile(resumeCreateRequest.file());
-        System.out.println( GPTUtil.countTokens(extractText));
-        System.out.println(GPTUtil.countTokens(GPTUtil.truncateString(extractText,3000)));
-        System.out.println(GPTUtil.truncateString(extractText,3500));
+//        System.out.println( GPTUtil.countTokens(extractText));
+//        System.out.println(GPTUtil.countTokens(GPTUtil.truncateString(extractText,3000)));
+//        System.out.println(GPTUtil.truncateString(extractText,3500));
+        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2850);
+        chunks.stream().forEach(textC -> {
+            System.out.println(textC);
+            System.out.println("========================= Break =======================");
+        });
+        System.out.println("Total Chunks: " + chunks.size());
+
+        // Let OpenAI do the work
+        List<Resume> resumeDataset = new ArrayList<>();
+        int index = 0;
+        for (String chunk : chunks) {
+            System.out.println("Calling ChatGPT.......");
+            StringBuilder sbTemp = new StringBuilder();
+            if (index == 0) {
+                sbTemp.append(GPTPROMPT3);
+            } else {
+                sbTemp.append(GPTPROMPT3);
+            }
+            sbTemp.append(chunk);
+            ChatGPTRequestDTO request = new ChatGPTRequestDTO(chatModel, sbTemp.toString(), chatGPTTemperature);
+            ChatGPTResponseDTO chatGPTResponse = restTemplate.postForObject(openAiUrl, request, ChatGPTResponseDTO.class);
+            String jsonOutput = chatGPTResponse.getChoices().get(0).getMessage().getContent();
+            System.out.println("Show CHATGPT MESSAGE: ");
+            System.out.println(jsonOutput);
+            Resume resume = chatGPTResponseToResume(jsonOutput);
+            resume.setFileName(resumeCreateRequest.fileName());
+            resumeDataset.add(resume);
+            System.out.println("*********************************");
+            System.out.println(resume);
+        }
+
+//        resumeDataset.stream().forEach(resume -> {
+//            System.out.println(resume);
+//            System.out.println("========================= Break =======================");
+//        });
+
+
     }
 
     public ResumeCreateResponseDTO parseAndCreateResume(ResumeCreateRequestDTO resumeCreateRequest) {
@@ -104,75 +201,58 @@ public class ResumeService {
 
         StringBuilder sb = new StringBuilder();
         String extractText = extractTextFromFile(resumeCreateRequest.file());
-        sb.append("""
-                Please help me extract the following fields from each CV and use the followings as the keys:
-                name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.
-                email (string): The email address of the candidate.
-                mobile (string): The mobile number of the candidate.
-                skills (array): The skills possessed by the candidate.
-                yearsOfExperience (number): The number of years of experience of the candidate. Please calculate the total number of year if he is working till present.
-                companies (array): The names of the recent 3 companies the candidate has worked for.
-                                
-                Please return only the JSON format. Please do not return any other strings.
-                                
-                """);
+        sb.append(GPTPROMPT3);
         sb.append("\n");
-//        String replaceString=extractText.replace(" ","");
-//        sb.append(replaceString);
-//        extractText.replaceAll("\\s+","");
-//        extractText.replaceAll("((\r\n)|\n)[\\s\t ]*(\\1)+", "$1");
-
-//        sb.append(extractText);
-        if (GPTUtil.countTokens(extractText) > 3200 ) {
+        if (GPTUtil.countTokens(extractText) > 3200) {
             System.out.println("Truncating...");
             sb.append(GPTUtil.truncateString(extractText, 3000));
         } else {
             sb.append(extractText);
         }
-//        sb.append("""
-//                Koh He Xiang
-//                Email: k@gmail.com
-//                """);
-        ChatGPTRequestDTO request = new ChatGPTRequestDTO(chatModel, sb.toString());
-        System.out.println(chatModel);
-        System.out.println(openAiUrl);
-        System.out.println(sb.toString());
+        ChatGPTRequestDTO request = new ChatGPTRequestDTO(chatModel, sb.toString(), chatGPTTemperature);
+//        System.out.println(chatModel);
+//        System.out.println(openAiUrl);
+//        System.out.println(sb.toString());
         ChatGPTResponseDTO chatGPTResponse = restTemplate.postForObject(openAiUrl, request, ChatGPTResponseDTO.class);
         String jsonOutput = chatGPTResponse.getChoices().get(0).getMessage().getContent();
-        System.out.println(jsonOutput);
+//        System.out.println(jsonOutput);
 
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        ChatGPTMappedDTO chatGPTMappedResults = null;
-        try {
-            chatGPTMappedResults = objectMapper.readValue(jsonOutput, ChatGPTMappedDTO.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("name: " + chatGPTMappedResults.getName());
-        System.out.println("email: " + chatGPTMappedResults.getEmail());
-        System.out.println("mobile: " + chatGPTMappedResults.getMobile());
-        System.out.println("skills: " + Arrays.toString(chatGPTMappedResults.getSkills()));
-        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
-        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
-
-        Resume resume = new Resume();
+        Resume resume = chatGPTResponseToResume(jsonOutput);
         resume.setFileName(resumeCreateRequest.fileName());
-        resume.setName(chatGPTMappedResults.getName());
-        resume.setEmail(chatGPTMappedResults.getEmail());
-        resume.setMobile(chatGPTMappedResults.getMobile());
-        for (String skill : chatGPTMappedResults.getSkills()) {
-            resume.addSkill(new Skill(skill));
-        }
-        resume.setYearsOfExperience(chatGPTMappedResults.getYearsOfExperience());
-        for (String company : chatGPTMappedResults.getCompanies()) {
-            resume.addCompany(new Company(company));
-        }
+
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        ChatGPTMappedDTO chatGPTMappedResults = null;
+//        try {
+//            chatGPTMappedResults = objectMapper.readValue(jsonOutput, ChatGPTMappedDTO.class);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//        System.out.println("name: " + chatGPTMappedResults.getName());
+//        System.out.println("email: " + chatGPTMappedResults.getEmail());
+//        System.out.println("mobile: " + chatGPTMappedResults.getMobile());
+//        System.out.println("skills: " + Arrays.toString(chatGPTMappedResults.getSkills()));
+//        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
+//        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
+//
+//        Resume resume = new Resume();
+//        resume.setFileName(resumeCreateRequest.fileName());
+//        resume.setName(chatGPTMappedResults.getName());
+//        resume.setEmail(chatGPTMappedResults.getEmail());
+//        resume.setMobile(chatGPTMappedResults.getMobile());
+//        for (String skill : chatGPTMappedResults.getSkills()) {
+//            resume.addSkill(new Skill(skill));
+//        }
+//        resume.setYearsOfExperience(chatGPTMappedResults.getYearsOfExperience());
+//        for (String company : chatGPTMappedResults.getCompanies()) {
+//            resume.addCompany(new Company(company));
+//        }
 
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         User savedUser = userRepository.save(user.get());
         System.out.println(savedResume.getCompanies().get(0).getName());
+
+        System.out.println(savedResume);
 
         return chatGPTResponseToResumeCreateResponse(savedResume);
     }
@@ -180,7 +260,7 @@ public class ResumeService {
     @Transactional
     public ResumeUpdateResponseDTO updateResume(ResumeUpdateRequestDTO resumeUpdateRequest) {
         Optional<Resume> resumeUpdated = resumeRepository.findById(resumeUpdateRequest.id());
-        if (!resumeUpdated.isPresent()){
+        if (!resumeUpdated.isPresent()) {
             throw new ResourceNotFoundException("Resource not found");
         }
 
@@ -214,11 +294,11 @@ public class ResumeService {
         Optional<User> user = userRepository.findByEmail(principal.getName());
         Optional<Resume> resume = resumeRepository.findById(id);
 
-        if (!resume.isPresent()){
+        if (!resume.isPresent()) {
             throw new ResourceNotFoundException("Resource not found");
         }
 
-        if (!user.isPresent()){
+        if (!user.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
 
@@ -254,7 +334,7 @@ public class ResumeService {
         }
     }
 
-        private ResumeCreateResponseDTO chatGPTResponseToResumeCreateResponse(Resume resume){
+    private ResumeCreateResponseDTO chatGPTResponseToResumeCreateResponse(Resume resume) {
 
         List<String> skills = resume.getSkills().stream().map(Skill::getName).toList();
         List<String> companies = resume.getCompanies().stream().map(Company::getName).toList();
@@ -270,7 +350,7 @@ public class ResumeService {
                 companies);
     }
 
-    private ResumeUpdateResponseDTO resumeToResumeUpdateResponseDTO(Resume resume){
+    private ResumeUpdateResponseDTO resumeToResumeUpdateResponseDTO(Resume resume) {
 
         List<String> skills = resume.getSkills().stream().map(Skill::getName).toList();
         List<String> companies = resume.getCompanies().stream().map(Company::getName).toList();
@@ -286,8 +366,8 @@ public class ResumeService {
                 companies);
     }
 
-    private List<ResumeCreateResponseDTO> mapToResumeCreateResponseDTOList (List<Resume> resumes) {
-        return resumes.stream().map( resumeCreateResponse -> {
+    private List<ResumeCreateResponseDTO> mapToResumeCreateResponseDTOList(List<Resume> resumes) {
+        return resumes.stream().map(resumeCreateResponse -> {
             List<String> skills = resumeCreateResponse.getSkills().stream().map(Skill::getName).toList();
             List<String> companies = resumeCreateResponse.getCompanies().stream().map(Company::getName).toList();
             return new ResumeCreateResponseDTO(
@@ -302,5 +382,38 @@ public class ResumeService {
         }).collect(Collectors.toList());
     }
 
+    private Resume chatGPTResponseToResume(String jsonOutput) {
+
+        Resume resume = new Resume();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ChatGPTMappedDTO chatGPTMappedResults = null;
+        try {
+            chatGPTMappedResults = objectMapper.readValue(jsonOutput, ChatGPTMappedDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Display out the chatGPTMappedresult and check
+//        System.out.println("name: " + chatGPTMappedResults.getName());
+//        System.out.println("email: " + chatGPTMappedResults.getEmail());
+//        System.out.println("mobile: " + chatGPTMappedResults.getMobile());
+//        System.out.println("skills: " + Arrays.toString(chatGPTMappedResults.getSkills()));
+//        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
+//        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
+
+        resume.setName(chatGPTMappedResults.getName());
+        resume.setEmail(chatGPTMappedResults.getEmail());
+        resume.setMobile(chatGPTMappedResults.getMobile());
+        for (String skill : chatGPTMappedResults.getSkills()) {
+            resume.addSkill(new Skill(skill));
+        }
+        resume.setYearsOfExperience(chatGPTMappedResults.getYearsOfExperience());
+        for (String company : chatGPTMappedResults.getCompanies()) {
+            resume.addCompany(new Company(company));
+        }
+
+        return resume;
+    }
 
 }

@@ -1,14 +1,13 @@
 package com.avensys.CVparserApplication.user;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
+import com.avensys.CVparserApplication.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
-import com.avensys.CVparserApplication.jwt.JwtService;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -53,16 +52,21 @@ public class UserService {
     	userRepository.save(user);
     }
 
-	public UserRoleResponseDTO updateUserRole(long userId) {
+	public UserRoleResponseDTO updateUserRole(long userId, String type) {
 		Optional<User> user = userRepository.findById(userId);
 		if(!user.isPresent()) {
 			throw new ResourceNotFoundException("User not found");
 		}
-		user.get().setRole("ROLE_PAID");
+        if (type.equals("free")) {
+            user.get().setRole("ROLE_FREE");
+        } else if (type.equals("paid")) {
+            user.get().setRole("ROLE_PAID");
+        }
 		User updatedUser = userRepository.save(user.get());
 		UserRoleResponseDTO userRoleResponse = new UserRoleResponseDTO(updatedUser.getRole());
 		return userRoleResponse;
 	}
+
 	
 //    //Delete user
 //    public void deleteUser(long user_id) {

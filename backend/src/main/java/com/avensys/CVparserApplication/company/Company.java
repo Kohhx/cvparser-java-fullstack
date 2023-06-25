@@ -53,4 +53,5 @@ public class Company {
     public void setResume(Resume resume) {
         this.resume = resume;
     }
+
 }

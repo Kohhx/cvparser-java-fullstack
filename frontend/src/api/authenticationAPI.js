@@ -39,6 +39,9 @@ export const authenticationAPI = {
   },
   logout: () => {
     removeSessionStorage();
+  },
+  changeRole(role) {
+    sessionStorage.setItem(ROLE_KEY, role);
   }
 };
 

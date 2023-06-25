@@ -1,43 +1,149 @@
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  padding: 12px 15px 15px 15px !important;
+  /* padding-bottom: 100px !; */
+  background-color: #f2f2f2;
+  box-shadow: 8px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
 
-  .nav-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 60px;
-    padding: 0 80px;    
-    background-color:white; 
-    
-  }
+.nav-link-custom {
+  color: rgb(92, 92, 92);
+  font-size: 1.3rem !important;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: normal !important;
+  transition: all 0.1s ease-in-out !important;
+  text-decoration: none !important;
+  /* border: red 2px solid; */
+}
 
-   .dropdown-content {
-    /* display: none; */
-    position: absolute;
-    background-color: #f9f9f9;
-    width: 170px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 10;
-    border-radius: 5px;
-    margin-top: 3px;
-    margin-left: -55px;
-   }
+.nav-link-custom:hover {
+  /* font-weight:bold!important; */
+  color: rgb(45, 45, 45);
+  transform: scale(1.01);
+  font-family: "Roboto", sans-serif !important;
 
-   .dropdown-content div {
-    cursor: pointer;
-    padding:10px;
-    border-bottom: #f1f1f1;
-    /* height:15px; */
-    text-align: center;
-   }
+}
 
-   .dropdown-content div:hover {
-    background-color: #f1f1f1;
-    font-weight: bold;
-   }
+.nav-link-custom-active{
+  font-weight:bold!important;
+  color: rgb(15, 15, 15);
+  font-size: 1.4rem !important;
+  text-decoration: none !important;
+  font-family: "Roboto", sans-serif !important;
 
-   .dropdown-content div:first-child {
-    border-radius: 5px;
-   }
+}
 
-   .dropdown-content div:last-child {
-    border-radius: 5px;
-   }
+.dropdown-content {
+  /* display: none; */
+  position: absolute;
+  background-color: #f9f9f9;
+  width: 170px;
+  box-shadow: 8px 8px 20px 0px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border-radius: 5px;
+  margin-top: 3px;
+  margin-left: -70px;
+}
+
+.dropdown-content div {
+  cursor: pointer;
+  padding: 10px;
+  border-bottom: #f1f1f1;
+  /* height:15px; */
+  text-align: center;
+}
+
+.dropdown-content div:hover {
+  background-color: #f1f1f1;
+  font-weight: bold;
+}
+
+.dropdown-content div:first-child {
+  border-radius: 5px;
+}
+
+.dropdown-content div:last-child {
+  border-radius: 5px;
+}
+
+.logo-text * {
+  line-height: 0.5rem;
+}
+
+.logo-text h6 {
+  background: rgb(223, 81, 87);
+  color: white;
+  letter-spacing: 0.13rem;
+  border-radius: 3px;
+  width: fit-content;
+  padding: 3px;
+  font-size: 0.85rem;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.logo-text h5 {
+  color: rgb(85, 122, 221);
+  font-weight: bold;
+  font-size: 1.3rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.logo-text > h5 > span {
+  color: rgb(85, 122, 221);
+  font-weight: bold;
+}
+
+.square-four-icon {
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+.dropdown-toggle{
+  font-size: 1.4rem;
+}
+
+.subscription-container h2{
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.subscription-container > p{
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
+.subscription-price {
+  font-size: 1.2rem !important;
+  font-weight: 300;
+  margin: 0;
+  padding: 0;
+}
+
+
+.subscription-container div {
+  margin-top: 10px;
+}
+
+.subscription-container div p {
+  margin: 0;
+  padding: 0;
+}
+
+.tick-icon{
+  color: green;
+  font-size: 1.4rem;
+}
+
+.cancel-icon {
+  cursor: pointer;
+  position: absolute;
+  right:-12px;
+  top: -12px;
+  font-size: 2rem;
+}
