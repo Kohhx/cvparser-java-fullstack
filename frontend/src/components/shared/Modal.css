@@ -9,17 +9,17 @@
 }
 
 .modal-backdrop {
-  position: absolute;
-  inset: 0 0 0 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute !important;
+  inset: 0 0 0 0 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .modal-content {
-  position: absolute;
-  background-color: #f2f2f2;
-  border-radius: 20px;
-  padding: 40px;
-  z-index:100000;
-  display: inline-block;
-  width: fit-content;
+  position: absolute !important;
+  background-color: #f2f2f2 !important;
+  border-radius: 20px !important;
+  padding: 40px !important;
+  z-index:100000 !important;
+  display: inline-block !important;
+  width: fit-content !important;
 }

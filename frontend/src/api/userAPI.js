@@ -8,4 +8,7 @@ export const userAPI = {
   updateUserToFree: async (userId) => {
     return axiosInstance.patch(`users/${userId}?type=free`);
   },
+  getUserDetails: async (userId) => {
+    return axiosInstance.get(`users/${userId}`);
+  }
 };

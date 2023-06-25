@@ -14,60 +14,69 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
-    
+
     @Autowired
     PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     JwtService jwtService;
-    
-    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder, JwtService jwtService) {
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
-    
+
 //    //Create user
 //    public void createUser(User newUser){
 //    	userRepository.save(newUser);
 //    }
-    
+
     //Read singular user
-    public User getUserById(long id) {
+    public UserResponseDTO getUserById(long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            return user.get();
+            UserResponseDTO userResponse = new UserResponseDTO(
+                    user.get().getEmail(),
+                    user.get().getFirstName(),
+                    user.get().getLastName(),
+                    user.get().getRole(),
+                    user.get().getResumeLimit(),
+                    user.get().getCreatedAt(),
+                    user.get().getUpdatedAt()
+            );
+            return userResponse;
         } else {
             throw new ResourceNotFoundException("User with id %s not found".formatted(id));
         }
     }
-    
+
     //Read list of user
-    public List<User> getAllUsers(){
-    	return userRepository.findAll();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     //Update user
     public void updateUser(User user) {
-    	userRepository.save(user);
+        userRepository.save(user);
     }
 
-	public UserRoleResponseDTO updateUserRole(long userId, String type) {
-		Optional<User> user = userRepository.findById(userId);
-		if(!user.isPresent()) {
-			throw new ResourceNotFoundException("User not found");
-		}
+    public UserRoleResponseDTO updateUserRole(long userId, String type) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent()) {
+            throw new ResourceNotFoundException("User not found");
+        }
         if (type.equals("free")) {
             user.get().setRole("ROLE_FREE");
         } else if (type.equals("paid")) {
             user.get().setRole("ROLE_PAID");
         }
-		User updatedUser = userRepository.save(user.get());
-		UserRoleResponseDTO userRoleResponse = new UserRoleResponseDTO(updatedUser.getRole());
-		return userRoleResponse;
-	}
+        User updatedUser = userRepository.save(user.get());
+        UserRoleResponseDTO userRoleResponse = new UserRoleResponseDTO(updatedUser.getRole());
+        return userRoleResponse;
+    }
 
-	
+
 //    //Delete user
 //    public void deleteUser(long user_id) {
 //    	User user = userRepository.getUserById(user_id);

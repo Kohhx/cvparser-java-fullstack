@@ -19,13 +19,9 @@ public class UserController {
 	
 	//Upload Page (#3 - Get)
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> GetUserForUpload (@PathVariable long id){
-		User user = userService.getUserById(id);
-		if(user != null) {
-			return new ResponseEntity<>(user,HttpStatus.OK);
-		}
-		return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
-		
+	public ResponseEntity<UserResponseDTO> GetUserForUpload (@PathVariable long id){
+		UserResponseDTO user = userService.getUserById(id);
+		return new ResponseEntity<UserResponseDTO>(user,HttpStatus.OK);
 	}
 	
 	//Upload Page (#4 - Patch)

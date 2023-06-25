@@ -93,3 +93,46 @@ border-radius: 20px;
   font-size: 3rem;
   margin-right: 10px;
 }
+
+.subscription-container h2{
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.subscription-container > p{
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
+.subscription-price {
+  font-size: 1.2rem !important;
+  font-weight: 300;
+  margin: 0;
+  padding: 0;
+}
+
+
+.subscription-container div {
+  margin-top: 10px;
+}
+
+.subscription-container div p {
+  margin: 0;
+  padding: 0;
+}
+
+.tick-icon{
+  color: green;
+  font-size: 1.4rem;
+}
+
+.cancel-icon {
+  cursor: pointer;
+  position: absolute;
+  right:-12px;
+  top: -12px;
+  font-size: 2rem;
+}

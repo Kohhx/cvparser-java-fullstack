@@ -240,6 +240,7 @@ public class ResumeService {
         resume.setFileName(resumeCreateRequest.fileName());
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
+        user.get().setResumeLimit(user.get().getResumeLimit() + 1);
         User savedUser = userRepository.save(user.get());
         System.out.println(savedResume.getCompanies().get(0).getName());
 
@@ -363,6 +364,7 @@ public class ResumeService {
         }
 
         user.get().getResumes().remove(resume.get());
+        user.get().setResumeLimit(user.get().getResumeLimit() - 1);
         userRepository.save(user.get());
         resumeRepository.delete(resume.get());
     }

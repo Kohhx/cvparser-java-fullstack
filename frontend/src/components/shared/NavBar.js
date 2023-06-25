@@ -47,6 +47,7 @@ function NavBar() {
       .updateUserToPaid(ctx.getUserId())
       .then((res) => {
         authenticationAPI.changeRole("ROLE_PAID");
+        ctx.handleUserRole();
         toast.success("Successfully upgraded to paid subscription");
         setShowUpgradeModal(false);
       })
@@ -61,6 +62,7 @@ function NavBar() {
       .updateUserToFree(ctx.getUserId())
       .then((res) => {
         authenticationAPI.changeRole("ROLE_FREE");
+        ctx.handleUserRole();
         toast.success("Successfully downgraded to free subscription");
         setShowDowngradeModal(false);
       })
@@ -123,6 +125,7 @@ function NavBar() {
             </NavLink>
           </div>
           {ctx.getUserRole()}
+          {ctx.userDetails.role}
           <div className="dropdown" style={{ paddingRight: "30px" }}>
             <div
               className="dropdown-toggle"

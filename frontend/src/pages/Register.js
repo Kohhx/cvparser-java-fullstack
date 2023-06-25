@@ -77,9 +77,6 @@ const Register = () => {
     setEmail({ ...email, value: e.target.value, valid: false });
   };
 
-  // const handleUsernameChange = (e) => {
-  //   setUsername(e.target.value);
-  // };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -103,13 +100,19 @@ const Register = () => {
       role: "ROLE_FREE",
     };
 
-    authenticationAPI.signup(regData).then((res) => {
-      toast.success("Registration successful.");
-      navigate("/upload");
-    });
+    authenticationAPI
+      .signup(regData)
+      .then((res) => {
+        toast.success("Registration successful.");
+        navigate("/upload");
+      }).catch((err) => {
+        console.log(err);
+        toast.error(
+          err.response.data.message ||
+            "Error in registration. Please try again."
+        );
+      });
   };
-
-  // };
 
   return (
     <div className="register-container container d-flex">
@@ -126,7 +129,7 @@ const Register = () => {
         >
           <div className="d-flex gap-3 align-items-center register-form-container justify-content-center mb-4">
             <h2>Register</h2>
-            <RiAccountCircleFill className="create-account-icon"/>
+            <RiAccountCircleFill className="create-account-icon" />
           </div>
 
           <div className="form-floating mb-3">
