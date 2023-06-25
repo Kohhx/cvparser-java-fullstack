@@ -41,7 +41,7 @@ public class ResumeService {
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
     public final RestTemplate restTemplate;
-    public final double chatGPTTemperature = 0.3;
+    public final double chatGPTTemperature = 0.5;
 
 
     @Value("${openai.model}")
@@ -82,6 +82,41 @@ public class ResumeService {
                     """;
 
     private final String GPTPROMPT3 =
+            """
+                    Please help me extract the following fields from each CV and use the followings as the keys:\s
+                                                     name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.\s
+                                                     email (string): The email address of the candidate.\s
+                                                     mobile (string): The mobile number of the candidate.\s
+                                                     skills (array): The skills possessed by the candidate. Both technical skills and soft skills.
+                                                     companiesDetails (array): All the companies the candidate worked with.
+                                                     1)	name:(string) name of the company . If nothing, return "".
+                                                     2)	startDate: (string) start date in this format month/year If nothing, return "".
+                                                     3)	endDate: (string) end date || Jan 2023 || if present, then Jan 2023. Use this format for output month/year If nothing, return "".
+                                                     4)	noOfYears: (decimal) Number of employment years in the company. Else return 0.0. If start date is empty, then is 0\s
+                                                     yearsOfExperience (number): Total employment in years based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only. Verify by adding up all the noOfYears from companiesDetails array.
+                                                     1)Exclude education and trainings.\s
+                                                     2) If candidate mention only present date without start date, then calculate years based on the last working date to present.
+                                                     3) If candidate mention start date to present date, then calculate years based on the start date to present date.
+                                                     4) Present year is 2023.
+                                                     5) Employment dates for each position mentioned in your career history. Include the month and year for both the start and end dates of each job.
+                                                     If any positions have unspecified employment dates, please mention that explicitly. Based on these, calculate the number of employment years of the candidate.
+                                                     6) Please return number of years. Not months.
+                                                     7) Always use candidate stated start date to end date first.
+                                                     8) present always refer to end date.
+                                                     companies (array): The names of the recent 3 companies the candidate has worked for.
+                                                     
+                                                     Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid and complete according to the above requirements.The following is a chunk of a CV.
+                                                     Complete the response before returning the response.
+                    """;
+
+    private final String GPTPROMPT3_2 =
+            """
+                                
+                    Above is the result from previous response. Use this as the input for the next response. Add the new extracted information to this and merge them to give the final JSON output.
+                           
+                            """;
+
+    private final String GPTPROMPT3BK =
             """
                     Please help me extract the following fields from each CV and use the followings as the keys:\s
                                                      name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.\s
@@ -138,17 +173,26 @@ public class ResumeService {
         return mapToResumeCreateResponseDTOList(resumeList);
     }
 
-    public void resumeTest(ResumeCreateRequestDTO resumeCreateRequest) {
+    public ResumeCreateResponseDTO resumeTest(ResumeCreateRequestDTO resumeCreateRequest) {
         System.out.println("Hello World");
+
         if (!FileUtil.checkFileIsDocument(resumeCreateRequest.file().getOriginalFilename())) {
             throw new UploadFileException("Incorrect file extension");
         }
+
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(principal.getName());
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+
         StringBuilder sb = new StringBuilder();
         String extractText = extractTextFromFile(resumeCreateRequest.file());
 //        System.out.println( GPTUtil.countTokens(extractText));
 //        System.out.println(GPTUtil.countTokens(GPTUtil.truncateString(extractText,3000)));
 //        System.out.println(GPTUtil.truncateString(extractText,3500));
-        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2850);
+        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2700);
         chunks.stream().forEach(textC -> {
             System.out.println(textC);
             System.out.println("========================= Break =======================");
@@ -157,6 +201,7 @@ public class ResumeService {
 
         // Let OpenAI do the work
         List<Resume> resumeDataset = new ArrayList<>();
+        List<String> storedResponses = new ArrayList<>();
         int index = 0;
         for (String chunk : chunks) {
             System.out.println("Calling ChatGPT.......");
@@ -164,19 +209,26 @@ public class ResumeService {
             if (index == 0) {
                 sbTemp.append(GPTPROMPT3);
             } else {
+                sbTemp.append(storedResponses.get(index - 1));
+                sbTemp.append(GPTPROMPT3_2);
                 sbTemp.append(GPTPROMPT3);
             }
             sbTemp.append(chunk);
+            System.out.println("Show CHATGPT INPUT: ");
+            System.out.println(sbTemp.toString());
             ChatGPTRequestDTO request = new ChatGPTRequestDTO(chatModel, sbTemp.toString(), chatGPTTemperature);
             ChatGPTResponseDTO chatGPTResponse = restTemplate.postForObject(openAiUrl, request, ChatGPTResponseDTO.class);
             String jsonOutput = chatGPTResponse.getChoices().get(0).getMessage().getContent();
             System.out.println("Show CHATGPT MESSAGE: ");
             System.out.println(jsonOutput);
-            Resume resume = chatGPTResponseToResume(jsonOutput);
-            resume.setFileName(resumeCreateRequest.fileName());
-            resumeDataset.add(resume);
-            System.out.println("*********************************");
-            System.out.println(resume);
+            storedResponses.add(jsonOutput);
+            //////////
+//            Resume resume = chatGPTResponseToResume(jsonOutput);
+//            resume.setFileName(resumeCreateRequest.fileName());
+//            resumeDataset.add(resume);
+//            System.out.println("*********************************");
+//            System.out.println(resume);
+            index++;
         }
 
 //        resumeDataset.stream().forEach(resume -> {
@@ -184,7 +236,15 @@ public class ResumeService {
 //            System.out.println("========================= Break =======================");
 //        });
 
+        Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
+        resume.setFileName(resumeCreateRequest.fileName());
+        Resume savedResume = resumeRepository.save(resume);
+        user.get().addResume(savedResume);
+        User savedUser = userRepository.save(user.get());
+        System.out.println(savedResume.getCompanies().get(0).getName());
 
+
+        return chatGPTResponseToResumeCreateResponse(savedResume);
     }
 
     public ResumeCreateResponseDTO parseAndCreateResume(ResumeCreateRequestDTO resumeCreateRequest) {
@@ -203,9 +263,9 @@ public class ResumeService {
         String extractText = extractTextFromFile(resumeCreateRequest.file());
         sb.append(GPTPROMPT3);
         sb.append("\n");
-        if (GPTUtil.countTokens(extractText) > 3200) {
+        if (GPTUtil.countTokens(extractText) > 2700) {
             System.out.println("Truncating...");
-            sb.append(GPTUtil.truncateString(extractText, 3000));
+            sb.append(GPTUtil.truncateString(extractText, 2700));
         } else {
             sb.append(extractText);
         }
