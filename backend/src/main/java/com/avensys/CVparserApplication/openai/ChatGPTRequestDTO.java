@@ -6,13 +6,14 @@ import java.util.List;
 public class ChatGPTRequestDTO {
     private String model;
     private List<Message> messages;
+    private double temperature;
 
 
-    public ChatGPTRequestDTO(String model, String prompt) {
+    public ChatGPTRequestDTO(String model, String prompt, double temperature) {
         this.model = model;
         this.messages = new ArrayList<>();
         this.messages.add(new Message("user",prompt));
-
+        this.temperature = temperature;
     }
 
     public String getModel() {

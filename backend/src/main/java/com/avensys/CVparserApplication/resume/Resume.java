@@ -190,5 +190,20 @@ public class Resume {
         this.companies = companies;
     }
 
-
+    @Override
+    public String toString() {
+        return "Resume{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", yearsOfExperience=" + yearsOfExperience +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", user=" + user +
+                ", skills=" + skills +
+                ", companies=" + companies +
+                '}';
+    }
 }

@@ -53,4 +53,6 @@ public class Skill {
     public void setResume(Resume resume) {
         this.resume = resume;
     }
+
+
 }

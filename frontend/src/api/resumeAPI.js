@@ -5,13 +5,10 @@ export const resumeAPI = {
   uploadResume: async (resumeDetails) => {
     return axiosInstance
       .post("resumes", resumeDetails)
-      // .then((res) => {
-      //   toast.success("Resume uploaded successfully.");
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      //   toast.error("Error in uploading resume. Please try again.");
-      // });
+  },
+  uploadResume2: async (resumeDetails) => {
+    return axiosInstance
+      .post("resumes/test", resumeDetails)
   },
   getUserResumes: async (userId) => {
     return axiosInstance.get(`users/${userId}/resumes`);

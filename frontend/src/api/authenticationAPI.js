@@ -9,18 +9,13 @@ import { toast } from "react-toastify";
 
 export const authenticationAPI = {
   signup: async (userRegistrationDetails) => {
-    axiosInstance
+    return axiosInstance
       .post("signup", userRegistrationDetails)
       .then((res) => {
         const data = res.data;
         let token = TOKEN_PREFIX + data.token;
         setSessionStorage(data.id, data.email, token, data.role);
-        return res;
       })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Error in registration. Please try again.")
-      });
   },
   login: async (userLoginDetails) => {
     return axiosInstance
@@ -39,6 +34,9 @@ export const authenticationAPI = {
   },
   logout: () => {
     removeSessionStorage();
+  },
+  changeRole(role) {
+    sessionStorage.setItem(ROLE_KEY, role);
   }
 };
 

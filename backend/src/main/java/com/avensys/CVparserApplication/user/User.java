@@ -32,6 +32,9 @@ public class User {
     @Column(nullable = false, length = 15)
     private String role;
 
+    @Column(name="resume_limit", nullable = false)
+    private int resumeLimit;
+
     @CreationTimestamp
     @Column(name ="created_at")
     private LocalDateTime createdAt;
@@ -45,15 +48,17 @@ public class User {
 
     public User() {}
 
-    public User(long id, String email, String password, String firstName, String lastName, String role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(long id, String email, String password, String firstName, String lastName, String role, int resumeLimit, LocalDateTime createdAt, LocalDateTime updatedAt, List<Resume> resumes) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
+        this.resumeLimit = resumeLimit;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.resumes = resumes;
     }
 
     public long getId() {
@@ -130,5 +135,13 @@ public class User {
 
     public List<Resume> getResumes() {
         return resumes;
+    }
+
+    public int getResumeLimit() {
+        return resumeLimit;
+    }
+
+    public void setResumeLimit(int resumeLimit) {
+        this.resumeLimit = resumeLimit;
     }
 }

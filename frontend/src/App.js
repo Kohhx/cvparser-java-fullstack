@@ -18,6 +18,7 @@ import FreePaidGuard from "./guards/FreePaidGuard";
 import "./App.css";
 import { pdfjs } from "react-pdf";
 import Resume from "./pages/Resume";
+import NavbarLayout from "./layout/NavbarLayout";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 function App() {
   const ctx = useContext(UserContext);
@@ -26,7 +27,6 @@ function App() {
     <>
       <ToastContainer />
       <Router>
-        {ctx.isUserLoggedIn() && <NavBar />}
         <div className="main-container">
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
@@ -37,12 +37,20 @@ function App() {
               <Route path="/register" element={<Register />} />
             </Route>
 
-            {/* Routes protected by FreePaid Guard */}
-            <Route element={<FreePaidGuard />}>
-              <Route path="/upload" element={<Upload />} />
-              <Route path="/users/:userId/resumes/:resumeId" element={<Resume />} />
-              <Route path="/users/:userId/resumes" element={<UserResumes />} />
-              <Route path="/userdetails" element={<UserDetails />} />
+            <Route element={<NavbarLayout />}>
+              {/* Routes protected by FreePaid Guard */}
+              <Route element={<FreePaidGuard />}>
+                <Route path="/upload" element={<Upload />} />
+                <Route
+                  path="/users/:userId/resumes/:resumeId"
+                  element={<Resume />}
+                />
+                <Route
+                  path="/users/:userId/resumes"
+                  element={<UserResumes />}
+                />
+                <Route path="/userdetails" element={<UserDetails />} />
+              </Route>
             </Route>
           </Routes>
         </div>

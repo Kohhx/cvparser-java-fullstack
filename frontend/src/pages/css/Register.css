@@ -9,7 +9,6 @@
   display: flex;
   /* flex-direction: column; */
   justify-content: center;
-
   /* padding: 0 50px; */
   align-items: center;
 }
@@ -36,4 +35,13 @@
 
 .img3{
   margin-left: -6rem;
+}
+
+.create-account-icon{
+  font-size: 3rem;
+}
+
+.register-form-container h2{
+  font-size: 3rem;
+
 }
