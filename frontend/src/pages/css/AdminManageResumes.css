@@ -1,0 +1,91 @@
+.admin-resume-container {
+  margin-top: 100px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.table-card * {
+  color: black;
+}
+
+.admin-resume-container td {
+  vertical-align: middle;
+}
+
+.table-card {
+  background: white;
+  /*padding: 20px;*/
+  border-radius: 20px;
+}
+
+.table-card-container {
+  width: 90%;
+  margin: 0 auto;
+  padding-top:2rem;
+}
+
+.fa-magnifying-glass {
+  margin-right: -25px;
+  z-index: 100;
+  color: rgb(126, 131, 157)
+}
+
+.search-bar-input {
+  background: rgb(239, 242, 247);
+  border: none;
+  outline: none;
+  font-size: 1.25rem;
+  border-radius: 7px;
+  padding: 5px 5px 5px 35px;
+  width:400px;
+}
+
+.custom-table {
+  margin: 0;
+}
+
+.pagination {
+  padding: 5px 0px 5px 15px;
+  background: rgb(225, 228, 232);
+  margin: 0;
+  font-size: 0.8rem;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.arrow {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.arrow > a {
+  text-decoration: none;
+  cursor: pointer;
+  color: black;
+}
+
+.arrow > a:hover {
+  color: rgb(85, 122, 221);
+}
+
+.avatar-small {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.arrow-disabled {
+  margin-right: 10px;
+  margin-left: 10px;
+  color: rgb(126, 131, 157);
+}
+
+.admin-resume-container td, th {
+  padding: 10px 15px !important;
+  font-size: 1rem;
+}
+
+.btn-custom {
+  white-space: nowrap;
+}

@@ -19,7 +19,9 @@ import "./App.css";
 import { pdfjs } from "react-pdf";
 import Resume from "./pages/Resume";
 import NavbarLayout from "./layout/NavbarLayout";
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+import AdminGuard from "./guards/AdminGuard";
+import AdminManageResumes from "./pages/AdminManageResumes";
+
 function App() {
   const ctx = useContext(UserContext);
 
@@ -50,6 +52,11 @@ function App() {
                   element={<UserResumes />}
                 />
                 <Route path="/userdetails" element={<UserDetails />} />
+              </Route>
+
+              {/* // Admin Routes */}
+              <Route element={<AdminGuard />}>
+                <Route path="/admin/resumes" element={<AdminManageResumes />} />
               </Route>
             </Route>
           </Routes>

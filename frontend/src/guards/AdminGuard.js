@@ -2,16 +2,15 @@ import React, { useContext, useEffect } from "react";
 import { UserContext } from "../context/userContext";
 import { Navigate, Outlet } from "react-router-dom";
 
-const FreePaidGuard = () => {
+const AdminGuard = () => {
   const ctx = useContext(UserContext);
   console.log(ctx.getUserRole());
   return !ctx.isUserLoggedIn() &&
-    ctx.getUserRole() !== "ROLE_FREE" &&
-    ctx.getUserRole() !== "ROLE_PAID" && ctx.getUserRole() !== "ROLE_ADMIN"? (
-    <Navigate to="/login" />
+    ctx.getUserRole() !== "ROLE_ADMIN" ? (
+    <Navigate to="/upload" />
   ) : (
     <Outlet />
   );
 };
 
-export default FreePaidGuard;
+export default AdminGuard;
