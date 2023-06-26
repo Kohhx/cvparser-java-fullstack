@@ -19,13 +19,16 @@ const UserResumes = () => {
   const params = useParams();
   const navigate = useNavigate();
 
+  const getResumes = () => {
+    resumeAPI.getUserResumes(ctx.getUserId()).then((res) => {
+      setResumes(res.data);
+    });
+  }
 
   useEffect(() => {
     console.log("userId",ctx.getUserId());
     setUserId(ctx.userDetails.id);
-    resumeAPI.getUserResumes(ctx.getUserId()).then((res) => {
-      setResumes(res.data);
-    });
+    getResumes()
   }, []);
 
   //Table Mapping
@@ -53,7 +56,8 @@ const UserResumes = () => {
   //Delete
   const handleDeleteResume = (resumeId) => {
     resumeAPI.deleteResume(resumeId).then(() => {
-      window.location.reload();
+      toast.success("Resume deleted successfully.");
+      getResumes();
     });
   };
 
@@ -88,12 +92,12 @@ const UserResumes = () => {
             <th scope="col" colspan="2"></th>
           </tr>
         </thead>
-        <tbody >
+        <tbody>
         {filteredResumes
           .slice(offset, offset + PER_PAGE)
           .map((resumes) => {
             // Custom formatting for YYYY-MM-DD HH:MM
-            const createdAt = new Date(resumes.created);
+            const createdAt = new Date(resumes.createdAt);
             const year = createdAt.getFullYear();
             const month = String(createdAt.getMonth() + 1).padStart(2, "0");
             const day = String(createdAt.getDate()).padStart(2, "0");
@@ -123,7 +127,7 @@ const UserResumes = () => {
         </tbody>
       </table>
             
-      <div>
+      <div style={{marginTop:'-20px'}}>
       <ReactPaginate
         previousLabel={"←"}
         nextLabel={"→"}
