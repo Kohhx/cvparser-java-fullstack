@@ -7,10 +7,32 @@
     background-color: #ffffff;
     display:flex;
     justify-content:center;
+    align-items: center;
     width:auto;
     color:black;
+    font-size:larger;
 }
 
+.pagination__link {
+    font-size:larger;
+    padding:2px;
+  }
+  
+.pagination__link--disabled {
+    font-size:larger;
+    padding:2px;
+  }
+
+.next{
+    font-size:larger;
+    padding:2px;  
+}
+
+.pagination__link--active {
+    font-size: larger;
+    padding:2px;
+  }
+  
 
 .table-fixed {
     table-layout: fixed;
