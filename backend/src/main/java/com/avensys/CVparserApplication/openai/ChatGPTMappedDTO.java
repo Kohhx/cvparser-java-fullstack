@@ -11,7 +11,7 @@ public class ChatGPTMappedDTO {
 
     private String mobile;
 
-    private int yearsOfExperience;
+    private double yearsOfExperience;
 
     private String[] skills;
 
@@ -56,11 +56,11 @@ public class ChatGPTMappedDTO {
         this.mobile = mobile;
     }
 
-    public int getYearsOfExperience() {
+    public double getYearsOfExperience() {
         return yearsOfExperience;
     }
 
-    public void setYearsOfExperience(int yearsOfExperience) {
+    public void setYearsOfExperience(double yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
     }
 
