@@ -16,6 +16,9 @@ import com.avensys.CVparserApplication.utility.FileUtil;
 import com.avensys.CVparserApplication.utility.GPTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
@@ -31,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -344,6 +349,27 @@ public class ResumeService {
 
         return resumeToResumeUpdateResponseDTO(savedResume);
     }
+    
+    public String exportResume(ResumeExportRequestDTO resumeExportRequest) {
+    	StringWriter stringWriter = new StringWriter();
+        
+        try (CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT)) {
+        	
+        	csvPrinter.printRecord("Resume Name",
+        			"Email",  "Mobile", "Skills",
+        			"Years of Experiences", "Companies");
+
+            // Write data from DTO to CSV
+            csvPrinter.printRecord(resumeExportRequest.name(),
+            		resumeExportRequest.email(),resumeExportRequest.mobile(),resumeExportRequest.skills(),
+            		resumeExportRequest.yearsOfExperience(),resumeExportRequest.companies());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        
+        return stringWriter.toString();
+    }
 
     public void deleteResume(long id) {
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
@@ -483,7 +509,7 @@ public class ResumeService {
 
     private UserResponseDTO userToUserResponseDTO(User user) {
         return new UserResponseDTO(
-                user.getId(),
+        		user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
