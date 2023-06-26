@@ -156,9 +156,19 @@ public class ResumeService {
     }
 
     public AdminResumesResponseDTO getAllResumes(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
+        PageRequest pageable = PageRequest.of(page-1, size);
         Page resumeList = resumeRepository.findAllWithPage(pageable);
 
+        List<ResumeCreateResponseDTO> resumeListResponse = mapToResumeCreateResponseDTOList(resumeList.getContent());
+        AdminResumesResponseDTO adminResumeResponse = new AdminResumesResponseDTO(resumeList.getTotalPages(), page, resumeListResponse);
+        return adminResumeResponse;
+    }
+
+    public AdminResumesResponseDTO getAllResumesWithSearch(int page, int size, String keywords) {
+        PageRequest pageable = PageRequest.of(page-1, size);
+        System.out.println("Check keyword again: " + keywords);
+        Page resumeList = resumeRepository.findAllWithSearchPage(keywords,pageable);
+        System.out.println(resumeList.getContent());
         List<ResumeCreateResponseDTO> resumeListResponse = mapToResumeCreateResponseDTOList(resumeList.getContent());
         AdminResumesResponseDTO adminResumeResponse = new AdminResumesResponseDTO(resumeList.getTotalPages(), page, resumeListResponse);
         return adminResumeResponse;
@@ -473,6 +483,7 @@ public class ResumeService {
 
     private UserResponseDTO userToUserResponseDTO(User user) {
         return new UserResponseDTO(
+                user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),

@@ -69,6 +69,7 @@ public class UserService {
 
     private UserResponseDTO userToUserResponseDTO(User user) {
         return new UserResponseDTO(
+                user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),

@@ -3,7 +3,7 @@ package com.avensys.CVparserApplication.skill;
 import com.avensys.CVparserApplication.resume.Resume;
 import jakarta.persistence.*;
 
-@Entity
+@Entity(name = "Skill")
 @Table(name = "skills")
 public class Skill {
 
