@@ -57,10 +57,16 @@ public class ResumeController {
         return new ResponseEntity<CustomResponse>(new CustomResponse("Resume deleted successfully"), HttpStatus.OK);
     }
 
-//     Admin Routes
+    //     Admin Routes
+    @DeleteMapping("admin/users/{userId}/resumes/{resumeId}")
+    public ResponseEntity<CustomResponse> deleteResume(@PathVariable long userId, @PathVariable long resumeId) {
+        resumeService.deleteUserResume(userId, resumeId);
+        return new ResponseEntity<CustomResponse>(new CustomResponse("Resume deleted successfully"), HttpStatus.OK);
+    }
+
     @GetMapping("/admin/resumes")
-    public ResponseEntity<AdminResumesResponseDTO> getAllResumes(@RequestParam int page, @RequestParam(required = false) String keywords) {
-        int size = 50;
+    public ResponseEntity<AdminResumesResponseDTO> getAllResumes(@RequestParam int page, @RequestParam(required = false) String keywords, @RequestParam(required = false) int size) {
+//        int size = 15;
         System.out.println("Page:" + page);
         System.out.println("Keywords: :" +  keywords);
         AdminResumesResponseDTO adminResumeResponseDTO;

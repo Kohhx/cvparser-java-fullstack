@@ -22,10 +22,14 @@ export const resumeAPI = {
   deleteResume: async (resumeId) => {
     return axiosInstance.delete(`resumes/${resumeId}`);
   },
-  adminGetAllResumes: async (page, keywords) => {
-    return axiosInstance.get(`admin/resumes?page=${page}&keywords=${keywords}`);
+  adminGetAllResumes: async (page, keywords, size) => {
+    return axiosInstance.get(`admin/resumes?page=${page}&keywords=${keywords}&size=${size}`);
   },
-  adminGetAllResumesSearch: async (page, keywords) => {
-    return axiosInstance.get(`admin/resumes?page=${1}&keywords=${keywords}`);
-  }
+  adminGetAllResumesSearch: async (page, keywords, size) => {
+    return axiosInstance.get(`admin/resumes?page=${1}&keywords=${keywords}&size=${size}`);
+  },
+  adminDeleteResume: async (userId, resumeId) => {
+    return axiosInstance.delete(`admin/users/${userId}/resumes/${resumeId}`);
+  },
+
 };

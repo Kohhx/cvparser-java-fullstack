@@ -128,7 +128,7 @@ const Register = () => {
           noValidate
         >
           <div className="d-flex gap-3 align-items-center register-form-container justify-content-center mb-4">
-            <h2>Register</h2>
+            <h2 className="register-title">Register</h2>
             <RiAccountCircleFill className="create-account-icon" />
           </div>
 

@@ -2,6 +2,8 @@
   margin-top: 100px;
   margin-bottom: 20px;
   color: white;
+  width: 90%;
+  margin: 120px auto;
 }
 
 .table-card * {
@@ -19,7 +21,7 @@
 }
 
 .table-card-container {
-  width: 90%;
+  width: 95%;
   margin: 0 auto;
   padding-top:2rem;
 }
@@ -89,4 +91,21 @@
 
 .btn-custom {
   white-space: nowrap;
+}
+
+.icon{
+  cursor: pointer;
+  font-size: 1.6rem;
+}
+
+.icon-delete{
+  font-size: 2rem;
+}
+
+.btn-custom{
+  color: white;
+}
+
+.count-input{
+  width:100px;
 }

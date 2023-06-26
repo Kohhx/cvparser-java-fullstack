@@ -6,7 +6,7 @@
 
 .login-container {
   height: 100vh;
-  /* margin-top:80px; */
+  /* margin-top:200px; */
 }
 
 .left-side {
@@ -105,4 +105,8 @@
   color: rgb(85, 122, 221);
   font-size: 3rem;
   font-weight: bold;
+}
+
+.login-title{
+  text-shadow: 1px 1px 3px rgb(106, 106, 106);
 }

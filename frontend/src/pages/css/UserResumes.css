@@ -1,50 +1,85 @@
 .search-bar {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
-.pagination{
-    border-top: 1px solid #dee2e6;
-    background-color: #ffffff;
-    display:flex;
-    justify-content:center;
-    align-items: center;
-    width:auto;
-    color:black;
-    font-size:larger;
+.user-resumes-container {
+  margin-top: 130px;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.pagination {
+  border-top: 1px solid #dee2e6;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  color: black;
+  font-size: larger;
 }
 
 .pagination__link {
-    font-size:larger;
-    padding:2px;
-  }
-  
-.pagination__link--disabled {
-    font-size:larger;
-    padding:2px;
-  }
+  font-size: larger;
+  padding: 2px;
+}
 
-.next{
-    font-size:larger;
-    padding:2px;  
+.pagination__link--disabled {
+  font-size: larger;
+  padding: 2px;
+}
+
+.next {
+  font-size: larger;
+  padding: 2px;
 }
 
 .pagination__link--active {
-    font-size: larger;
-    padding:2px;
-  }
-  
+  font-size: larger;
+  padding: 2px;
+}
 
 .table-fixed {
-    table-layout: fixed;
-  }
+  table-layout: fixed;
+}
 
-  .table-fixed th,
-  .table-fixed td {
-    white-space: normal;
-    word-break: break-word;
-    overflow: hidden;
+.table-fixed th,
+.table-fixed td {
+  white-space: normal;
+  word-break: break-word;
+  overflow: hidden;
 }
 
 .main-container {
-margin-top: 80px !important;
+  margin-top: 80px !important;
+}
+
+.search-container {
+  background-color: white;
+  padding: 25px;
+  border-radius: 20px;
+  margin-bottom: 35px;
+  color: rgb(61, 61, 61);
+}
+
+.myresume-title {
+  margin-bottom: 20px !important;
+}
+
+.search-container input{
+  outline: none;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgb(61, 61, 61);
+}
+
+.table-wrapper {
+padding-top:20px;
+background-color: #bacbe6;
+border-radius: 20px;
+}
+
+.search-container span {
+  color: rgb(85, 122, 221);
+  text-shadow: 0.2px 0.2px 0.6px black;
 }
