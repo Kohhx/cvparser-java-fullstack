@@ -86,7 +86,7 @@ function NavBar() {
           />
           <div class="logo-text">
             <h6>Avensys</h6>
-            <h5>CSV Parser</h5>
+            <h5>CV Parser</h5>
           </div>
         </NavLink>
         <button
@@ -156,8 +156,8 @@ function NavBar() {
                 )}
                 {ctx.getUserRole() === "ROLE_ADMIN" && (
                   <>
-                    <div onClick={() => navigate("/admin/resumes?page=1")}>Manage Resumes</div>
-                    <div>Manage Users</div>
+                    <div onClick={() => navigate("/admin/resumes?page=1&size=5")}>Manage Resumes</div>
+                    {/* <div>Manage Users</div> */}
                   </>
                 )}
                 <div onClick={handleLogout}>Logout</div>

@@ -358,6 +358,26 @@ public class ResumeService {
             throw new UsernameNotFoundException("User not found");
         }
 
+        System.out.println("deleting.....");
+        user.get().getResumes().remove(resume.get());
+        user.get().setResumeLimit(user.get().getResumeLimit() - 1);
+        userRepository.save(user.get());
+        resumeRepository.delete(resume.get());
+    }
+
+    public void deleteUserResume(long userId,long resumeId) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Resume> resume = resumeRepository.findById(resumeId);
+
+        if (!resume.isPresent()) {
+            throw new ResourceNotFoundException("Resource not found");
+        }
+
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        System.out.println("deleting.....");
         user.get().getResumes().remove(resume.get());
         user.get().setResumeLimit(user.get().getResumeLimit() - 1);
         userRepository.save(user.get());

@@ -58,7 +58,7 @@ const LoginPage = () => {
         <div className="login-main-title">
             <h3>Avensys</h3>
             <div>
-                <span class="right-header-1" id="first-line">CSV Parser</span>
+                <span class="right-header-1" id="first-line">CV Parser</span>
             </div>
         </div>
 
@@ -67,7 +67,7 @@ const LoginPage = () => {
         <div className="right-card">
           <div className="text-center">
             <img src={LoginImg} alt="login" className="login-icon mb-4"/>
-            <h1 className="mb-5">Login</h1>
+            <h1 className="mb-5 login-title">Login</h1>
           </div>
           <form onSubmit={handleSubmit} className="needs-validation" noValidate>
             <div className="form-floating mb-3">

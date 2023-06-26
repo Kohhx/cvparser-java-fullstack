@@ -1,6 +1,6 @@
 .register-container {
   height: 100vh;
-  gap:100px;
+  gap: 100px;
   /* margin-top:80px; */
 }
 
@@ -13,7 +13,7 @@
   align-items: center;
 }
 
-.right-card{
+.right-card {
   background-color: #dde6ed; /* Bright Blue */
   border-radius: 25px 25px 25px 25px;
   padding: 80px 50px;
@@ -29,19 +29,22 @@
   /* transform: scale(1); */
 }
 
-.img2{
+.img2 {
   margin-left: -4rem;
 }
 
-.img3{
+.img3 {
   margin-left: -6rem;
 }
 
-.create-account-icon{
+.create-account-icon {
   font-size: 3rem;
 }
 
-.register-form-container h2{
+.register-form-container h2 {
   font-size: 3rem;
+}
 
+.register-title {
+  text-shadow: 1px 1px 3px rgb(106, 106, 106);
 }
