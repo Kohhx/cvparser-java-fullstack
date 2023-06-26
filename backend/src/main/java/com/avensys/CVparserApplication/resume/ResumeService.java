@@ -11,6 +11,7 @@ import com.avensys.CVparserApplication.skill.Skill;
 import com.avensys.CVparserApplication.skill.SkillRepository;
 import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
+import com.avensys.CVparserApplication.user.UserResponseDTO;
 import com.avensys.CVparserApplication.utility.FileUtil;
 import com.avensys.CVparserApplication.utility.GPTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,6 +22,8 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -88,12 +91,12 @@ public class ResumeService {
                                                      email (string): The email address of the candidate.\s
                                                      mobile (string): The mobile number of the candidate.\s
                                                      skills (array): The skills possessed by the candidate. Both technical skills and soft skills.
-                                                     companiesDetails (array): All the companies the candidate worked with.
+                                                     companiesDetails (array): All the companies the candidate worked with including internships. Array should start with the latest.
                                                      1)	name:(string) name of the company . If nothing, return "".
                                                      2)	startDate: (string) start date in this format month/year If nothing, return "".
-                                                     3)	endDate: (string) end date || Jan 2023 || if present, then Jan 2023. Use this format for output month/year If nothing, return "".
+                                                     3)	endDate: (string) end date or if no end date, present is Jan 2023. Use this format for output month/year If nothing, return "".
                                                      4)	noOfYears: (decimal) Number of employment years in the company. Else return 0.0. If start date is empty, then is 0\s
-                                                     yearsOfExperience (number): Total employment in years based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only. Verify by adding up all the noOfYears from companiesDetails array.
+                                                     yearsOfExperience (number): Total employment in years including internship based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only. Verify by adding up all the noOfYears from companiesDetails array.
                                                      1)Exclude education and trainings.\s
                                                      2) If candidate mention only present date without start date, then calculate years based on the last working date to present.
                                                      3) If candidate mention start date to present date, then calculate years based on the start date to present date.
@@ -150,6 +153,15 @@ public class ResumeService {
         this.skillRepository = skillRepository;
         this.companyRepository = companyRepository;
         this.restTemplate = restTemplate;
+    }
+
+    public AdminResumesResponseDTO getAllResumes(int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        Page resumeList = resumeRepository.findAllWithPage(pageable);
+
+        List<ResumeCreateResponseDTO> resumeListResponse = mapToResumeCreateResponseDTOList(resumeList.getContent());
+        AdminResumesResponseDTO adminResumeResponse = new AdminResumesResponseDTO(resumeList.getTotalPages(), page, resumeListResponse);
+        return adminResumeResponse;
     }
 
     public ResumeUpdateResponseDTO getResume(long UserId, long resumeId) {
@@ -281,33 +293,6 @@ public class ResumeService {
         Resume resume = chatGPTResponseToResume(jsonOutput);
         resume.setFileName(resumeCreateRequest.fileName());
 
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        ChatGPTMappedDTO chatGPTMappedResults = null;
-//        try {
-//            chatGPTMappedResults = objectMapper.readValue(jsonOutput, ChatGPTMappedDTO.class);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//        System.out.println("name: " + chatGPTMappedResults.getName());
-//        System.out.println("email: " + chatGPTMappedResults.getEmail());
-//        System.out.println("mobile: " + chatGPTMappedResults.getMobile());
-//        System.out.println("skills: " + Arrays.toString(chatGPTMappedResults.getSkills()));
-//        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
-//        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
-//
-//        Resume resume = new Resume();
-//        resume.setFileName(resumeCreateRequest.fileName());
-//        resume.setName(chatGPTMappedResults.getName());
-//        resume.setEmail(chatGPTMappedResults.getEmail());
-//        resume.setMobile(chatGPTMappedResults.getMobile());
-//        for (String skill : chatGPTMappedResults.getSkills()) {
-//            resume.addSkill(new Skill(skill));
-//        }
-//        resume.setYearsOfExperience(chatGPTMappedResults.getYearsOfExperience());
-//        for (String company : chatGPTMappedResults.getCompanies()) {
-//            resume.addCompany(new Company(company));
-//        }
-
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         User savedUser = userRepository.save(user.get());
@@ -409,7 +394,11 @@ public class ResumeService {
                 resume.getMobile(),
                 resume.getYearsOfExperience(),
                 skills,
-                companies);
+                companies,
+                resume.getCreatedAt(),
+                resume.getUpdatedAt(),
+                userToUserResponseDTO(resume.getUser())
+        );
     }
 
     private ResumeUpdateResponseDTO resumeToResumeUpdateResponseDTO(Resume resume) {
@@ -440,7 +429,11 @@ public class ResumeService {
                     resumeCreateResponse.getMobile(),
                     resumeCreateResponse.getYearsOfExperience(),
                     skills,
-                    companies);
+                    companies,
+                    resumeCreateResponse.getCreatedAt(),
+                    resumeCreateResponse.getUpdatedAt(),
+                    userToUserResponseDTO(resumeCreateResponse.getUser())
+            );
         }).collect(Collectors.toList());
     }
 
@@ -477,5 +470,18 @@ public class ResumeService {
 
         return resume;
     }
+
+    private UserResponseDTO userToUserResponseDTO(User user) {
+        return new UserResponseDTO(
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole(),
+                user.getResumeLimit(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+    }
+
 
 }

@@ -154,8 +154,12 @@ function NavBar() {
                     Downgrade Subscription
                   </div>
                 )}
-                <div>Manage Resumes</div>
-                <div>Manage Users</div>
+                {ctx.getUserRole() === "ROLE_ADMIN" && (
+                  <>
+                    <div onClick={() => navigate("/admin/resumes")}>Manage Resumes</div>
+                    <div>Manage Users</div>
+                  </>
+                )}
                 <div onClick={handleLogout}>Logout</div>
               </div>
             )}
@@ -195,8 +199,7 @@ function NavBar() {
         </div>
       </Modal>
 
-
-    {/* // Downgrade Subcription */}
+      {/* // Downgrade Subcription */}
       <Modal
         isOpen={showDowngradeModal}
         closeModal={() => setShowDowngradeModal(false)}

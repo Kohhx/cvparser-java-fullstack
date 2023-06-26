@@ -37,6 +37,7 @@ public class ResumeController {
         return new ResponseEntity<ResumeCreateResponseDTO>(chatResponse, HttpStatus.OK);
     }
 
+    // Newer algo for chat GPT
     @PostMapping("resumes/test")
     public ResponseEntity<ResumeCreateResponseDTO> createResumeTest(@ModelAttribute ResumeCreateRequestDTO resumeCreateRequest) {
         ResumeCreateResponseDTO chatResponse = resumeService.resumeTest(resumeCreateRequest);
@@ -54,6 +55,14 @@ public class ResumeController {
     public ResponseEntity<CustomResponse> deleteResume(@PathVariable long id) {
         resumeService.deleteResume(id);
         return new ResponseEntity<CustomResponse>(new CustomResponse("Resume deleted successfully"), HttpStatus.OK);
+    }
+
+//     Admin Routes
+    @GetMapping("/admin/resumes")
+    public ResponseEntity<AdminResumesResponseDTO> getAllResumes(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String keywords) {
+        int size = 2;
+        AdminResumesResponseDTO adminResumeResponseDTO = resumeService.getAllResumes(page, size);
+        return new ResponseEntity<AdminResumesResponseDTO>(adminResumeResponseDTO, HttpStatus.OK);
     }
 
 }
