@@ -23,3 +23,7 @@
     word-break: break-word;
     overflow: hidden;
 }
+
+.main-container {
+margin-top: 80px !important;
+}
