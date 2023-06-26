@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name= "Resume")
 @Table(name = "resumes")
 public class Resume {
 

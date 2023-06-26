@@ -36,16 +36,7 @@ public class UserService {
     public UserResponseDTO getUserById(long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            UserResponseDTO userResponse = new UserResponseDTO(
-                    user.get().getEmail(),
-                    user.get().getFirstName(),
-                    user.get().getLastName(),
-                    user.get().getRole(),
-                    user.get().getResumeLimit(),
-                    user.get().getCreatedAt(),
-                    user.get().getUpdatedAt()
-            );
-            return userResponse;
+            return userToUserResponseDTO(user.get());
         } else {
             throw new ResourceNotFoundException("User with id %s not found".formatted(id));
         }
@@ -74,6 +65,18 @@ public class UserService {
         User updatedUser = userRepository.save(user.get());
         UserRoleResponseDTO userRoleResponse = new UserRoleResponseDTO(updatedUser.getRole());
         return userRoleResponse;
+    }
+
+    private UserResponseDTO userToUserResponseDTO(User user) {
+        return new UserResponseDTO(
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole(),
+                user.getResumeLimit(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
     }
 
 
