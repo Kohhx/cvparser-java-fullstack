@@ -156,7 +156,7 @@ function NavBar() {
                 )}
                 {ctx.getUserRole() === "ROLE_ADMIN" && (
                   <>
-                    <div onClick={() => navigate("/admin/resumes")}>Manage Resumes</div>
+                    <div onClick={() => navigate("/admin/resumes?page=1")}>Manage Resumes</div>
                     <div>Manage Users</div>
                   </>
                 )}

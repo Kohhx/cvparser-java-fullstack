@@ -59,9 +59,18 @@ public class ResumeController {
 
 //     Admin Routes
     @GetMapping("/admin/resumes")
-    public ResponseEntity<AdminResumesResponseDTO> getAllResumes(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String keywords) {
-        int size = 2;
-        AdminResumesResponseDTO adminResumeResponseDTO = resumeService.getAllResumes(page, size);
+    public ResponseEntity<AdminResumesResponseDTO> getAllResumes(@RequestParam int page, @RequestParam(required = false) String keywords) {
+        int size = 50;
+        System.out.println("Page:" + page);
+        System.out.println("Keywords: :" +  keywords);
+        AdminResumesResponseDTO adminResumeResponseDTO;
+        if (keywords.isEmpty()) {
+            System.out.println("Empty");
+             adminResumeResponseDTO = resumeService.getAllResumes(page, size);
+        } else {
+            System.out.println("With Key words");
+             adminResumeResponseDTO = resumeService.getAllResumesWithSearch(page, size, keywords);
+        }
         return new ResponseEntity<AdminResumesResponseDTO>(adminResumeResponseDTO, HttpStatus.OK);
     }
 

@@ -24,5 +24,8 @@ export const resumeAPI = {
   },
   adminGetAllResumes: async (page, keywords) => {
     return axiosInstance.get(`admin/resumes?page=${page}&keywords=${keywords}`);
+  },
+  adminGetAllResumesSearch: async (page, keywords) => {
+    return axiosInstance.get(`admin/resumes?page=${1}&keywords=${keywords}`);
   }
 };
