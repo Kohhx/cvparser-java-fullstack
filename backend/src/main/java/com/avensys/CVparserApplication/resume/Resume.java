@@ -29,7 +29,7 @@ public class Resume {
 
     private String mobile;
 
-    private int yearsOfExperience;
+    private double yearsOfExperience;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -52,7 +52,7 @@ public class Resume {
     public Resume() {
     }
 
-    public Resume(long id, String fileName, String name, String email, String mobile, int yearsOfExperience, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies) {
+    public Resume(long id, String fileName, String name, String email, String mobile, double yearsOfExperience, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies) {
         this.id = id;
         this.fileName = fileName;
         this.name = name;
@@ -106,11 +106,11 @@ public class Resume {
         this.mobile = mobile;
     }
 
-    public int getYearsOfExperience() {
+    public double getYearsOfExperience() {
         return yearsOfExperience;
     }
 
-    public void setYearsOfExperience(int yearsOfExperience) {
+    public void setYearsOfExperience(double yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
     }
 

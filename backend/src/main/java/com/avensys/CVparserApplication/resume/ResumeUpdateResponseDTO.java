@@ -8,7 +8,7 @@ public record ResumeUpdateResponseDTO(
         String name,
         String email,
         String mobile,
-        int yearsOfExperience,
+        double yearsOfExperience,
         List<String> skills,
         List<String> companies) {
 
