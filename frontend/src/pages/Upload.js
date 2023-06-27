@@ -14,6 +14,7 @@ import Modal from "../components/shared/Modal";
 import { TiTick } from "react-icons/ti";
 import { MdCancel } from "react-icons/md";
 import { authenticationAPI } from "../api/authenticationAPI";
+import { CSSTransition } from "react-transition-group";
 
 const Upload = () => {
   const uploadRef = useRef();
@@ -159,22 +160,22 @@ const Upload = () => {
 
   function getUserDetails() {
     userAPI
-    .getUserDetails(ctx.getUserId())
-    .then((res) => {
-      console.log(res.data);
-      setUserDetails(res.data);
-    })
-    .catch((err) => {
-      toast.error(
-        err.response.data.message ||
-          "Error in registration. Please try again." ||
-          "Something went wrong. Please try again."
-      );
-    });
+      .getUserDetails(ctx.getUserId())
+      .then((res) => {
+        console.log(res.data);
+        setUserDetails(res.data);
+      })
+      .catch((err) => {
+        toast.error(
+          err.response.data.message ||
+            "Error in registration. Please try again." ||
+            "Something went wrong. Please try again."
+        );
+      });
   }
 
   useEffect(() => {
-    getUserDetails()
+    getUserDetails();
   }, [ctx.userDetails.role]);
 
   const handleSubscriptionUpgrade = () => {
@@ -196,33 +197,43 @@ const Upload = () => {
   return (
     <>
       {/* // Upgrade Subcription */}
-      <Modal isOpen={showUpgradeModal} closeModal={() => setShowUpgradeModal(false)}>
-        <MdCancel
-          className="cancel-icon"
-          onClick={() => setShowUpgradeModal(false)}
-        />
-        <div className="subscription-container">
-          <h2>Upgrade Subcription</h2>
-          <p className="subscription-type">Paid</p>
-          <p className="subscription-price">$20.00 per month</p>
-          <div>
-            <div className="d-flex align-items-center">
-              <TiTick className="tick-icon" />
-              <p>Unlimited resume upload</p>
+      <CSSTransition
+        in={showUpgradeModal}
+        timeout={200}
+        classNames="fadedown" // Classes for css transition in index.css
+        unmountOnExit
+      >
+        <Modal
+          isOpen={showUpgradeModal}
+          closeModal={() => setShowUpgradeModal(false)}
+        >
+          <MdCancel
+            className="cancel-icon"
+            onClick={() => setShowUpgradeModal(false)}
+          />
+          <div className="subscription-container">
+            <h2>Upgrade Subcription</h2>
+            <p className="subscription-type">Paid</p>
+            <p className="subscription-price">$20.00 per month</p>
+            <div>
+              <div className="d-flex align-items-center">
+                <TiTick className="tick-icon" />
+                <p>Unlimited resume upload</p>
+              </div>
+              <div className="d-flex align-items-center">
+                <TiTick className="tick-icon" />
+                <p>Unlimited resume parsing</p>
+              </div>
             </div>
-            <div className="d-flex align-items-center">
-              <TiTick className="tick-icon" />
-              <p>Unlimited resume parsing</p>
-            </div>
+            <button
+              onClick={handleSubscriptionUpgrade}
+              className="btn-rounded-solid mt-4"
+            >
+              Upgrade
+            </button>
           </div>
-          <button
-            onClick={handleSubscriptionUpgrade}
-            className="btn-rounded-solid mt-4"
-          >
-            Upgrade
-          </button>
-        </div>
-      </Modal>
+        </Modal>
+      </CSSTransition>
       <div className="upload-container">
         <div className="upload-left-section">
           <form onSubmit={handleSubmit}>

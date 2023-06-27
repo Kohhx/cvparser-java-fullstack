@@ -46,3 +46,75 @@ margin-top: 0px !important;
   background: rgb(8, 83, 244);
   color: white;
 }
+
+.fade-enter {
+  opacity: 0.01;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 400ms ease-in-out;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 400ms ease-in-out;
+}
+
+.grow-enter {
+  transform: scale(0);
+}
+.grow-enter-active {
+  transform: scale(1);
+  transition: all 200ms ease-in-out;
+}
+.grow-exit {
+  transform: scale(1);
+}
+.grow-exit-active {
+  transform: scale(0);
+  transition: all 200ms ease-in-out;
+}
+
+.fadedown-enter {
+  /* opacity: 0.01; */
+  transform: translateY(-5px);
+  filter: blur(2px);
+}
+.fadedown-enter-active {
+  /* opacity: 1; */
+  filter: blur(0px);
+  transform: translateY(0);
+  transition: all 300ms ease-in-out;
+}
+.fadedown-exit {
+  transform: translateY(0);
+  /* opacity: 1; */
+  filter: blur(0px);
+}
+.fadedown-exit-active {
+  transform: translateY(-5px);
+  filter: blur(2px);
+  /* opacity: 0.01; */
+  transition: all 300ms ease-in-out;
+}
+
+
+.alert-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.alert-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.alert-exit {
+  opacity: 1;
+}
+.alert-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms, transform 300ms;
+}
