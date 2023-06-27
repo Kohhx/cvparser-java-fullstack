@@ -143,6 +143,10 @@ const AdminManageResumes = () => {
   };
 
   const handleSizeChange = (e) => {
+    if (e.target.value === "") {
+      setSize(5)
+      return
+    }
     setSize(prev => e.target.value);
     resumeAPI
       .adminGetAllResumes(+searchParams.get("page"), searchInput, e.target.value)

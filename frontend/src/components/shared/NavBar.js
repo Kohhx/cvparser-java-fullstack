@@ -20,6 +20,7 @@ function NavBar() {
   const [dropdown, setDropdown] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showDowngradeModal, setShowDowngradeModal] = useState(false);
+  const [user, setUser] = useState({});
   const navigate = useNavigate();
   const handleLogout = () => {
     authenticationAPI.logout();
@@ -32,6 +33,13 @@ function NavBar() {
   const dropdownBtn = useRef();
 
   useEffect(() => {
+    userAPI.getUserDetails(ctx.getUserId()).then((res) => {
+      console.log(res.data);
+      setUser(res.data);
+    });
+  }, []);
+
+  useEffect(() => {
     document.addEventListener("click", (e) => {
       if (dropdown && !dropdownBtn.current?.contains(e.target)) {
         setDropdown(false);
@@ -42,7 +50,7 @@ function NavBar() {
       document.removeEventListener("click", (e) => {
         setDropdown(false);
       });
-  });
+  }, []);
 
   const handleSubscriptionUpgrade = () => {
     console.log("upgrade");
@@ -127,49 +135,57 @@ function NavBar() {
               Your Resumes
             </NavLink>
           </div>
-          {ctx.getUserRole()}
-          {ctx.userDetails.role}
-          <div className="dropdown" style={{ paddingRight: "30px" }}>
-            <div
-              className="dropdown-toggle"
-              type="button"
-              id="dropdownMenuButton"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-              onClick={() => setDropdown(!dropdown)}
-              ref={dropdownBtn}
-            >
-              <PiSquaresFourFill className="square-four-icon" />
-            </div>
-            {dropdown && (
+          {/* {ctx.getUserRole()}
+          {ctx.userDetails.role} */}
+          <div className="d-flex gap-5 align-items-center">
+            <span className="myName">
+              Welcome, {user.firstName} {user.lastName}
+            </span>
+            <div className="dropdown" style={{ paddingRight: "30px" }}>
               <div
-                className="dropdown-content"
-                aria-labelledby="dropdownMenuButton"
+                className="dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onClick={() => setDropdown(!dropdown)}
+                ref={dropdownBtn}
               >
-                {ctx.getUserRole() === "ROLE_FREE" && (
-                  <div onClick={() => setShowUpgradeModal(true)}>
-                    Upgrade Subscription
-                  </div>
-                )}
-                {ctx.getUserRole() === "ROLE_PAID" && (
-                  <div onClick={() => setShowDowngradeModal(true)}>
-                    Downgrade Subscription
-                  </div>
-                )}
-                {ctx.getUserRole() === "ROLE_ADMIN" && (
-                  <>
-                    <div
-                      onClick={() => navigate("/admin/resumes?page=1&size=5")}
-                    >
-                      Manage Resumes
-                    </div>
-                    {/* <div>Manage Users</div> */}
-                  </>
-                )}
-                <div onClick={handleLogout}>Logout</div>
+                <PiSquaresFourFill className="square-four-icon" />
               </div>
-            )}
+              {dropdown && (
+                <div
+                  className="dropdown-content"
+                  aria-labelledby="dropdownMenuButton"
+                >
+                  {ctx.getUserRole() === "ROLE_FREE" && (
+                    <div onClick={() => setShowUpgradeModal(true)}>
+                      Upgrade Subscription
+                    </div>
+                  )}
+                  {ctx.getUserRole() === "ROLE_PAID" && (
+                    <div onClick={() => setShowDowngradeModal(true)}>
+                      Downgrade Subscription
+                    </div>
+                  )}
+                  {ctx.getUserRole() === "ROLE_ADMIN" && (
+                    <>
+                      <div
+                        onClick={() => {
+                          setDropdown(false);
+                          navigate("/admin/resumes?page=1&size=5");
+                        }}
+                      >
+                        Manage Resumes
+                      </div>
+                      {/* <div>Manage Users</div> */}
+                    </>
+                  )}
+                  <div onClick={handleLogout}>Logout</div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </nav>
@@ -220,32 +236,32 @@ function NavBar() {
         classNames="fadedown" // Classes for css transition in index.css
         unmountOnExit
       >
-      <Modal
-        isOpen={showDowngradeModal}
-        closeModal={() => setShowDowngradeModal(false)}
-      >
-        <MdCancel
-          className="cancel-icon"
-          onClick={() => setShowDowngradeModal(false)}
-        />
-        <div className="subscription-container">
-          <h2>Downgrade Subcription</h2>
-          <p className="subscription-type">Free</p>
-          <p className="subscription-price">$0</p>
-          <div>
-            <div className="d-flex align-items-center">
-              <TiTick className="tick-icon" />
-              <p>Maximum of 5 resumes</p>
+        <Modal
+          isOpen={showDowngradeModal}
+          closeModal={() => setShowDowngradeModal(false)}
+        >
+          <MdCancel
+            className="cancel-icon"
+            onClick={() => setShowDowngradeModal(false)}
+          />
+          <div className="subscription-container">
+            <h2>Downgrade Subcription</h2>
+            <p className="subscription-type">Free</p>
+            <p className="subscription-price">$0</p>
+            <div>
+              <div className="d-flex align-items-center">
+                <TiTick className="tick-icon" />
+                <p>Maximum of 5 resumes</p>
+              </div>
             </div>
+            <button
+              onClick={handleSubscriptionDowngrade}
+              className="btn-rounded-solid mt-4"
+            >
+              Downgrade
+            </button>
           </div>
-          <button
-            onClick={handleSubscriptionDowngrade}
-            className="btn-rounded-solid mt-4"
-          >
-            Downgrade
-          </button>
-        </div>
-      </Modal>
+        </Modal>
       </CSSTransition>
     </>
   );
