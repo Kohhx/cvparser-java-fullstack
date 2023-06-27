@@ -51,6 +51,7 @@ const Upload = () => {
     // console.log(fileType)
     if (fileType !== "pdf" && fileType !== "doc" && fileType !== "docx") {
       toast.error("Only PDF, DOC, and DOCX file types are allowed.");
+      return;
     }
     // Set file to state
     console.log(selectedFile);
@@ -202,7 +203,7 @@ const Upload = () => {
         timeout={200}
         classNames="fadedown" // Classes for css transition in index.css
         unmountOnExit
-      >
+    >
         <Modal
           isOpen={showUpgradeModal}
           closeModal={() => setShowUpgradeModal(false)}
