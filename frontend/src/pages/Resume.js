@@ -5,7 +5,7 @@ import { RxCross2 } from "react-icons/rx";
 import { RiAddCircleFill } from "react-icons/ri";
 import { useParams, useNavigate } from "react-router-dom";
 import { resumeAPI } from "../api/resumeAPI";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify"
 
 const Resume = () => {
   const params = useParams();
@@ -141,6 +141,10 @@ const Resume = () => {
       const resume = res.data;
       // Set Initial state
       setFields(resume);
+    }).catch((err) => {
+      console.log(err);
+      toast.error("Access denied to resume");
+      navigate(`/upload`)
     });
   }, []);
 
