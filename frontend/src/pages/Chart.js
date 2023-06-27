@@ -50,7 +50,7 @@ export const CompaniesSkillsHeatmap = ({ data }) => {
 
     const skills = Object.keys(skillsCount);
     const companies = Object.keys(companiesCount);
-    
+
     // Creating an array of arrays for the heatmap
     const heatMapData = skills.map(skill => companies.map(company => {
         let count = 0;
@@ -179,7 +179,7 @@ export const ExperienceRadialBarChart = ({ data }) => {
         YearsOfExperience: item.yearsOfExperience
     }));
 
-    
+
     return (
         <RadialBarChart
             width={500}
@@ -208,14 +208,14 @@ const ResumeStatistics = ({ resumes }) => {
 
     return (
         <div class = "overflow-auto">
-            <h2>Resume Statistics</h2>
+            {/* <h2>Resume Statistics</h2> */}
         <div class = "d-flex">
             <ExperienceBarChart data={data} />
             <SkillsAreaChart data={data} />
             <CompaniesBarChart data={data} />
         </div>
         <div class = "d-flex">
-            
+
         </div>
         </div>
     )
