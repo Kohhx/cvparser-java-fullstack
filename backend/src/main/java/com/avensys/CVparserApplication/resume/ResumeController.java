@@ -18,12 +18,20 @@ public class ResumeController {
         this.resumeService = resumeService;
     }
 
-//    @PreAuthorize("hasRole('ROLE_USER')")
+////    @PreAuthorize("hasRole('ROLE_USER')")
+//    @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
+//    @GetMapping("/users/{userId}/resumes/{resumeId}")
+//    public ResponseEntity<ResumeUpdateResponseDTO> getResume(@PathVariable long userId, @PathVariable long resumeId) {
+//        ResumeUpdateResponseDTO resumeResponse = resumeService.getResume(userId, resumeId);
+//        return new ResponseEntity<ResumeUpdateResponseDTO>(resumeResponse, HttpStatus.OK);
+//    }
+
+    //    @PreAuthorize("hasRole('ROLE_USER')")
     @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
     @GetMapping("/users/{userId}/resumes/{resumeId}")
-    public ResponseEntity<ResumeUpdateResponseDTO> getResume(@PathVariable long userId, @PathVariable long resumeId) {
-        ResumeUpdateResponseDTO resumeResponse = resumeService.getResume(userId, resumeId);
-        return new ResponseEntity<ResumeUpdateResponseDTO>(resumeResponse, HttpStatus.OK);
+    public ResponseEntity<ResumeCreateResponseDTO> getResume(@PathVariable long userId, @PathVariable long resumeId) {
+        ResumeCreateResponseDTO resumeResponse = resumeService.getResume(userId, resumeId);
+        return new ResponseEntity<ResumeCreateResponseDTO>(resumeResponse, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")

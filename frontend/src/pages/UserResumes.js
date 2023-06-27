@@ -8,6 +8,7 @@ import detailsIcon from "./Assets/detailsIcon.png";
 import deleteIcon from "./Assets/deleteIcon.png";
 import { toast } from "react-toastify";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { excelUtil } from "../utility/excelUtil";
 
 const UserResumes = () => {
   const ctx = useContext(UserContext);
@@ -62,6 +63,11 @@ const UserResumes = () => {
     });
   };
 
+  const exportToExcel = () => {
+    console.log(filteredResumes);
+    excelUtil.exportToExcel(filteredResumes);
+  };
+
   return (
     <div
       className="container user-resumes-container"
@@ -71,9 +77,18 @@ const UserResumes = () => {
         <h1 className="myresume-title">My Resumes</h1>
         <div className="ml-auto ">
           <div className="search-container">
-            <h4 className="mb-2">
-              Filter <span>Resumes</span>
-            </h4>
+            <div className="d-flex align-items-center justify-content-between mb-2">
+              <h4 className="mb-2">
+                Filter <span>Resumes</span>
+              </h4>
+              {(ctx.getUserRole() === "ROLE_ADMIN" ||
+                ctx.getUserRole() === "ROLE_PAID") && (
+                <button onClick={exportToExcel} className="btn btn-secondary">
+                  Export to excel
+                </button>
+              )}
+            </div>
+
             <input
               type="text"
               placeholder="Search by Resume Filename"
