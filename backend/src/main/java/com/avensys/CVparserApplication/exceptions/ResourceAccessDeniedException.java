@@ -1,6 +1,7 @@
 package com.avensys.CVparserApplication.exceptions;
 
 public class ResourceAccessDeniedException extends GlobalException {
+
     public ResourceAccessDeniedException(String message) {
         super(message);
     }

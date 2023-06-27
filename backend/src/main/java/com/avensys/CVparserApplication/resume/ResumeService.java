@@ -2,6 +2,7 @@ package com.avensys.CVparserApplication.resume;
 
 import com.avensys.CVparserApplication.company.Company;
 import com.avensys.CVparserApplication.company.CompanyRepository;
+import com.avensys.CVparserApplication.exceptions.ResourceAccessDeniedException;
 import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
 import com.avensys.CVparserApplication.exceptions.UploadFileException;
 import com.avensys.CVparserApplication.openai.ChatGPTMappedDTO;
@@ -44,7 +45,7 @@ public class ResumeService {
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
     public final RestTemplate restTemplate;
-    public final double chatGPTTemperature = 0.5;
+    public final double chatGPTTemperature = 0.7;
 
 
     @Value("${openai.model}")
@@ -203,6 +204,7 @@ public class ResumeService {
     }
 
     public ResumeUpdateResponseDTO getResume(long UserId, long resumeId) {
+
         Optional<User> user = userRepository.findById(UserId);
         if (!user.isPresent()) {
             throw new UsernameNotFoundException("User not found");
@@ -211,6 +213,11 @@ public class ResumeService {
         if (!resume.isPresent()) {
             throw new ResourceNotFoundException("Resume not found");
         }
+
+        if(!checkIsAdmin()){
+            checkResumeBelongToUser(resume.get());
+        }
+
         return resumeToResumeUpdateResponseDTO(resume.get());
     }
 
@@ -542,5 +549,17 @@ public class ResumeService {
         );
     }
 
+    private boolean checkIsAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+    }
+
+    public void checkResumeBelongToUser(Resume resume) {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(principal.getName());
+        if (resume.getUser().getId() != user.get().getId()) {
+            throw new ResourceAccessDeniedException("Access denied to resource");
+        }
+    }
 
 }

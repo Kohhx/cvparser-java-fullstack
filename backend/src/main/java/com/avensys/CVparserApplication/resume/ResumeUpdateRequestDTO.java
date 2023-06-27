@@ -1,6 +1,8 @@
 package com.avensys.CVparserApplication.resume;
 
 public record ResumeUpdateRequestDTO(
+
+
         long id,
         String fileName,
         String name,
