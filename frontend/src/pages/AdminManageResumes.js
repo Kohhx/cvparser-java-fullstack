@@ -29,7 +29,6 @@ const AdminManageResumes = () => {
     setShowStats((prevShowStats) => !prevShowStats);
   };
 
-
   useEffect(() => {
     setPage(+searchParams.get("page"));
     resumeAPI
@@ -151,18 +150,22 @@ const AdminManageResumes = () => {
 
   const handleSizeChange = (e) => {
     if (e.target.value === "") {
-      setSize(5)
-      return
+      setSize(5);
+      return;
     }
-    setSize(prev => e.target.value);
+    setSize((prev) => e.target.value);
     resumeAPI
-      .adminGetAllResumes(+searchParams.get("page"), searchInput, e.target.value)
+      .adminGetAllResumes(
+        +searchParams.get("page"),
+        searchInput,
+        e.target.value
+      )
       .then((res) => {
         console.log(res.data);
         setResumes(res.data.resumeList);
         setTotalPages(res.data.totalPages);
       });
-  }
+  };
 
   return (
     <div className=" admin-resume-container">
@@ -183,13 +186,30 @@ const AdminManageResumes = () => {
                     placeHolder="Search resume by skills or name"
                   />
                 </div>
-                <button type="submit" hidden>
+                {/* <button type="submit" hidden>
                   submit
-                </button>
+                </button> */}
               </form>
+              <button
+                type="btn"
+                className="btn btn-primary"
+                style={{ color: "white", marginLeft: "5px" }}
+                onClick={handleShowStats}
+              >
+                Toggle Statistics
+              </button>
             </div>
             <div className="d-flex gap-2">
-              <input onChange={handleSizeChange} type="number" value={size} min="5" max="50" step="5" placeholder="Count per page" className="count-input" />
+              <input
+                onChange={handleSizeChange}
+                type="number"
+                value={size}
+                min="5"
+                max="50"
+                step="5"
+                placeholder="Count per page"
+                className="count-input"
+              />
               <button
                 className="btn btn-secondary btn-custom"
                 onClick={exportToExcel}
@@ -199,17 +219,16 @@ const AdminManageResumes = () => {
             </div>
           </div>
         </div>
-
-        <div>
-          <button type="button" onClick={handleShowStats}>
-            Toggle Statistics
-          </button>
-
-          {showStats ? <ResumeStatistics resumes={resumes} /> : null}
-
+        {showStats && (
+        <div className="resume-statistics">
+          <h2>Resumes Statistics</h2>
+          <div>
+            <ResumeStatistics resumes={resumes} />
+          </div>
         </div>
-        <br>
-        </br>
+        )}
+
+        <br></br>
 
         <div class="table-responsive">
           <table class="table table-striped-columns custom-table">
