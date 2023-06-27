@@ -13,6 +13,7 @@ import { TiTick } from "react-icons/ti";
 import { MdCancel } from "react-icons/md";
 import { userAPI } from "../../api/userAPI";
 import { toast } from "react-toastify";
+import { CSSTransition } from "react-transition-group";
 
 function NavBar() {
   const ctx = useContext(UserContext);
@@ -25,6 +26,8 @@ function NavBar() {
     ctx.logoutUserDetails();
     navigate("/login");
   };
+
+  const nodeRef = useRef();
 
   const dropdownBtn = useRef();
 
@@ -86,7 +89,7 @@ function NavBar() {
           />
           <div class="logo-text">
             <h6>Avensys</h6>
-            <h5>CSV Parser</h5>
+            <h5>CV Parser</h5>
           </div>
         </NavLink>
         <button
@@ -156,8 +159,12 @@ function NavBar() {
                 )}
                 {ctx.getUserRole() === "ROLE_ADMIN" && (
                   <>
-                    <div onClick={() => navigate("/admin/resumes?page=1")}>Manage Resumes</div>
-                    <div>Manage Users</div>
+                    <div
+                      onClick={() => navigate("/admin/resumes?page=1&size=5")}
+                    >
+                      Manage Resumes
+                    </div>
+                    {/* <div>Manage Users</div> */}
                   </>
                 )}
                 <div onClick={handleLogout}>Logout</div>
@@ -168,38 +175,51 @@ function NavBar() {
       </nav>
 
       {/* // Upgrade Subcription */}
-      <Modal
-        isOpen={showUpgradeModal}
-        closeModal={() => setShowUpgradeModal(false)}
+      <CSSTransition
+        in={showUpgradeModal}
+        timeout={200}
+        classNames="fadedown" // Classes for css transition in index.css
+        unmountOnExit
       >
-        <MdCancel
-          className="cancel-icon"
-          onClick={() => setShowUpgradeModal(false)}
-        />
-        <div className="subscription-container">
-          <h2>Upgrade Subcription</h2>
-          <p className="subscription-type">Paid</p>
-          <p className="subscription-price">$20.00 per month</p>
-          <div>
-            <div className="d-flex align-items-center">
-              <TiTick className="tick-icon" />
-              <p>Unlimited resume upload</p>
+        <Modal
+          isOpen={showUpgradeModal}
+          closeModal={() => setShowUpgradeModal(false)}
+        >
+          <MdCancel
+            className="cancel-icon"
+            onClick={() => setShowUpgradeModal(false)}
+          />
+          <div className="subscription-container">
+            <h2>Upgrade Subcription</h2>
+            <p className="subscription-type">Paid</p>
+            <p className="subscription-price">$20.00 per month</p>
+            <div>
+              <div className="d-flex align-items-center">
+                <TiTick className="tick-icon" />
+                <p>Unlimited resume upload</p>
+              </div>
+              <div className="d-flex align-items-center">
+                <TiTick className="tick-icon" />
+                <p>Unlimited resume parsing</p>
+              </div>
             </div>
-            <div className="d-flex align-items-center">
-              <TiTick className="tick-icon" />
-              <p>Unlimited resume parsing</p>
-            </div>
+            <button
+              onClick={handleSubscriptionUpgrade}
+              className="btn-rounded-solid mt-4"
+            >
+              Upgrade
+            </button>
           </div>
-          <button
-            onClick={handleSubscriptionUpgrade}
-            className="btn-rounded-solid mt-4"
-          >
-            Upgrade
-          </button>
-        </div>
-      </Modal>
+        </Modal>
+      </CSSTransition>
 
       {/* // Downgrade Subcription */}
+      <CSSTransition
+        in={showDowngradeModal}
+        timeout={200}
+        classNames="fadedown" // Classes for css transition in index.css
+        unmountOnExit
+      >
       <Modal
         isOpen={showDowngradeModal}
         closeModal={() => setShowDowngradeModal(false)}
@@ -226,6 +246,7 @@ function NavBar() {
           </button>
         </div>
       </Modal>
+      </CSSTransition>
     </>
   );
 }

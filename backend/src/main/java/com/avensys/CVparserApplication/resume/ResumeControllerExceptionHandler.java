@@ -1,6 +1,7 @@
 package com.avensys.CVparserApplication.resume;
 
 import com.avensys.CVparserApplication.exceptions.ExceptionResponse;
+import com.avensys.CVparserApplication.exceptions.ResourceAccessDeniedException;
 import com.avensys.CVparserApplication.exceptions.UploadFileException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,23 @@ public class ResumeControllerExceptionHandler {
         );
 
         if (uploadFileException.includeStackTrace) {
+            return new ResponseEntity<>(apiException, apiException.getHttpStatus());
+        }
+
+        apiException.setThrowable(null);
+        return new ResponseEntity<>(apiException, apiException.getHttpStatus());
+    }
+
+    @ExceptionHandler({ResourceAccessDeniedException.class})
+    public ResponseEntity<Object> handleApiException(ResourceAccessDeniedException resourceAccessDeniedException) {
+        ExceptionResponse apiException = new ExceptionResponse(
+                resourceAccessDeniedException.getMessage(),
+                resourceAccessDeniedException,
+                HttpStatus.UNAUTHORIZED,
+                LocalDate.now()
+        );
+
+        if (resourceAccessDeniedException.includeStackTrace) {
             return new ResponseEntity<>(apiException, apiException.getHttpStatus());
         }
 
