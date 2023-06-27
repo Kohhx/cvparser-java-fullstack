@@ -83,3 +83,8 @@ border-radius: 20px;
   color: rgb(85, 122, 221);
   text-shadow: 0.2px 0.2px 0.6px black;
 }
+
+.total-resumes{
+  color:rgb(207, 207, 207);
+  font-style: italic;
+}

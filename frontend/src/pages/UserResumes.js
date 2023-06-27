@@ -19,10 +19,13 @@ const UserResumes = () => {
   const [resumes, setResumes] = useState("");
   const params = useParams();
   const navigate = useNavigate();
+  const [totalResumes, setTotalResumes] = useState(0);
 
   const getResumes = () => {
     resumeAPI.getUserResumes(ctx.getUserId()).then((res) => {
       setResumes(res.data);
+      console.log(res.data)
+      setTotalResumes(res.data.length);
     });
   };
 
@@ -35,6 +38,9 @@ const UserResumes = () => {
   //Table Mapping
   const resumesArray = Object.values(resumes);
   const filteredResumes = resumesArray.filter((resume) => {
+    if (searchSkills==="" && searchName==="") {
+      return resumes;
+    }
     return (
       resume.skills.some((skill) =>
         skill.toLowerCase().includes(searchSkills.toLowerCase())
@@ -74,7 +80,11 @@ const UserResumes = () => {
       style={{ display: "flex", justifyContent: "center" }}
     >
       <div style={{ width: "85%" }}>
-        <h1 className="myresume-title">My Resumes</h1>
+        <div className="d-flex align-items-center justify-content-between">
+          <h1 className="myresume-title">My Resumes</h1>
+          <h4 className="total-resumes">Total Resumes: {totalResumes}</h4>
+        </div>
+
         <div className="ml-auto ">
           <div className="search-container">
             <div className="d-flex align-items-center justify-content-between mb-2">
