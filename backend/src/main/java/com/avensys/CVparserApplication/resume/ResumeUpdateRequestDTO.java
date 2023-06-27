@@ -9,6 +9,7 @@ public record ResumeUpdateRequestDTO(
         String email,
         String mobile,
         int yearsOfExperience,
+        String education,
         String[] skills,
         String[] companies
 ) {

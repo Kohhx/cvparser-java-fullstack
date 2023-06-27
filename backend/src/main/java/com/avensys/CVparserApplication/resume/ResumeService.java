@@ -91,7 +91,7 @@ public class ResumeService {
                                                      name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.\s
                                                      email (string): The email address of the candidate.\s
                                                      mobile (string): The mobile number of the candidate.\s
-                                                     skills (array): The skills possessed by the candidate. Both technical skills and soft skills.
+                                                     skills (array): The skills possessed by the candidate. Just technical skills, and no linguistic languages.
                                                      companiesDetails (array): All the companies the candidate worked with including internships. Array should start with the latest.
                                                      1)	name:(string) name of the company . If nothing, return "".
                                                      2)	startDate: (string) start date in this format "month/year" If nothing, return "". 
@@ -107,11 +107,14 @@ public class ResumeService {
                                                      6) Please return number of years. Not months.
                                                      7) Always use candidate stated start date to end date first.
                                                      8) present always refer to end date.
-                                                     companies (array): The names of the recent 3 companies the candidate has worked for.
+                                                     companies (array): The names of the recent 3 companies the candidate has worked for. Do not return duplicate companies.
+                                                     education (string): Give me the candidate highest education qualification in the resume.
                                                      
                                                      Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid and complete according to the above requirements.The following is a chunk of a CV.
                                                      Complete the response before returning the response.
                     """;
+
+//    ["A-Levels","Diploma","Degree","Master","PHD"].
 
     private final String GPTPROMPT3_2 =
             """
@@ -377,6 +380,7 @@ public class ResumeService {
         resumeUpdated.get().setName(resumeUpdateRequest.name());
         resumeUpdated.get().setEmail(resumeUpdateRequest.email());
         resumeUpdated.get().setMobile(resumeUpdateRequest.mobile());
+        resumeUpdated.get().setEducation(resumeUpdateRequest.education());
         resumeUpdated.get().setYearsOfExperience(resumeUpdateRequest.yearsOfExperience());
 
         // Update Skills & Companies
@@ -478,6 +482,7 @@ public class ResumeService {
                 resume.getYearsOfExperience(),
                 skills,
                 companies,
+                resume.getEducation(),
                 resume.getCreatedAt(),
                 resume.getUpdatedAt(),
                 userToUserResponseDTO(resume.getUser())
@@ -496,6 +501,7 @@ public class ResumeService {
                 resume.getEmail(),
                 resume.getMobile(),
                 resume.getYearsOfExperience(),
+                resume.getEducation(),
                 skills,
                 companies);
     }
@@ -513,6 +519,7 @@ public class ResumeService {
                     resumeCreateResponse.getYearsOfExperience(),
                     skills,
                     companies,
+                    resumeCreateResponse.getEducation(),
                     resumeCreateResponse.getCreatedAt(),
                     resumeCreateResponse.getUpdatedAt(),
                     userToUserResponseDTO(resumeCreateResponse.getUser())
@@ -543,6 +550,7 @@ public class ResumeService {
         resume.setName(chatGPTMappedResults.getName());
         resume.setEmail(chatGPTMappedResults.getEmail());
         resume.setMobile(chatGPTMappedResults.getMobile());
+        resume.setEducation(chatGPTMappedResults.getEducation());
         for (String skill : chatGPTMappedResults.getSkills()) {
             resume.addSkill(new Skill(skill));
         }
