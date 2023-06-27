@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./css/Resume.css";
 import { AiFillEdit } from "react-icons/ai";
 import { RxCross2 } from "react-icons/rx";
@@ -6,8 +6,11 @@ import { RiAddCircleFill } from "react-icons/ri";
 import { useParams, useNavigate } from "react-router-dom";
 import { resumeAPI } from "../api/resumeAPI";
 import { toast } from "react-toastify"
+import { excelUtil } from "../utility/excelUtil";
+import { UserContext } from "../context/userContext";
 
 const Resume = () => {
+  const ctx = useContext(UserContext);
   const params = useParams();
   const navigate = useNavigate();
   const [resume, setResume] = useState(null);
@@ -71,6 +74,8 @@ const Resume = () => {
     setFileName((prev) => ({ ...prev, value: e.target.value }));
   };
 
+  console.log(resume)
+
   const handleUpdateResume = () => {
     console.log(fileName.value);
     console.log(name.value);
@@ -127,7 +132,7 @@ const Resume = () => {
     setName((prev) => ({ ...prev, value: resume?.name }));
     setEmail((prev) => ({ ...prev, value: resume?.email }));
     setMobile((prev) => ({ ...prev, value: resume?.mobile }));
-    setYearsOfExp((prev) => ({ ...prev, value: resume?.yearsOfExperience }));
+    setYearsOfExp((prev) => ({ ...prev, value: resume?.yearsOfExperience.toFixed(1) }));
     setSkills((prev) => [...prev, ...resume?.skills]);
     setCompany1((prev) => ({ ...prev, value: resume?.companies?.[0] }));
     setCompany2((prev) => ({ ...prev, value: resume?.companies?.[1] }));
@@ -147,6 +152,10 @@ const Resume = () => {
       navigate(`/upload`)
     });
   }, []);
+
+  const exportToExcel = () => {
+    excelUtil.exportToExcelCustom(resume)
+  }
 
   return (
     <div className="container resume-container w-50">
@@ -221,7 +230,7 @@ const Resume = () => {
           </div>
           <div class="resume-details-part">
             <div className="d-flex align-items-center gap-2">
-              <h3>Mobile</h3>{" "}
+              <h3>Mobile</h3>
               <AiFillEdit
                 className="edit-icons-md"
                 onClick={() =>
@@ -399,6 +408,10 @@ const Resume = () => {
           <button className="btn btn-danger" onClick={handleDeleteResume}>
             Delete
           </button>
+          { (ctx.getUserRole() === "ROLE_ADMIN" || ctx.getUserRole() === "ROLE_PAID") &&           <button className="btn btn-secondary" onClick={exportToExcel}>
+            Export to excel
+          </button>}
+
         </div>
 
 
