@@ -10,6 +10,7 @@ import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { MdDeleteForever } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
+import ResumeStatistics from "./Chart";
 
 const AdminManageResumes = () => {
   const navigate = useNavigate();
@@ -20,8 +21,14 @@ const AdminManageResumes = () => {
   const [resumes, setResumes] = useState([]);
   const [resumeExportData, setResumeExportData] = useState([]);
   const [size, setSize] = useState(5);
+  const [showStats, setShowStats] = useState(false);
 
   // console.log(searchParams.get("page"));
+
+  const handleShowStats = () => {
+    setShowStats((prevShowStats) => !prevShowStats);
+  };
+
 
   useEffect(() => {
     setPage(+searchParams.get("page"));
@@ -182,7 +189,7 @@ const AdminManageResumes = () => {
               </form>
             </div>
             <div className="d-flex gap-2">
-              <input onChange={handleSizeChange} type="number" value={size} min="5" max="50" step="5" placeholder="Count per page" className="count-input"/>
+              <input onChange={handleSizeChange} type="number" value={size} min="5" max="50" step="5" placeholder="Count per page" className="count-input" />
               <button
                 className="btn btn-secondary btn-custom"
                 onClick={exportToExcel}
@@ -192,6 +199,17 @@ const AdminManageResumes = () => {
             </div>
           </div>
         </div>
+
+        <div>
+          <button type="button" onClick={handleShowStats}>
+            Toggle Statistics
+          </button>
+
+          {showStats ? <ResumeStatistics resumes={resumes} /> : null}
+
+        </div>
+        <br>
+        </br>
 
         <div class="table-responsive">
           <table class="table table-striped-columns custom-table">
