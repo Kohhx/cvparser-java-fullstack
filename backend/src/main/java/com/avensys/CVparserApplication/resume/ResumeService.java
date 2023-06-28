@@ -511,6 +511,7 @@ public class ResumeService {
                 skills,
                 companies,
                 resume.getEducation(),
+                resume.getCompaniesDetails(),
                 resume.getCreatedAt(),
                 resume.getUpdatedAt(),
                 userToUserResponseDTO(resume.getUser())
@@ -530,6 +531,7 @@ public class ResumeService {
                 resume.getMobile(),
                 resume.getYearsOfExperience(),
                 resume.getEducation(),
+                resume.getCompaniesDetails(),
                 skills,
                 companies);
     }
@@ -548,6 +550,7 @@ public class ResumeService {
                     skills,
                     companies,
                     resumeCreateResponse.getEducation(),
+                    resumeCreateResponse.getCompaniesDetails(),
                     resumeCreateResponse.getCreatedAt(),
                     resumeCreateResponse.getUpdatedAt(),
                     userToUserResponseDTO(resumeCreateResponse.getUser())
@@ -574,7 +577,14 @@ public class ResumeService {
 //        System.out.println("skills: " + Arrays.toString(chatGPTMappedResults.getSkills()));
 //        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
 //        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
-
+        // Create an ObjectMapper instance
+        String companiesDetail;
+        try {
+            companiesDetail = objectMapper.writeValueAsString(chatGPTMappedResults.getCompaniesDetails());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        resume.setCompaniesDetails(companiesDetail);
         resume.setName(chatGPTMappedResults.getName());
         resume.setEmail(chatGPTMappedResults.getEmail());
         resume.setMobile(chatGPTMappedResults.getMobile());

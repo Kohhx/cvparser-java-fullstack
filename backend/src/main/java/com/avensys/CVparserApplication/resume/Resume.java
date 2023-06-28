@@ -33,6 +33,9 @@ public class Resume {
 
     private String education;
 
+    @Column(columnDefinition = "TEXT")
+    private String companiesDetails;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -54,19 +57,20 @@ public class Resume {
     public Resume() {
     }
 
-    public Resume(long id, String fileName, String name, String email, String mobile, double yearsOfExperience, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies, String education) {
+    public Resume(long id, String fileName, String name, String email, String mobile, double yearsOfExperience, String education, String companiesDetails, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies) {
         this.id = id;
         this.fileName = fileName;
         this.name = name;
         this.email = email;
         this.mobile = mobile;
         this.yearsOfExperience = yearsOfExperience;
+        this.education = education;
+        this.companiesDetails = companiesDetails;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.user = user;
         this.skills = skills;
         this.companies = companies;
-        this.education = education;
     }
 
     public long getId() {
@@ -199,6 +203,14 @@ public class Resume {
 
     public void setEducation(String education) {
         this.education = education;
+    }
+
+    public String getCompaniesDetails() {
+        return companiesDetails;
+    }
+
+    public void setCompaniesDetails(String companiesDetails) {
+        this.companiesDetails = companiesDetails;
     }
 
     @Override

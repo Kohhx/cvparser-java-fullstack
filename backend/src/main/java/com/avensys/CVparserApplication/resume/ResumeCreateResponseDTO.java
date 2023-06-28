@@ -15,6 +15,7 @@ public record ResumeCreateResponseDTO(
         List<String> skills,
         List<String> companies,
         String education,
+        String companiesDetails,
         LocalDateTime createdAt,
         LocalDateTime UpdatedAt,
         UserResponseDTO user

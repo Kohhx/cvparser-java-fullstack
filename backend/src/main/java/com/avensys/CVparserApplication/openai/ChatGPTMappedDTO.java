@@ -98,4 +98,6 @@ public class ChatGPTMappedDTO {
     public void setEducation(String education) {
         this.education = education;
     }
+
+
 }
