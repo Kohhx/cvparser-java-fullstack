@@ -36,6 +36,4 @@ public class UserController {
 			UserRoleResponseDTO userResponse = userService.updateUserRole(id,type);
 			return new ResponseEntity<>(userResponse,HttpStatus.OK);
 	}
-
-
 }
