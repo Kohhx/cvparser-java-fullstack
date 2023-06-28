@@ -62,6 +62,7 @@ public class ResumeController {
     @PatchMapping("resumes/{id}")
     @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
     public ResponseEntity<ResumeUpdateResponseDTO> updateResume(@RequestBody ResumeUpdateRequestDTO resumeUpdateRequest) {
+        System.out.println("1");
         ResumeUpdateResponseDTO resumeUpdateResponse =  resumeService.updateResume(resumeUpdateRequest);
         return new ResponseEntity<ResumeUpdateResponseDTO>(resumeUpdateResponse, HttpStatus.OK);
     }

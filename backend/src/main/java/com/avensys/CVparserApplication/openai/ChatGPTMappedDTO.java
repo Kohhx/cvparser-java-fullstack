@@ -19,9 +19,11 @@ public class ChatGPTMappedDTO {
 
     private List<CompaniesDetails> companiesDetails = new ArrayList<>();
 
+    private String education;
+
     public ChatGPTMappedDTO() {};
 
-    public ChatGPTMappedDTO(String name, String email, String mobile, int yearsOfExperience, String[] skills, String[] companies, List<CompaniesDetails> companiesDetails) {
+    public ChatGPTMappedDTO(String name, String email, String mobile, int yearsOfExperience, String[] skills, String[] companies, List<CompaniesDetails> companiesDetails, String education) {
         this.name = name;
         this.email = email;
         this.mobile = mobile;
@@ -29,6 +31,7 @@ public class ChatGPTMappedDTO {
         this.skills = skills;
         this.companies = companies;
         this.companiesDetails = companiesDetails;
+        this.education = education;
     }
 
     public String getName() {
@@ -86,5 +89,13 @@ public class ChatGPTMappedDTO {
 
     public void setCompaniesDetails(List<CompaniesDetails> companiesDetails) {
         this.companiesDetails = companiesDetails;
+    }
+
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
     }
 }
