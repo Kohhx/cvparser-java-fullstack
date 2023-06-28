@@ -208,7 +208,25 @@ public class ResumeService {
         return adminResumeResponse;
     }
 
-    public ResumeUpdateResponseDTO getResume(long UserId, long resumeId) {
+//    public ResumeUpdateResponseDTO getResume(long UserId, long resumeId) {
+//
+//        Optional<User> user = userRepository.findById(UserId);
+//        if (!user.isPresent()) {
+//            throw new UsernameNotFoundException("User not found");
+//        }
+//        Optional<Resume> resume = resumeRepository.findById(resumeId);
+//        if (!resume.isPresent()) {
+//            throw new ResourceNotFoundException("Resume not found");
+//        }
+//
+//        if(!checkIsAdmin()){
+//            checkResumeBelongToUser(resume.get());
+//        }
+//
+//        return resumeToResumeUpdateResponseDTO(resume.get());
+//    }
+
+    public ResumeCreateResponseDTO getResume(long UserId, long resumeId) {
 
         Optional<User> user = userRepository.findById(UserId);
         if (!user.isPresent()) {
@@ -223,7 +241,7 @@ public class ResumeService {
             checkResumeBelongToUser(resume.get());
         }
 
-        return resumeToResumeUpdateResponseDTO(resume.get());
+        return chatGPTResponseToResumeCreateResponse(resume.get());
     }
 
     public List<ResumeCreateResponseDTO> getResumesByUserId(long id) {

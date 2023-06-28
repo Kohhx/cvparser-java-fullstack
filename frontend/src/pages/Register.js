@@ -16,21 +16,35 @@ import { RiAccountCircleFill } from "react-icons/ri";
 const Register = () => {
   const navigate = useNavigate();
   const ctx = useContext(UserContext);
-  // const [username, setUsername] = useState('');
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState({
+    value: "",
+    touched: false,
+    valid: false,
+  });
   const [email, setEmail] = useState({
     value: "",
     touched: false,
     valid: false,
   });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState({
+    value: "",
+    touched: false,
+    valid: false,
+  });
+  const [firstName, setFirstName] = useState({
+    value: "",
+    touched: false,
+    valid: false,
+  });
+  const [lastName, setLastName] = useState({
+    value: "",
+    touched: false,
+    valid: false,
+  });
 
   const [firstNameTouched, setFirstNameTouched] = useState(false);
   const [lastNameTouched, setLastNameTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
-  // const [usernameTouched, setUsernameTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
@@ -45,10 +59,6 @@ const Register = () => {
   const handleEmailBlur = (e) => {
     setEmailTouched(true);
   };
-
-  // const handleUsernameBlur = (e) => {
-  //   setUsernameTouched(true);
-  // };
 
   const handlePasswordBlur = (e) => {
     setPasswordTouched(true);
@@ -140,7 +150,7 @@ const Register = () => {
                 (firstName.length > 0 ? "is-valid" : "is-invalid")
               }`}
               id="firstNameInput"
-              value={firstName}
+              value={firstName.value}
               placeholder="Silas"
               onChange={handleFirstNameChange}
               onBlur={handleFirstNameBlur}
@@ -166,7 +176,7 @@ const Register = () => {
                 (lastName.length > 0 ? "is-valid" : "is-invalid")
               }`}
               id="lastNameInput"
-              value={lastName}
+              value={lastName.value}
               placeholder="Yeak"
               onChange={handleLastNameChange}
               onBlur={handleLastNameBlur}
@@ -220,7 +230,7 @@ const Register = () => {
               }`}
               id="passwordInput"
               placeholder="password"
-              value={password}
+              value={password.value}
               onChange={handlePasswordChange}
               onBlur={handlePasswordBlur}
               required
@@ -246,7 +256,7 @@ const Register = () => {
               }`}
               id="confirmPasswordInput"
               placeholder="password"
-              value={confirmPassword}
+              value={confirmPassword.value}
               onChange={handleConfirmPasswordChange}
               onBlur={handleConfirmPasswordBlur}
               required

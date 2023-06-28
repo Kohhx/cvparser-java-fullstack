@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./css/Resume.css";
 import { AiFillEdit } from "react-icons/ai";
 import { RxCross2 } from "react-icons/rx";
 import { RiAddCircleFill } from "react-icons/ri";
 import { useParams, useNavigate } from "react-router-dom";
 import { resumeAPI } from "../api/resumeAPI";
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
+import { excelUtil } from "../utility/excelUtil";
+import { UserContext } from "../context/userContext";
 
 const Resume = () => {
+  const ctx = useContext(UserContext);
   const params = useParams();
   const navigate = useNavigate();
   const [resume, setResume] = useState(null);
@@ -57,6 +60,10 @@ const Resume = () => {
     value: "",
     isEditing: false,
   });
+  const [qualification, setQualification] = useState({
+    value: "",
+    isEditing: false,
+  });
 
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
@@ -70,6 +77,8 @@ const Resume = () => {
     }
     setFileName((prev) => ({ ...prev, value: e.target.value }));
   };
+
+  console.log(resume);
 
   const handleUpdateResume = () => {
     console.log(fileName.value);
@@ -88,7 +97,8 @@ const Resume = () => {
       name: name.value,
       email: email.value,
       mobile: mobile.value,
-      yearsOfExperience: yearsOfExp.value,
+      education: qualification.value,
+      yearsOfExperience: +yearsOfExp.value,
       skills: skills,
       companies: [company1.value, company2.value, company3.value],
     };
@@ -105,10 +115,9 @@ const Resume = () => {
     resumeAPI.deleteResume(params.resumeId).then((res) => {
       console.log(res);
       toast.success("Resume deleted successfully.");
-      navigate(`/users/${params.userId}/resumes`)
+      navigate(`/users/${params.userId}/resumes`);
     });
   };
-
 
   const setAllEditableToFalse = () => {
     setFileName((prev) => ({ ...prev, isEditing: false }));
@@ -120,6 +129,7 @@ const Resume = () => {
     setCompany1((prev) => ({ ...prev, isEditing: false }));
     setCompany2((prev) => ({ ...prev, isEditing: false }));
     setCompany3((prev) => ({ ...prev, isEditing: false }));
+    setQualification((prev) => ({ ...prev, isEditing: false }));
   };
 
   const setFields = (resume) => {
@@ -127,26 +137,37 @@ const Resume = () => {
     setName((prev) => ({ ...prev, value: resume?.name }));
     setEmail((prev) => ({ ...prev, value: resume?.email }));
     setMobile((prev) => ({ ...prev, value: resume?.mobile }));
-    setYearsOfExp((prev) => ({ ...prev, value: resume?.yearsOfExperience }));
+    setYearsOfExp((prev) => ({
+      ...prev,
+      value: resume?.yearsOfExperience.toFixed(1),
+    }));
     setSkills((prev) => [...prev, ...resume?.skills]);
     setCompany1((prev) => ({ ...prev, value: resume?.companies?.[0] }));
     setCompany2((prev) => ({ ...prev, value: resume?.companies?.[1] }));
     setCompany3((prev) => ({ ...prev, value: resume?.companies?.[2] }));
+    setQualification((prev) => ({ ...prev, value: resume?.education }));
   };
 
   useEffect(() => {
-    resumeAPI.getResume(params.userId, params.resumeId).then((res) => {
-      console.log(res.data);
-      setResume(res.data);
-      const resume = res.data;
-      // Set Initial state
-      setFields(resume);
-    }).catch((err) => {
-      console.log(err);
-      toast.error("Access denied to resume");
-      navigate(`/upload`)
-    });
+    resumeAPI
+      .getResume(params.userId, params.resumeId)
+      .then((res) => {
+        console.log(res.data);
+        setResume(res.data);
+        const resume = res.data;
+        // Set Initial state
+        setFields(resume);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Access denied to resume");
+        navigate(`/upload`);
+      });
   }, []);
+
+  const exportToExcel = () => {
+    excelUtil.exportToExcelCustom(resume);
+  };
 
   return (
     <div className="container resume-container w-50">
@@ -221,7 +242,7 @@ const Resume = () => {
           </div>
           <div class="resume-details-part">
             <div className="d-flex align-items-center gap-2">
-              <h3>Mobile</h3>{" "}
+              <h3>Mobile</h3>
               <AiFillEdit
                 className="edit-icons-md"
                 onClick={() =>
@@ -264,6 +285,34 @@ const Resume = () => {
                   setYearsOfExp((prev) => ({ ...prev, value: e.target.value }))
                 }
                 disabled={!yearsOfExp.isEditing}
+              />
+            </div>
+          </div>
+
+          <div class="resume-details-part">
+            <div className="d-flex align-items-center gap-2">
+              <h3>Highest Qualification</h3>
+              <AiFillEdit
+                className="edit-icons-md"
+                onClick={() =>
+                  setQualification((prev) => ({
+                    ...prev,
+                    isEditing: !prev.isEditing,
+                  }))
+                }
+              />
+            </div>
+            <div className="d-flex align-items-center justify-content-between gap-5">
+              <input
+                type="text"
+                value={qualification.value}
+                onChange={(e) =>
+                  setQualification((prev) => ({
+                    ...prev,
+                    value: e.target.value,
+                  }))
+                }
+                disabled={!qualification.isEditing}
               />
             </div>
           </div>
@@ -399,9 +448,13 @@ const Resume = () => {
           <button className="btn btn-danger" onClick={handleDeleteResume}>
             Delete
           </button>
+          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+            ctx.getUserRole() === "ROLE_PAID") && (
+            <button className="btn btn-secondary" onClick={exportToExcel}>
+              Export to excel
+            </button>
+          )}
         </div>
-
-
       </div>
     </div>
   );

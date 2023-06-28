@@ -109,3 +109,12 @@
 .count-input{
   width:100px;
 }
+
+.resume-statistics{
+  width: 95%;
+  margin: 0 auto;
+}
+
+.resume-statistics h2 {
+  font-size: 1.5rem;
+}

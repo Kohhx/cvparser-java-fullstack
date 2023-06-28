@@ -10,6 +10,7 @@ import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { MdDeleteForever } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { toast } from "react-toastify";
+import ResumeStatistics from "./Chart";
 
 const AdminManageResumes = () => {
   const navigate = useNavigate();
@@ -20,8 +21,13 @@ const AdminManageResumes = () => {
   const [resumes, setResumes] = useState([]);
   const [resumeExportData, setResumeExportData] = useState([]);
   const [size, setSize] = useState(5);
+  const [showStats, setShowStats] = useState(false);
 
   // console.log(searchParams.get("page"));
+
+  const handleShowStats = () => {
+    setShowStats((prevShowStats) => !prevShowStats);
+  };
 
   useEffect(() => {
     setPage(+searchParams.get("page"));
@@ -143,15 +149,23 @@ const AdminManageResumes = () => {
   };
 
   const handleSizeChange = (e) => {
-    setSize(prev => e.target.value);
+    if (e.target.value === "") {
+      setSize(5);
+      return;
+    }
+    setSize((prev) => e.target.value);
     resumeAPI
-      .adminGetAllResumes(+searchParams.get("page"), searchInput, e.target.value)
+      .adminGetAllResumes(
+        +searchParams.get("page"),
+        searchInput,
+        e.target.value
+      )
       .then((res) => {
         console.log(res.data);
         setResumes(res.data.resumeList);
         setTotalPages(res.data.totalPages);
       });
-  }
+  };
 
   return (
     <div className=" admin-resume-container">
@@ -172,13 +186,30 @@ const AdminManageResumes = () => {
                     placeHolder="Search resume by skills or name"
                   />
                 </div>
-                <button type="submit" hidden>
+                {/* <button type="submit" hidden>
                   submit
-                </button>
+                </button> */}
               </form>
+              <button
+                type="btn"
+                className="btn btn-primary"
+                style={{ color: "white", marginLeft: "5px" }}
+                onClick={handleShowStats}
+              >
+                Toggle Statistics
+              </button>
             </div>
             <div className="d-flex gap-2">
-              <input onChange={handleSizeChange} type="number" value={size} min="5" max="50" step="5" placeholder="Count per page" className="count-input"/>
+              <input
+                onChange={handleSizeChange}
+                type="number"
+                value={size}
+                min="5"
+                max="50"
+                step="5"
+                placeholder="Count per page"
+                className="count-input"
+              />
               <button
                 className="btn btn-secondary btn-custom"
                 onClick={exportToExcel}
@@ -188,6 +219,16 @@ const AdminManageResumes = () => {
             </div>
           </div>
         </div>
+        {showStats && (
+        <div className="resume-statistics">
+          <h2>Resumes Statistics</h2>
+          <div>
+            <ResumeStatistics resumes={resumes} />
+          </div>
+        </div>
+        )}
+
+        <br></br>
 
         <div class="table-responsive">
           <table class="table table-striped-columns custom-table">
