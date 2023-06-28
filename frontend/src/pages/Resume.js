@@ -8,6 +8,7 @@ import { resumeAPI } from "../api/resumeAPI";
 import { toast } from "react-toastify";
 import { excelUtil } from "../utility/excelUtil";
 import { UserContext } from "../context/userContext";
+import { AiFillCaretDown } from "react-icons/ai";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -64,6 +65,8 @@ const Resume = () => {
     value: "",
     isEditing: false,
   });
+
+  const [showCompaniesDetails, setShowCompaniesDetails] = useState(false);
 
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
@@ -153,10 +156,13 @@ const Resume = () => {
       .getResume(params.userId, params.resumeId)
       .then((res) => {
         console.log(res.data);
-        setResume(res.data);
-        const resume = res.data;
+        const resumeGet = { ...res.data };
+        resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+        setResume(resumeGet);
+        // const resume = res.data;
         // Set Initial state
-        setFields(resume);
+        setFields(resumeGet);
+        console.log(resumeGet);
       })
       .catch((err) => {
         console.log(err);
@@ -372,7 +378,16 @@ const Resume = () => {
           </div>
         </div>
         <div class="resume-companies-section mt-4">
-          <h3>Companies</h3>
+          <div className="companies-container">
+            <h3>Companies</h3>
+            <button
+              className="show-companies"
+              onClick={() => setShowCompaniesDetails(!showCompaniesDetails)}
+            >
+              Show more <AiFillCaretDown />
+            </button>
+          </div>
+
           {/* {company1.value === "" && company2.value === "" && company3.value &&  <div>No Compa</div>}  */}
           <div>
             <div className="d-flex align-items-center gap-2 mt-2">
@@ -440,6 +455,25 @@ const Resume = () => {
             </div>
           </div>
         </div>
+
+        {showCompaniesDetails && (
+          <div className="companies-details-card">
+            {resume.companiesDetails.map((company, index) => {
+              return (
+                <div className="companies-details-single">
+                  <p>
+                    {index + 1}) Company Name: {company.name}
+                  </p>
+                  <div className="companies-details-card-details">
+                    <p>Start Date: {company.startDate}</p>
+                    <p>End Date: {company.endDate}</p>
+                    <p>No of Years: {company.noOfYears.toFixed(1)}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className="text-center mt-3 d-flex gap-3 justify-content-center">
           <button className="btn btn-success" onClick={handleUpdateResume}>

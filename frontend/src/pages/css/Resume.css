@@ -1,9 +1,9 @@
 .resume-container {
-  color:white;
+  color: white;
 }
 
 input {
-  width:100%;
+  width: 100%;
 }
 
 input:disabled {
@@ -12,18 +12,18 @@ input:disabled {
   /* background-color: rgb(193, 193, 193); */
 }
 
-.resume-filename-section{
+.resume-filename-section {
   margin-bottom: 1.5rem;
   margin-top: 6rem;
   border-radius: 20px;
-  background-color: rgb(214,223,232);
+  background-color: rgb(214, 223, 232);
   padding: 2rem;
-  color:rgb(67, 67, 67);
+  color: rgb(67, 67, 67);
 }
 
-.resume-filename-section input{
+.resume-filename-section input {
   font-size: 1rem;
-  padding:5px;
+  padding: 5px;
   padding-left: 1rem;
   border-radius: 100vh;
   border: none;
@@ -32,44 +32,40 @@ input:disabled {
 
 .resume-main-section {
   border-radius: 20px;
-  background-color: rgb(214,223,232);
+  background-color: rgb(214, 223, 232);
   padding: 2rem;
-  color:rgb(67, 67, 67);
+  color: rgb(67, 67, 67);
 }
 
-.resume-personal-details-section{
-
+.resume-personal-details-section {
 }
 
-.resume-personal-details-section input{
+.resume-personal-details-section input {
   font-size: 1rem;
-  padding:5px;
+  padding: 5px;
   padding-left: 1rem;
   border-radius: 100vh;
   border: none;
   outline: none;
 }
-
 
 .resume-details-part {
   margin-bottom: 1rem;
 }
 
-.resume-skills-section{
-
+.resume-skills-section {
 }
 
-.resume-skills-section input{
+.resume-skills-section input {
   font-size: 1rem;
-  padding:5px;
+  padding: 5px;
   padding-left: 1rem;
   border-radius: 100vh;
   border: none;
   outline: none;
 }
 
-.resume-companies-section{
-
+.resume-companies-section {
 }
 
 .edit-icons-lg {
@@ -82,7 +78,7 @@ input:disabled {
   cursor: pointer;
 }
 
-.edit-icons:hover{
+.edit-icons:hover {
   color: rgb(187, 176, 161);
 }
 
@@ -102,9 +98,9 @@ input:disabled {
   cursor: pointer;
 }
 
-.resume-companies-section input{
+.resume-companies-section input {
   font-size: 1rem;
-  padding:5px;
+  padding: 5px;
   padding-left: 1rem;
   border-radius: 100vh;
   border: none;
@@ -115,4 +111,53 @@ input:disabled {
   font-size: 1.2rem;
   margin-left: 1rem;
   font-weight: bold;
+}
+
+.companies-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.show-companies {
+  border: 1px solid grey;
+  border-radius: 100vh;
+  margin-bottom: 7px;
+  padding: 3px 10px;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+  color: rgb(67, 67, 67);
+}
+
+.show-companies:hover {
+  background-color: grey;
+  color: white;
+  border: none;
+}
+
+.companies-details-card {
+  margin-top: 20px;
+  border-radius: 20px;
+  background-color: rgb(233, 233, 233);
+  padding: 2rem;
+  color: rgb(67, 67, 67);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 5px 15px;
+
+}
+
+.companies-details-single {
+  margin-bottom: 10px;
+}
+
+.companies-details-single > p{
+  margin: 0;
+  padding: 0;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.companies-details-card-details p{
+  margin: 0;
+  padding: 0;
+  margin-left: 1.3rem;
 }
