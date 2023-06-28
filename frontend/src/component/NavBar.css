@@ -1,0 +1,26 @@
+  
+  .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    padding: 0 80px;    
+    background-color: #3cb371;
+    
+  }
+  
+  .left-side img {
+    max-width: 100%;
+    max-height: 40px;
+  }
+  
+  .right-side a {
+    color: white;
+    margin-left: 10px;
+    text-decoration: none;
+  }
+  
+  .right-side a:hover {
+    text-decoration: underline;
+  }
+  
