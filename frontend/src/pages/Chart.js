@@ -275,7 +275,6 @@ const ResumeStatistics = ({ resumes }) => {
       {/* <h2>Resume Statistics</h2> */}
       <div class="d-flex">
         <ExperienceBarChart data={data} />
-        <SkillsAreaChart data={data} />
         <CompaniesBarChart data={data} />
       </div>
       <div class="d-flex"></div>
