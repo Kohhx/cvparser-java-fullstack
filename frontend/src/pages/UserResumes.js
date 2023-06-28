@@ -14,7 +14,7 @@ const UserResumes = () => {
   const ctx = useContext(UserContext);
   const [searchName, setSearchName] = useState("");
   const [searchSkills, setSearchSkills] = useState("");
-  const [searchDate, setSearchDate] = useState("");
+  const [filteredArray, setFilteredArray] = useState([]);
   const [userId, setUserId] = useState();
   const [resumes, setResumes] = useState("");
   const params = useParams();
@@ -26,6 +26,7 @@ const UserResumes = () => {
       setResumes(res.data);
       console.log(res.data)
       setTotalResumes(res.data.length);
+      setFilteredArray(res.data);
     });
   };
 
@@ -33,22 +34,36 @@ const UserResumes = () => {
     console.log("userId", ctx.getUserId());
     setUserId(ctx.userDetails.id);
     getResumes();
+
+
   }, []);
 
-  //Table Mapping
-  const resumesArray = Object.values(resumes);
-  const filteredResumes = resumesArray.filter((resume) => {
-    if (searchSkills==="" && searchName==="") {
-      return resumes;
-    }
-    return (
-      resume.skills.some((skill) =>
-        skill.toLowerCase().includes(searchSkills.toLowerCase())
-      ) && resume.filename.toLowerCase().includes(searchName.toLowerCase())
-    );
-  });
+  //Filtering useEffect
+  useEffect(() => {
+    const resumesArray = Object.values(resumes);
+    const filteredResumes = resumesArray.filter((resume) => {
+      if (searchSkills==="" && searchName==="") { 
+        return resumes;
+      }
+      else if (searchSkills ==="" && searchName !="") {
+        return (
+        resume.filename.toLowerCase().includes(searchName.toLowerCase()));}
+      else 
+        return (
+        resume.skills.some((skill) =>
+        skill.toLowerCase().includes(searchSkills.toLowerCase())) 
+        &&
+        resume.filename.toLowerCase().includes(searchName.toLowerCase()));  
+    })
+    setFilteredArray(filteredResumes)
+  },[searchName,searchSkills]);
 
-  console.log("Resumes from this user", filteredResumes); // Add this line to check resumes in the console.
+  // Reset currentPage to 0 whenever filteredArray changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [filteredArray]);
+
+  console.log("Resumes from this user", filteredArray); // Add this line to check resumes in the console.
 
   //Paginate
   const PER_PAGE = 7;
@@ -59,7 +74,7 @@ const UserResumes = () => {
   }
 
   const offset = currentPage * PER_PAGE;
-  const pageCount = Math.ceil(filteredResumes.length / PER_PAGE);
+  const pageCount = Math.ceil(filteredArray.length / PER_PAGE);
 
   //Delete
   const handleDeleteResume = (resumeId) => {
@@ -70,8 +85,8 @@ const UserResumes = () => {
   };
 
   const exportToExcel = () => {
-    console.log(filteredResumes);
-    excelUtil.exportToExcel(filteredResumes);
+    console.log(filteredArray);
+    excelUtil.exportToExcel(filteredArray);
   };
 
   return (
@@ -103,14 +118,16 @@ const UserResumes = () => {
               type="text"
               placeholder="Search by Resume Filename"
               value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
+              onChange={(e) => {
+                setSearchName(e.target.value);}}
               className="mb-3 mt-2"
             />
             <input
               type="text"
               placeholder="Search by Skills"
               value={searchSkills}
-              onChange={(e) => setSearchSkills(e.target.value)}
+              onChange={(e) => {
+                setSearchSkills(e.target.value);}}
             />
           </div>
         </div>
@@ -132,7 +149,7 @@ const UserResumes = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredResumes
+              {filteredArray
                 .slice(offset, offset + PER_PAGE)
                 .map((resumes) => {
                   // Custom formatting for YYYY-MM-DD HH:MM
@@ -151,7 +168,7 @@ const UserResumes = () => {
                   const formattedCreatedAt = `${year}/${month}/${day} ${hours}:${minutes}`;
 
                   return (
-                    <tr key={resumes.filename}>
+                    <tr key={resumes.id}>
                       <th scope="row" colspan="2">
                         {resumes.filename}
                       </th>
