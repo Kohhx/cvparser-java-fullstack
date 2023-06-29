@@ -108,7 +108,9 @@ const Resume = () => {
 
     resumeAPI.updateResume(resumeDetails).then((res) => {
       console.log(res.data);
-      setResume(res.data);
+        const resumeGet = { ...res.data };
+      resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+      setResume(resumeGet);
       setAllEditableToFalse();
       toast.success("Resume updated successfully.");
     });
@@ -458,7 +460,7 @@ const Resume = () => {
 
         {showCompaniesDetails && (
           <div className="companies-details-card">
-            {resume.companiesDetails.map((company, index) => {
+            {resume.companiesDetails.length > 0 && resume.companiesDetails.map((company, index) => {
               return (
                 <div className="companies-details-single">
                   <p>
@@ -472,6 +474,7 @@ const Resume = () => {
                 </div>
               );
             })}
+
           </div>
         )}
 
@@ -484,10 +487,10 @@ const Resume = () => {
           </button>
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
-            <button className="btn btn-secondary" onClick={exportToExcel}>
-              Export to excel
-            </button>
-          )}
+              <button className="btn btn-secondary" onClick={exportToExcel}>
+                Export to excel
+              </button>
+            )}
         </div>
       </div>
     </div>
