@@ -91,10 +91,10 @@ public class ResumeService {
                                                      name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.\s
                                                      email (string): The email address of the candidate.\s
                                                      mobile (string): The mobile number of the candidate.\s
-                                                     skills (array): The skills possessed by the candidate. Just technical skills, and no linguistic languages.
+                                                     skills (array): The skills possessed by the candidate. Just technical skills and software skills, no linguistic languages.
                                                      companiesDetails (array): All the companies the candidate worked with including internships. Array should start with the latest.
                                                      1)	name:(string) name of the company . If nothing, return "".
-                                                     2)	startDate: (string) start date of employment typically in the format "month/year", if nothing, just use end date of previous job. 
+                                                     2)	startDate: (string) start date of employment typically in the format "month/year", if nothing, just use end date of previous job.
                                                      3)	endDate: (string) end date. Use this format for output "month/year". If no end date, just use 2023-06, present == 2023-06
                                                      4)	noOfYears: (decimal) Number of employment years in the company. Else return 0.0. If start date is empty, then is 0. If there is only start date, then take take it as 1 year.
                                                      yearsOfExperience (number): Total employment in years including internship based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only, but if there are overlapping months, do not double count. Verify by adding up all the noOfYears from companiesDetails array.
