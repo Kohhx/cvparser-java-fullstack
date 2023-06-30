@@ -35,9 +35,9 @@ This project aims to develop a CV Parsing application using Java Fullstack techn
 ### Features
 - Applications accepts 3 roles
   - Free role
-    As a free subscriber to the application, user can upload a maximum of 5 CV to be parsed.
+    - As a free subscriber to the application, user can upload a maximum of 5 CV to be parsed.
   - Paid role
-    As a paid subscriber to the application, user can upload unlimited number of CVs to be parsed. User can view all his CVs, filter them based on name or skills. User also have the options to export filtered data to excel or single resume details to excel for further processing.
+    - As a paid subscriber to the application, user can upload unlimited number of CVs to be parsed. User can view all his CVs, filter them based on name or skills. User also have the options to export filtered data to excel or single resume details to excel for further processing.
 
 ### Additional Features (optional)
 
