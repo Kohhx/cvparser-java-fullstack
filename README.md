@@ -33,7 +33,7 @@ This project aims to develop a CV Parsing application using Java Fullstack techn
 - Ensure data consistency between the frontend and backend.
 
 ### Features
-- Applications accepts 3 roles
+- Applications accepts 2 main roles
   - Free role
     - As a free subscriber to the application, free user can upload a maximum of 5 CV to be parsed.
   - Paid role
@@ -50,11 +50,28 @@ This project aims to develop a CV Parsing application using Java Fullstack techn
 To set up the CV Parsing application, follow these steps:
 
 1. Clone the repository to your local machine.
-2. Install the required dependencies for the frontend and backend components.
-3. Set up the backend by configuring the database connection and server settings.
-4. Set up the frontend by configuring the API endpoint and any additional settings.
-5. Build the project to compile the source code and generate the necessary files.
-6. Deploy the application to a suitable hosting environment or run it locally for development and testing purposes.
+2. Install the required dependencies for the frontend using "npm install" and backend components(maven clean install).
+3. Set up the backend application properties by configuring the MySQL database setting, server setting and chatGPT api settings.
+- spring.datasource.url=jdbc:mysql://localhost:3306/cvparserDb
+- spring.datasource.username=
+- spring.datasource.password=
+- spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+- spring.jpa.hibernate.ddl-auto=update
+- spring.jpa.defer-datasource-initialization=true
+- spring.sql.init.mode=always
+- server.error.include-message=always
+- openai.model=gpt-3.5-turbo
+- openai.api.key = 
+- openai.api.url=https://api.openai.com/v1/chat/completions
+
+
+spring.servlet.multipart.max-file-size=100MB
+spring.servlet.multipart.max-request-size=100MB
+![image](https://github.com/Kohhx/cvparser-java-fullstack/assets/108639973/fa047644-b7ab-4ea6-9e11-219ccd89b163)
+
+5. Set up the frontend by configuring the API endpoint and any additional settings.
+6. Build the project to compile the source code and generate the necessary files.
+7. Deploy the application to a suitable hosting environment or run it locally for development and testing purposes.
 
 Please refer to the project's documentation for detailed installation and setup instructions specific to your chosen technologies.
 
