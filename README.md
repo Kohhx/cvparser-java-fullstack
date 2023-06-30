@@ -78,11 +78,3 @@ Contributions to this project are welcome! If you'd like to contribute, please f
 4. Create a pull request, explaining your changes and any related information.
 
 Please ensure that your contributions align with the project's coding conventions, guidelines, and licensing requirements.
-
-## License
-
-This project is licensed under the [INSERT LICENSE NAME] License. Please refer to the `LICENSE` file for more information.
-
-## Support
-
-For any questions, issues, or support regarding the CV Parsing application, please contact [INSERT CONTACT INFORMATION]. Additionally, [INSERT ADDITIONAL SUPPORT INFORMATION IF AVAILABLE].
