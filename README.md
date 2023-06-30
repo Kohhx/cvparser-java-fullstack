@@ -7,7 +7,7 @@ This project aims to develop a CV Parsing application using Java Fullstack techn
 ### Backend Development
 
 - Accept Word/PDF format CV files as input.
-- Implemented a parser to extract information from the CV files.
+- Implemented a parser to extract information from the CV files. Since all the resumes do not follow a specific format, Generative Pre-trained Transformer (GPT API) large language models (LLMs) was used to facilitate the parsing of CVs into the required JSON format.
 - Extract the following fields from each CV:
   - Name (string): The name of the candidate.
   - Email ID (string): The email address of the candidate.
@@ -56,7 +56,6 @@ To set up the CV Parsing application, follow these steps:
 
 5. Set up the frontend by configuring the API endpoint and any additional settings.
 6. Build the project to compile the source code and generate the necessary files.
-7. Deploy the application to a suitable hosting environment or run it locally for development and testing purposes.
 
 Please refer to the project's documentation for detailed installation and setup instructions specific to your chosen technologies.
 
@@ -67,17 +66,6 @@ Once the application is set up, follow these steps to use the CV Parsing applica
 1. Access the application through a web browser.
 2. Upload a Word/PDF format CV file using the provided form.
 3. The application will process the file and extract the relevant information.
-4. The extracted information will be displayed on the user interface.
+4. The extracted information will be displayed on the user interface. User can update errorous extracted information.
 5. Use the search functionality to find candidates based on their name or skills.
 6. Explore any additional features, such as exporting the data or viewing visualizations.
-
-## Contributing
-
-Contributions to this project are welcome! If you'd like to contribute, please follow these steps:
-
-1. Fork the repository and create a new branch for your contribution.
-2. Make your changes, addressing any identified issues or adding new features.
-3. Test your changes thoroughly.
-4. Create a pull request, explaining your changes and any related information.
-
-Please ensure that your contributions align with the project's coding conventions, guidelines, and licensing requirements.
