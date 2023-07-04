@@ -39,25 +39,35 @@ export const CompaniesBarChart = ({ data }) => {
 
   return (
     <BarChart
-      width={500}
-      height={300}
+      width={800}
+      height={500}
       data={barData}
+      layout="vertical"
       margin={{
         top: 5,
         right: 30,
-        left: 20,
+        left: 20,  // Increase this value to make more room for y-axis labels
         bottom: 5,
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
+      <XAxis type="number" />
+      <YAxis
+        dataKey="name"
+        type="category"
+        interval={0}
+        // angle={-45}
+        textAnchor="end"
+        tick={{ fontSize: 10 }}
+      />
       <Tooltip />
       <Legend />
-      <Bar dataKey="value" fill="#0088FE" />
+      <Bar dataKey="value" fill="lightblue" />
     </BarChart>
+
   );
 };
+
 
 export const CompaniesSkillsHeatmap = ({ data }) => {
   let skillsCount = {};
@@ -173,7 +183,7 @@ export const ExperienceBarChart = ({ data }) => {
   return (
     <BarChart
       width={500}
-      height={300}
+      height={500}
       data={barData}
       margin={{
         top: 5,
@@ -275,7 +285,6 @@ const ResumeStatistics = ({ resumes }) => {
       {/* <h2>Resume Statistics</h2> */}
       <div class="d-flex">
         <ExperienceBarChart data={data} />
-        <SkillsAreaChart data={data} />
         <CompaniesBarChart data={data} />
       </div>
       <div class="d-flex"></div>
