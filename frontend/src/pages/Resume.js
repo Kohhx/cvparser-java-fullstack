@@ -460,11 +460,7 @@ const Resume = () => {
 
         {showCompaniesDetails && (
           <div className="companies-details-card">
-<<<<<<< HEAD
             {resume && resume.companiesDetails.length > 0 && resume.companiesDetails.map((company, index) => {
-=======
-            {resume.companiesDetails.length > 0 && resume.companiesDetails.map((company, index) => {
->>>>>>> master
               return (
                 <div className="companies-details-single">
                   <p>
