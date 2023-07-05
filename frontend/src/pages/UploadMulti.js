@@ -100,8 +100,9 @@ const UploadMulti = () => {
     // console.log(fileType)
     if (fileType !== "pdf" && fileType !== "doc" && fileType !== "docx") {
       toast.error("Only PDF, DOC, and DOCX file types are allowed.");
-      return;
+      return false;
     }
+    return true;
   };
 
   const handleFileChange = (event) => {
@@ -119,8 +120,9 @@ const UploadMulti = () => {
 
     // Check all files extension
     for (let i = 0; i < files.length; i++) {
-      checkFileExtension(files[i]);
+      if (!checkFileExtension(files[i])) return;
     }
+
 
     setIsValidAttachment(true);
     setTotalUploadCount(files.length);
@@ -172,7 +174,7 @@ const UploadMulti = () => {
 
     // Check all files extension
     for (let i = 0; i < files.length; i++) {
-      checkFileExtension(files[i]);
+      if (!checkFileExtension(files[i])) return;
     }
 
     setIsValidAttachment(true);
