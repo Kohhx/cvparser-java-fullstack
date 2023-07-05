@@ -18,6 +18,7 @@ import { CSSTransition } from "react-transition-group";
 function NavBar() {
   const ctx = useContext(UserContext);
   const [dropdown, setDropdown] = useState(false);
+  const [uploadDropdown, setUploadDropdown] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showDowngradeModal, setShowDowngradeModal] = useState(false);
   const [user, setUser] = useState({});
@@ -31,6 +32,7 @@ function NavBar() {
   const nodeRef = useRef();
 
   const dropdownBtn = useRef();
+  const uploadDropdownBtn = useRef();
 
   useEffect(() => {
     userAPI.getUserDetails(ctx.getUserId()).then((res) => {
@@ -49,6 +51,19 @@ function NavBar() {
     return () =>
       document.removeEventListener("click", (e) => {
         setDropdown(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("click", (e) => {
+      if (uploadDropdown && !uploadDropdownBtn.current?.contains(e.target)) {
+        setUploadDropdown(false);
+      }
+    });
+
+    return () =>
+      document.removeEventListener("click", (e) => {
+        setUploadDropdown(false);
       });
   }, []);
 
@@ -116,6 +131,8 @@ function NavBar() {
           id="navbarNav"
         >
           <div className="navbar-nav d-flex align-items-center gap-3">
+            
+            {ctx.getUserRole() === "ROLE_FREE" && (
             <NavLink
               className={({ isActive }) =>
                 isActive ? "nav-link-custom-active" : "nav-link-custom"
@@ -124,7 +141,8 @@ function NavBar() {
             >
               Upload
             </NavLink>
-            {ctx.getUserRole() === "ROLE_PAID" && (
+            )}
+            {/* {ctx.getUserRole() === "ROLE_PAID" && (
               <NavLink
                 className={({ isActive }) =>
                   isActive ? "nav-link-custom-active" : "nav-link-custom"
@@ -133,7 +151,51 @@ function NavBar() {
               >
                 Upload Multi
               </NavLink>
+            )} */}
+            {(ctx.getUserRole() === "ROLE_PAID" || ctx.getUserRole() === "ROLE_ADMIN") && (
+            <div className="dropdown" style={{ paddingRight: "30px" }}>
+              <div
+                className="dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onClick={() => setUploadDropdown(!uploadDropdown)}
+                ref={uploadDropdownBtn}
+              >
+              Upload
+              </div>
+              {uploadDropdown && (
+                <div
+                  className="dropdown-content"
+                  aria-labelledby="dropdownMenuButton"
+                >
+                <div>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? "nav-link-custom-active" : "nav-link-custom"
+                    }
+                    to="/upload"
+                  >
+                  Upload
+                  </NavLink> 
+                </div>
+                <div>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? "nav-link-custom-active" : "nav-link-custom"
+                    }
+                    to="/upload-multi"
+                  >
+                  Upload Multi
+                  </NavLink>
+                </div>
+                </div>
+              )}
+            </div>
             )}
+
             <NavLink
               className={({ isActive }) =>
                 isActive
