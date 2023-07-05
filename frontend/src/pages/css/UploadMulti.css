@@ -39,7 +39,7 @@ form h1 {
 background-color: rgb(205, 216, 226);
 width:650px;
 height: 100%;
-padding:30px;
+padding:15px;
 border-radius: 20px;
 }
 
@@ -69,11 +69,11 @@ border-radius: 20px;
   color:gray;
 }
 
-.drop-inner-border{
+.drop-inner-border-2{
   border:2px grey dashed;
   height:100%;
   border-radius: 10px;
-  padding:100px 90px 100px 90px;
+  padding:60px 230px 60px 230px;
 }
 
 .upload-icon {
@@ -135,4 +135,44 @@ border-radius: 20px;
   right:-12px;
   top: -12px;
   font-size: 2rem;
+}
+
+.arrow-icon{
+  margin: 0;
+  font-size: 1.8rem;
+  color: #007BFF;
+  cursor: pointer;
+}
+
+.arrows{
+  margin-bottom: 10px;
+}
+
+.arrow-disabled{
+  margin: 0;
+  color: #55a7ff;
+  font-size: 1.8rem;
+}
+
+.count {
+  color: rgb(33, 33, 33);
+}
+
+.file-display {
+  overflow: auto;
+  /* border: 2px solid red; */
+  max-height:150px;
+  margin-bottom: 10px;
+}
+
+.delete-icon{
+  margin-left: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.btn.input-file-btn{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
 }

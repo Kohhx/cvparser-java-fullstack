@@ -21,6 +21,7 @@ import Resume from "./pages/Resume";
 import NavbarLayout from "./layout/NavbarLayout";
 import AdminGuard from "./guards/AdminGuard";
 import AdminManageResumes from "./pages/AdminManageResumes";
+import UploadMulti from "./pages/UploadMulti";
 
 function App() {
   const ctx = useContext(UserContext);
@@ -43,6 +44,7 @@ function App() {
               {/* Routes protected by FreePaid Guard */}
               <Route element={<FreePaidGuard />}>
                 <Route path="/upload" element={<Upload />} />
+                <Route path="/upload-multi" element={<UploadMulti />} />
                 <Route
                   path="/users/:userId/resumes/:resumeId"
                   element={<Resume />}
