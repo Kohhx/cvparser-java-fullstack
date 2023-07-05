@@ -124,6 +124,16 @@ function NavBar() {
             >
               Upload
             </NavLink>
+            {ctx.getUserRole() === "ROLE_PAID" && (
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? "nav-link-custom-active" : "nav-link-custom"
+                }
+                to="/upload-multi"
+              >
+                Upload Multi
+              </NavLink>
+            )}
             <NavLink
               className={({ isActive }) =>
                 isActive
@@ -212,11 +222,15 @@ function NavBar() {
             <div>
               <div className="d-flex align-items-center">
                 <TiTick className="tick-icon" />
-                <p>Unlimited resume upload</p>
+                <p>Unlimited resume upload and parsing</p>
               </div>
               <div className="d-flex align-items-center">
                 <TiTick className="tick-icon" />
-                <p>Unlimited resume parsing</p>
+                <p>Export to excel function</p>
+              </div>
+              <div className="d-flex align-items-center">
+                <TiTick className="tick-icon" />
+                <p>Multiple resumes upload function</p>
               </div>
             </div>
             <button

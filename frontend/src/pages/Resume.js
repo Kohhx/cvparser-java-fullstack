@@ -108,7 +108,7 @@ const Resume = () => {
 
     resumeAPI.updateResume(resumeDetails).then((res) => {
       console.log(res.data);
-        const resumeGet = { ...res.data };
+      const resumeGet = { ...res.data };
       resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
       setResume(resumeGet);
       setAllEditableToFalse();
@@ -460,7 +460,7 @@ const Resume = () => {
 
         {showCompaniesDetails && (
           <div className="companies-details-card">
-            {resume.companiesDetails.length > 0 && resume.companiesDetails.map((company, index) => {
+            {resume && resume.companiesDetails.length > 0 && resume.companiesDetails.map((company, index) => {
               return (
                 <div className="companies-details-single">
                   <p>
