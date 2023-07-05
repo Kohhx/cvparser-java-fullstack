@@ -290,10 +290,10 @@ const AdminManageResumes = () => {
             </span>
             {page > 1 && (
               <div class="arrow">
-                <span onClick={() => goToPrev()}>Prev</span>
+                <span className="prev-arrow" onClick={() => goToPrev()}>Prev</span>
               </div>
             )}
-            {page === 1 && <div class="arrow-disabled">Prev</div>}
+            {page === 1 && <div class="arrow-disabled-2">Prev</div>}
             <span> {page} </span>
             {page < totalPages && (
               <div class="arrow">
