@@ -131,7 +131,7 @@ function NavBar() {
           id="navbarNav"
         >
           <div className="navbar-nav d-flex align-items-center gap-3">
-            
+
             {ctx.getUserRole() === "ROLE_FREE" && (
             <NavLink
               className={({ isActive }) =>
@@ -153,7 +153,7 @@ function NavBar() {
               </NavLink>
             )} */}
             {(ctx.getUserRole() === "ROLE_PAID" || ctx.getUserRole() === "ROLE_ADMIN") && (
-            <div className="dropdown" style={{ paddingRight: "30px" }}>
+            <div className="dropdown" style={{ paddingRight: "10px" }}>
               <div
                 className="dropdown-toggle"
                 type="button"
@@ -173,16 +173,18 @@ function NavBar() {
                 >
                 <div>
                   <NavLink
+                  onClick={() => setUploadDropdown(false)}
                     className={({ isActive }) =>
                       isActive ? "nav-link-custom-active" : "nav-link-custom"
                     }
                     to="/upload"
                   >
                   Upload
-                  </NavLink> 
+                  </NavLink>
                 </div>
                 <div>
                   <NavLink
+                     onClick={() => setUploadDropdown(false)}
                     className={({ isActive }) =>
                       isActive ? "nav-link-custom-active" : "nav-link-custom"
                     }
