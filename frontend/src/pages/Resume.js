@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import { excelUtil } from "../utility/excelUtil";
 import { UserContext } from "../context/userContext";
 import { AiFillCaretDown } from "react-icons/ai";
+import { projectStorage } from "../firebase/config";
+import { fileUtil } from "../utility/fileUtil";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -175,6 +177,12 @@ const Resume = () => {
 
   const exportToExcel = () => {
     excelUtil.exportToExcelCustom(resume);
+  };
+
+
+
+  const downloadResume = async() => {
+    fileUtil.firebaseFileDownload(resume.fileRef);
   };
 
   return (
@@ -460,21 +468,22 @@ const Resume = () => {
 
         {showCompaniesDetails && (
           <div className="companies-details-card">
-            {resume && resume.companiesDetails.length > 0 && resume.companiesDetails.map((company, index) => {
-              return (
-                <div className="companies-details-single">
-                  <p>
-                    {index + 1}) Company Name: {company.name}
-                  </p>
-                  <div className="companies-details-card-details">
-                    <p>Start Date: {company.startDate}</p>
-                    <p>End Date: {company.endDate}</p>
-                    <p>No of Years: {company.noOfYears.toFixed(1)}</p>
+            {resume &&
+              resume.companiesDetails.length > 0 &&
+              resume.companiesDetails.map((company, index) => {
+                return (
+                  <div className="companies-details-single">
+                    <p>
+                      {index + 1}) Company Name: {company.name}
+                    </p>
+                    <div className="companies-details-card-details">
+                      <p>Start Date: {company.startDate}</p>
+                      <p>End Date: {company.endDate}</p>
+                      <p>No of Years: {company.noOfYears.toFixed(1)}</p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-
+                );
+              })}
           </div>
         )}
 
@@ -487,10 +496,17 @@ const Resume = () => {
           </button>
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
-              <button className="btn btn-secondary" onClick={exportToExcel}>
-                Export to excel
-              </button>
-            )}
+            <button className="btn btn-secondary" onClick={exportToExcel}>
+              Export to excel
+            </button>
+          )}
+
+          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+            ctx.getUserRole() === "ROLE_PAID") && (
+            <button className="btn btn-secondary" onClick={downloadResume}>
+              Download Resume
+            </button>
+          )}
         </div>
       </div>
     </div>

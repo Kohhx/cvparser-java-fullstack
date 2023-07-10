@@ -39,7 +39,7 @@ public class FileUtil {
         return "";
     }
 
-    private static String getFileExtension(String fileName) {
+    public static String getFileExtension(String fileName) {
         int dotIndex = fileName.lastIndexOf('.');
         if (dotIndex == -1) {
             return "";

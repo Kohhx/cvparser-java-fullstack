@@ -1,6 +1,8 @@
 package com.avensys.CVparserApplication.configurations;
 
 import com.avensys.CVparserApplication.authentication.UserDetailsServiceImpl;
+import com.avensys.CVparserApplication.firebase.FirebaseInitializer;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +18,12 @@ public class ApplicationConfiguration {
 
 //    @Value("${cloudinary.url}")
 //    private String cloudinaryAPIURL;
+
+    private final FirebaseInitializer firebaseInitializer;
+
+    public ApplicationConfiguration(FirebaseInitializer firebaseInitializer) {
+        this.firebaseInitializer = firebaseInitializer;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,5 +48,11 @@ public class ApplicationConfiguration {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
+    @PostConstruct
+    public void initializeFirebase() {
+        this.firebaseInitializer.initializeFirebase();
+    }
+
 
 }

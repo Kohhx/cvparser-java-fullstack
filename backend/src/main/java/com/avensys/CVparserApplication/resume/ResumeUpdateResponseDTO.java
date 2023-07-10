@@ -11,6 +11,7 @@ public record ResumeUpdateResponseDTO(
         double yearsOfExperience,
         String education,
         String companiesDetails,
+        String fileRef,
         List<String> skills,
         List<String> companies) {
 

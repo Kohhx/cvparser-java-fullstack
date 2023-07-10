@@ -9,8 +9,10 @@ import { BsFillFileEarmarkTextFill } from "react-icons/bs";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { MdDeleteForever } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
+import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
 import { toast } from "react-toastify";
 import ResumeStatistics from "./Chart";
+import { fileUtil } from "../utility/fileUtil";
 
 const AdminManageResumes = () => {
   const navigate = useNavigate();
@@ -220,12 +222,12 @@ const AdminManageResumes = () => {
           </div>
         </div>
         {showStats && (
-        <div className="resume-statistics">
-          <h2>Resumes Statistics</h2>
-          <div>
-            <ResumeStatistics resumes={resumes} />
+          <div className="resume-statistics">
+            <h2>Resumes Statistics</h2>
+            <div>
+              <ResumeStatistics resumes={resumes} />
+            </div>
           </div>
-        </div>
         )}
 
         <br></br>
@@ -243,6 +245,7 @@ const AdminManageResumes = () => {
                 <th>Mobile</th>
                 <th>No of Employment Experience(Years)</th>
                 <th>Skills</th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -268,6 +271,14 @@ const AdminManageResumes = () => {
                   <td class="text-center">
                     <BsFillFileEarmarkArrowDownFill
                       className="icon"
+                      onClick={() =>
+                        fileUtil.firebaseFileDownload(resume.fileRef)
+                      }
+                    />
+                  </td>
+                  <td class="text-center">
+                    <PiMicrosoftExcelLogoFill
+                      className="icon excel-icon"
                       onClick={() => handleSingleExcelDownload(resume)}
                     />
                   </td>
@@ -284,13 +295,15 @@ const AdminManageResumes = () => {
             </tbody>
           </table>
 
-          <div class="pagination">
+          {/* <div class="pagination">
             <span>
               {page} of {totalPages}
             </span>
             {page > 1 && (
               <div class="arrow">
-                <span className="prev-arrow" onClick={() => goToPrev()}>Prev</span>
+                <span className="prev-arrow" onClick={() => goToPrev()}>
+                  Prev
+                </span>
               </div>
             )}
             {page === 1 && <div class="arrow-disabled-2">Prev</div>}
@@ -300,7 +313,26 @@ const AdminManageResumes = () => {
                 <span onClick={goToNext}>Next</span>
               </div>
             )}
-          </div>
+          </div> */}
+        </div>
+        <div class="pagination">
+          <span>
+            {page} of {totalPages}
+          </span>
+          {page > 1 && (
+            <div class="arrow">
+              <span className="prev-arrow" onClick={() => goToPrev()}>
+                Prev
+              </span>
+            </div>
+          )}
+          {page === 1 && <div class="arrow-disabled-2">Prev</div>}
+          <span> {page} </span>
+          {page < totalPages && (
+            <div class="arrow">
+              <span onClick={goToNext}>Next</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

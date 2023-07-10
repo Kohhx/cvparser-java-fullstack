@@ -29,7 +29,8 @@
     "recharts": "^2.7.2",
     "styled-components": "^5.3.11",
     "web-vitals": "^2.1.4",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "firebase": "8.5"
   },
   "scripts": {
     "start": "react-scripts start",
