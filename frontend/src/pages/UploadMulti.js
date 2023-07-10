@@ -20,6 +20,7 @@ import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
 
 const UploadMulti = () => {
+  const [multiThreadUpload, setMultiThreadUpload] = useState(false);
   const uploadFileRef = useRef(null);
   const uploadRef = useRef();
   const ctx = useContext(UserContext);
@@ -46,6 +47,14 @@ const UploadMulti = () => {
   const deleteFile = (index) => {
     setFileObjects(fileObjects.filter((file, i) => i !== index));
     setCurrentUploadCount(0);
+  };
+
+  const getFilesArray = () => {
+    const files = [];
+    for (let i = 0; i < fileObjects.length; i++) {
+      files.push(fileObjects[i].file);
+    }
+    return files;
   };
 
   const setFileObj = (files) => {
@@ -123,7 +132,6 @@ const UploadMulti = () => {
       if (!checkFileExtension(files[i])) return;
     }
 
-
     setIsValidAttachment(true);
     setTotalUploadCount(files.length);
 
@@ -193,34 +201,69 @@ const UploadMulti = () => {
     return resumeAPI.uploadResume2(formData);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (userDetails.role === "ROLE_FREE" && userDetails.resumeLimit >= 5) {
-      setShowUpgradeModal(true);
-      return;
-    }
-    setIsLoading(true);
-    if (fileObjects.length === 0) {
-      toast.error("Please select a file before uploading.");
-      return;
-    }
 
-    for (let i = 0; i < fileObjects.length; i++) {
-      const formData = new FormData();
-      formData.append("file", fileObjects[i].file);
-      formData.append("fileName", fileObjects[i].nameNoExt);
-      try {
-        await createResume(formData, i + 1);
-        toast.success(`${i + 1} File uploaded successfully.`);
-      } catch (err) {
-        toast.error("Something went wrong. Please try again.");
-        setIsLoading(false);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (userDetails.role === "ROLE_FREE" && userDetails.resumeLimit >= 5) {
+        setShowUpgradeModal(true);
         return;
       }
-    }
-    setIsLoading(false);
-    navigate(`/users/${ctx.getUserId()}/resumes`);
-  };
+      setIsLoading(true);
+      if (fileObjects.length === 0) {
+        toast.error("Please select a file before uploading.");
+        return;
+      }
+
+      for (let i = 0; i < fileObjects.length; i++) {
+        const formData = new FormData();
+        formData.append("file", fileObjects[i].file);
+        formData.append("fileName", fileObjects[i].nameNoExt);
+        try {
+          await createResume(formData, i + 1);
+          toast.success(`${i + 1} File uploaded successfully.`);
+        } catch (err) {
+          toast.error("Something went wrong. Please try again.");
+          setIsLoading(false);
+          return;
+        }
+      }
+      setIsLoading(false);
+      navigate(`/users/${ctx.getUserId()}/resumes`);
+    };
+
+    const handleSubmitMulti = async (e) => {
+      e.preventDefault();
+      if (userDetails.role === "ROLE_FREE" && userDetails.resumeLimit >= 5) {
+        setShowUpgradeModal(true);
+        return;
+      }
+      setIsLoading(true);
+      if (fileObjects.length === 0) {
+        toast.error("Please select a file before uploading.");
+        return;
+      }
+
+      const fileArray = getFilesArray();
+      const formData = new FormData();
+      for (let i = 0; i < fileArray.length; i++) {
+        formData.append("fileList", fileArray[i]);
+      }
+
+
+      resumeAPI
+        .uploadResumeList(formData)
+        .then((res) => {
+          toast.success(`File uploaded successfully.`);
+          setIsLoading(false);
+          navigate(`/users/${ctx.getUserId()}/resumes`);
+        })
+        .catch((err) => {
+          toast.error("Something went wrong. Please try again.");
+          setIsLoading(false);
+          return;
+        });
+    };
+
 
   function getUserDetails() {
     userAPI
@@ -280,7 +323,7 @@ const UploadMulti = () => {
             <p className="subscription-type">Paid</p>
             <p className="subscription-price">$20.00 per month</p>
             <div>
-            <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center">
                 <TiTick className="tick-icon" />
                 <p>Unlimited resume upload and parsing</p>
               </div>
@@ -304,10 +347,10 @@ const UploadMulti = () => {
       </CSSTransition>
       <div className="upload-container">
         <div className="upload-left-section">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={multiThreadUpload ? handleSubmitMulti : handleSubmit}>
             <h1>
               Upload Multiple Resumes
-              <MdUploadFile className="upload-header-icon" />
+              <MdUploadFile className={`upload-header-icon ${multiThreadUpload && "multiThreadUpload-icon"}`} onClick={() => setMultiThreadUpload(prev => !prev)}/>
             </h1>
             <div
               className={`drop-outer-border ${isDragOver && "drag-over"} mb-3`}

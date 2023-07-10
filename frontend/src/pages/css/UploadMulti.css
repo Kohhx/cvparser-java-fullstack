@@ -92,6 +92,7 @@ border-radius: 20px;
 .upload-header-icon {
   font-size: 3rem;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .subscription-container h2{
@@ -175,4 +176,8 @@ border-radius: 20px;
   margin-top: 10px;
   margin-bottom: 10px;
   font-size: 0.9rem;
+}
+
+.multiThreadUpload-icon{
+  color:green
 }
