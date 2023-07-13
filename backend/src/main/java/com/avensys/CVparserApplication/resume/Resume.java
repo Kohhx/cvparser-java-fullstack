@@ -56,10 +56,28 @@ public class Resume {
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Company> companies = new ArrayList<>();
 
+    // Updated information added 12072023
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private String spokenLanguages;
+    private String currentLocation;
+    private String nationality;
+    private String jobTitle;
+
+    @Column(columnDefinition = "TEXT")
+    private String profile;
+
+    @Column(columnDefinition = "TEXT")
+    private String primarySkills;
+
+    @Column(columnDefinition = "TEXT")
+    private String secondarySkills;
+
     public Resume() {
     }
 
-    public Resume(long id, String fileName, String name, String email, String mobile, double yearsOfExperience, String education, String resumeStorageRef, String companiesDetails, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies) {
+    public Resume(long id, String fileName, String name, String email, String mobile, double yearsOfExperience, String education, String resumeStorageRef, String companiesDetails, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies, String firstName, String lastName, String gender, String spokenLanguages, String currentLocation, String nationality, String jobTitle, String profile, String primarySkills, String secondarySkills) {
         this.id = id;
         this.fileName = fileName;
         this.name = name;
@@ -74,6 +92,16 @@ public class Resume {
         this.user = user;
         this.skills = skills;
         this.companies = companies;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.spokenLanguages = spokenLanguages;
+        this.currentLocation = currentLocation;
+        this.nationality = nationality;
+        this.jobTitle = jobTitle;
+        this.profile = profile;
+        this.primarySkills = primarySkills;
+        this.secondarySkills = secondarySkills;
     }
 
     public String getResumeStorageRef() {
@@ -222,6 +250,86 @@ public class Resume {
 
     public void setCompaniesDetails(String companiesDetails) {
         this.companiesDetails = companiesDetails;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getSpokenLanguages() {
+        return spokenLanguages;
+    }
+
+    public void setSpokenLanguages(String spokenLanguages) {
+        this.spokenLanguages = spokenLanguages;
+    }
+
+    public String getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(String currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getPrimarySkills() {
+        return primarySkills;
+    }
+
+    public void setPrimarySkills(String primarySkills) {
+        this.primarySkills = primarySkills;
+    }
+
+    public String getSecondarySkills() {
+        return secondarySkills;
+    }
+
+    public void setSecondarySkills(String secondarySkills) {
+        this.secondarySkills = secondarySkills;
     }
 
     @Override

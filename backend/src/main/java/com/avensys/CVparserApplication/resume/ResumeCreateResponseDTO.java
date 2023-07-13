@@ -19,7 +19,18 @@ public record ResumeCreateResponseDTO(
         String fileRef,
         LocalDateTime createdAt,
         LocalDateTime UpdatedAt,
-        UserResponseDTO user
+        UserResponseDTO user,
+        //Updated information added 12072023
+        String firstName,
+        String lastName,
+        String gender,
+        String currentLocation,
+        String nationality,
+        String jobTitle,
+        String spokenLanguages,
+        String primarySkills,
+        String secondarySkills,
+        String profile
 ) {
 
 

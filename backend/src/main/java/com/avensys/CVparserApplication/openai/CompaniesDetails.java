@@ -5,15 +5,17 @@ public class CompaniesDetails {
     private String startDate;
     private String endDate;
     private double noOfYears;
+    private String jobTitle;
 
     public CompaniesDetails() {
     }
 
-    public CompaniesDetails(String name, String startDate, String endDate, double noOfYears) {
+    public CompaniesDetails(String name, String startDate, String endDate, double noOfYears, String jobTitle) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.noOfYears = noOfYears;
+        this.jobTitle = jobTitle;
     }
 
     public String getName() {
@@ -46,5 +48,13 @@ public class CompaniesDetails {
 
     public void setNoOfYears(double noOfYears) {
         this.noOfYears = noOfYears;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 }

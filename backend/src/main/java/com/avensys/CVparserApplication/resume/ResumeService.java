@@ -94,14 +94,23 @@ public class ResumeService {
             """
                     Please help me extract the following fields from each CV and use the followings as the keys:\s
                                                      name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.\s
+                                                     firstName (string): The first name of the candidate. Letter of each word is capital, the rest are lowercase.\s
+                                                     lastName (string): The last name of the candidate. Letter of each word is capital, the rest are lowercase.\s
+                                                     gender (string): The gender of the candidate, return either "male" or "female". If not present, try to guess from the name. \s
+                                                     spokenLanguages (array): All the languages that the candidate speaks. If not present, return the language used to write this resume. \s
                                                      email (string): The email address of the candidate.\s
                                                      mobile (string): The mobile number of the candidate.\s
-                                                     skills (array): The skills possessed by the candidate. Just technical skills and software skills, no linguistic languages.
-                                                     companiesDetails (array): All the companies the candidate worked with including internships. Array should start with the latest.
+                                                     skills (array): The skills possessed by the candidate. All skills. \s
+                                                     primarySkills (array): The skills possessed by the candidate, frequently appearing throughout the resume. Just technical skills and software skills, no linguistic languages.\s
+                                                     secondarySkills (array): The skills possessed by the candidate, but doesn't show up in the primary skills.\s
+                                                     currentLocation (string): return the candidate's current country he/she resides in. If not available, just use the location of the candidate latest employment.\s 
+                                                     nationality (string): Return the nationality based on the country the candidate is born in. If not present, get the nationality from the currentLocation. \s
+                                                     companiesDetails (array): return all the companies the candidate worked with including internships. Array should ordered from the latest to earliest.\s
                                                      1)	name:(string) name of the company . If nothing, return "".
                                                      2)	startDate: (string) start date of employment typically in the format "month/year", if nothing, just use end date of previous job.
                                                      3)	endDate: (string) end date. Use this format for output "month/year". If no end date, just use 2023-06, present == 2023-06
                                                      4)	noOfYears: (decimal) Number of employment years in the company. Else return 0.0. If start date is empty, then is 0. If there is only start date, then take take it as 1 year.
+                                                     5) jobTitle: The candidate's job title for this job. \s
                                                      yearsOfExperience (number): Total employment in years including internship based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only, but if there are overlapping months, do not double count. Verify by adding up all the noOfYears from companiesDetails array.
                                                      1)Exclude education and trainings.\s
                                                      2) If candidate mention only present date without start date, then calculate years based on the last working date to present.
@@ -114,12 +123,13 @@ public class ResumeService {
                                                      8) present always refer to end date.
                                                      companies (array): The names of the recent 3 companies the candidate has worked for. Do not return duplicate companies.
                                                      education (string): Give me the candidate highest education qualification in the resume.
-                                                     
+                                                     jobTitle (string): return the candidate's job title of his/her latest job in the companiesDetail.
+                                                     profile (string): return the description/about me section about the candidate from the resume. 
                                                      Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid and complete according to the above requirements.The following is a chunk of a CV.
-                                                     Complete the response before returning the response.
+                                                     Complete the response before returning the response. For any empty results, reparse the resume again and get a result.
                     """;
 
-//    ["A-Levels","Diploma","Degree","Master","PHD"].
+
 
     private final String GPTPROMPT3_2 =
             """
@@ -211,6 +221,36 @@ public class ResumeService {
                                                      Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid and complete according to the above requirements.The following is a chunk of a CV.
                                                      Complete the response before returning the response.
                     """;
+    
+    private final String GPTPROMPT3_4BK =
+            """
+                    Please help me extract the following fields from each CV and use the followings as the keys:\s
+                                                     name (string): The name of the candidate. Letter of each word is capital, the rest are lowercase.\s
+                                                     email (string): The email address of the candidate.\s
+                                                     mobile (string): The mobile number of the candidate.\s
+                                                     skills (array): The skills possessed by the candidate. Just technical skills and software skills, no linguistic languages.
+                                                     companiesDetails (array): All the companies the candidate worked with including internships. Array should start with the latest.
+                                                     1)	name:(string) name of the company . If nothing, return "".
+                                                     2)	startDate: (string) start date of employment typically in the format "month/year", if nothing, just use end date of previous job.
+                                                     3)	endDate: (string) end date. Use this format for output "month/year". If no end date, just use 2023-06, present == 2023-06
+                                                     4)	noOfYears: (decimal) Number of employment years in the company. Else return 0.0. If start date is empty, then is 0. If there is only start date, then take take it as 1 year.
+                                                     yearsOfExperience (number): Total employment in years including internship based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only, but if there are overlapping months, do not double count. Verify by adding up all the noOfYears from companiesDetails array.
+                                                     1)Exclude education and trainings.\s
+                                                     2) If candidate mention only present date without start date, then calculate years based on the last working date to present.
+                                                     3) If candidate mention start date to present date, then calculate years based on the start date to present date.
+                                                     4) Present year is 2023.
+                                                     5) Employment dates for each position mentioned in your career history. Include the month and year for both the start and end dates of each job.
+                                                     If any positions have unspecified employment dates, please mention that explicitly. Based on these, calculate the number of employment years of the candidate.
+                                                     6) Please return number of years. Not months.
+                                                     7) Always use candidate stated start date to end date first.
+                                                     8) present always refer to end date.
+                                                     companies (array): The names of the recent 3 companies the candidate has worked for. Do not return duplicate companies.
+                                                     education (string): Give me the candidate highest education qualification in the resume.
+                                                     
+                                                     Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid and complete according to the above requirements.The following is a chunk of a CV.
+                                                     Complete the response before returning the response.
+                    """;
+
 
     public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
         this.userRepository = userRepository;
@@ -452,6 +492,17 @@ public class ResumeService {
         resumeUpdated.get().setMobile(resumeUpdateRequest.mobile());
         resumeUpdated.get().setEducation(resumeUpdateRequest.education());
         resumeUpdated.get().setYearsOfExperience(resumeUpdateRequest.yearsOfExperience());
+        // Updated field 12072023
+        resumeUpdated.get().setFirstName(resumeUpdateRequest.firstName());
+        resumeUpdated.get().setLastName(resumeUpdateRequest.lastName());
+        resumeUpdated.get().setGender(resumeUpdateRequest.gender());
+        resumeUpdated.get().setNationality(resumeUpdateRequest.nationality());
+        resumeUpdated.get().setCurrentLocation(resumeUpdateRequest.location());
+        resumeUpdated.get().setProfile(resumeUpdateRequest.profile());
+        resumeUpdated.get().setJobTitle(resumeUpdateRequest.jobTitle());
+        resumeUpdated.get().setPrimarySkills(resumeUpdateRequest.primarySkills());
+        resumeUpdated.get().setSecondarySkills(resumeUpdateRequest.secondarySkills());
+        resumeUpdated.get().setSpokenLanguages(resumeUpdateRequest.spokenLanguages());
 
         // Update Skills & Companies
         resumeUpdated.get().getSkills().clear();
@@ -468,6 +519,8 @@ public class ResumeService {
         }
 
         Resume savedResume = resumeRepository.save(resumeUpdated.get());
+
+        System.out.println("Updated Resume");
 
         return resumeToResumeUpdateResponseDTO(savedResume);
     }
@@ -563,7 +616,18 @@ public class ResumeService {
                 resume.getResumeStorageRef(),
                 resume.getCreatedAt(),
                 resume.getUpdatedAt(),
-                userToUserResponseDTO(resume.getUser())
+                userToUserResponseDTO(resume.getUser()),
+                // Updated 12072023
+                resume.getFirstName(),
+                resume.getLastName(),
+                resume.getGender(),
+                resume.getCurrentLocation(),
+                resume.getNationality(),
+                resume.getJobTitle(),
+                resume.getSpokenLanguages(),
+                resume.getPrimarySkills(),
+                resume.getSecondarySkills(),
+                resume.getProfile()
         );
     }
 
@@ -583,7 +647,18 @@ public class ResumeService {
                 resume.getCompaniesDetails(),
                 resume.getResumeStorageRef(),
                 skills,
-                companies);
+                companies,
+                // Updated 12072023
+                resume.getFirstName(),
+                resume.getLastName(),
+                resume.getGender(),
+                resume.getCurrentLocation(),
+                resume.getNationality(),
+                resume.getJobTitle(),
+                resume.getSpokenLanguages(),
+                resume.getPrimarySkills(),
+                resume.getSecondarySkills(),
+                resume.getProfile());
     }
 
     private List<ResumeCreateResponseDTO> mapToResumeCreateResponseDTOList(List<Resume> resumes) {
@@ -604,7 +679,17 @@ public class ResumeService {
                     resumeCreateResponse.getResumeStorageRef(),
                     resumeCreateResponse.getCreatedAt(),
                     resumeCreateResponse.getUpdatedAt(),
-                    userToUserResponseDTO(resumeCreateResponse.getUser())
+                    userToUserResponseDTO(resumeCreateResponse.getUser()),
+                    resumeCreateResponse.getFirstName(),
+                    resumeCreateResponse.getLastName(),
+                    resumeCreateResponse.getGender(),
+                    resumeCreateResponse.getCurrentLocation(),
+                    resumeCreateResponse.getNationality(),
+                    resumeCreateResponse.getJobTitle(),
+                    resumeCreateResponse.getSpokenLanguages(),
+                    resumeCreateResponse.getPrimarySkills(),
+                    resumeCreateResponse.getSecondarySkills(),
+                    resumeCreateResponse.getProfile()
             );
         }).collect(Collectors.toList());
     }
@@ -630,11 +715,18 @@ public class ResumeService {
 //        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
         // Create an ObjectMapper instance
         String companiesDetail;
+        String primarySkills;
+        String secondarySkills;
+        String spokenLanguages;
         try {
             companiesDetail = objectMapper.writeValueAsString(chatGPTMappedResults.getCompaniesDetails());
+            primarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getPrimarySkills());
+            secondarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getSecondarySkills());
+            spokenLanguages = objectMapper.writeValueAsString(chatGPTMappedResults.getSpokenLanguages());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
         resume.setCompaniesDetails(companiesDetail);
         resume.setName(chatGPTMappedResults.getName());
         resume.setEmail(chatGPTMappedResults.getEmail());
@@ -648,6 +740,17 @@ public class ResumeService {
             resume.addCompany(new Company(company));
         }
 
+        // Updated details 12072023
+        resume.setPrimarySkills(primarySkills);
+        resume.setSecondarySkills(secondarySkills);
+        resume.setSpokenLanguages(spokenLanguages);
+        resume.setFirstName(chatGPTMappedResults.getFirstName());
+        resume.setLastName(chatGPTMappedResults.getLastName());
+        resume.setGender(chatGPTMappedResults.getGender());
+        resume.setCurrentLocation(chatGPTMappedResults.getCurrentLocation());
+        resume.setNationality(chatGPTMappedResults.getNationality());
+        resume.setJobTitle(chatGPTMappedResults.getJobTitle());
+        resume.setProfile(chatGPTMappedResults.getProfile());
         return resume;
     }
 

@@ -20,7 +20,6 @@ import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
 
 const UploadMulti = () => {
-  const [multiThreadUpload, setMultiThreadUpload] = useState(false);
   const uploadFileRef = useRef(null);
   const uploadRef = useRef();
   const ctx = useContext(UserContext);
@@ -131,6 +130,7 @@ const UploadMulti = () => {
     for (let i = 0; i < files.length; i++) {
       if (!checkFileExtension(files[i])) return;
     }
+
 
     setIsValidAttachment(true);
     setTotalUploadCount(files.length);
@@ -323,7 +323,7 @@ const UploadMulti = () => {
             <p className="subscription-type">Paid</p>
             <p className="subscription-price">$20.00 per month</p>
             <div>
-              <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center">
                 <TiTick className="tick-icon" />
                 <p>Unlimited resume upload and parsing</p>
               </div>
@@ -351,6 +351,8 @@ const UploadMulti = () => {
             <h1>
               Upload Multiple Resumes
               <MdUploadFile className={`upload-header-icon ${multiThreadUpload && "multiThreadUpload-icon"}`} onClick={() => setMultiThreadUpload(prev => !prev)}/>
+              <div>
+    </div>
             </h1>
             <div
               className={`drop-outer-border ${isDragOver && "drag-over"} mb-3`}
