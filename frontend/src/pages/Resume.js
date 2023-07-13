@@ -75,6 +75,57 @@ const Resume = () => {
 
   const [showCompaniesDetails, setShowCompaniesDetails] = useState(false);
 
+   // Updated fields 12072023
+   const [firstName, setFirstName] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [lastName, setLastName] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [gender, setGender] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [nationality, setNationality] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [location, setLocation] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [profile, setProfile] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [jobTitle, setJobTitle] = useState({
+    value: "",
+    isEditing: false,
+  });
+
+  //Primary Skills
+  const [primarySkill, setPrimarySkill] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [primarySkills, setPrimarySkills] = useState([]);
+
+  //Secondary Skills
+  const [secondarySkill, setSecondarySkill] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [secondarySkills, setSecondarySkills] = useState([]);
+
+  // Spoken Languages
+  const [spokenLanguage, setSpokenLanguage] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [spokenLanguages, setSpokenLanguages] = useState([]);
+
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
   };
@@ -757,10 +808,6 @@ const Resume = () => {
                 loading ? "Loading document..." : "Download now!"
               }
             </PDFDownloadLink>
-          )}
-            <button className="btn btn-secondary" onClick={exportToExcel}>
-              Export to excel
-            </button>
           )}
 
           {(ctx.getUserRole() === "ROLE_ADMIN" ||

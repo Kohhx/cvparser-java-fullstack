@@ -42,6 +42,7 @@ const UploadMulti = () => {
   const [totalUploadCount, setTotalUploadCount] = useState(0);
   const [currentUploadCount, setCurrentUploadCount] = useState(0);
   const [fileObjects, setFileObjects] = useState([]);
+  const [multiThreadUpload, setMultiThreadUpload] = useState(false);
 
   const deleteFile = (index) => {
     setFileObjects(fileObjects.filter((file, i) => i !== index));
