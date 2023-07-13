@@ -58,6 +58,12 @@ public class ResumeController {
         System.out.println("OUT");
         return new ResponseEntity<ResumeCreateResponseDTO>(chatResponse, HttpStatus.OK);
     }
+
+    @PostMapping("resumeslist")
+    @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
+    public void createResumeList(@ModelAttribute ResumeListCreateRequestDTO resumeCreateRequest) {
+         resumeService.resumesListParse(resumeCreateRequest);
+    }
     
 
     @PatchMapping("resumes/{id}")

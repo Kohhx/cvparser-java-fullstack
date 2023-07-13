@@ -5,6 +5,8 @@ import com.avensys.CVparserApplication.company.CompanyRepository;
 import com.avensys.CVparserApplication.exceptions.ResourceAccessDeniedException;
 import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
 import com.avensys.CVparserApplication.exceptions.UploadFileException;
+import com.avensys.CVparserApplication.firebase.FirebaseStorageService;
+import com.avensys.CVparserApplication.openai.ChatGPTCallable;
 import com.avensys.CVparserApplication.openai.ChatGPTMappedDTO;
 import com.avensys.CVparserApplication.openai.ChatGPTRequestDTO;
 import com.avensys.CVparserApplication.openai.ChatGPTResponseDTO;
@@ -36,6 +38,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,8 +47,10 @@ public class ResumeService {
     public final ResumeRepository resumeRepository;
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
+    public final FirebaseStorageService firebaseStorageService;
     public final RestTemplate restTemplate;
     public final double chatGPTTemperature = 0.9;
+    private static final int NUM_THREADS = 10;
 
 
     @Value("${openai.model}")
@@ -247,16 +252,17 @@ public class ResumeService {
                     """;
 
 
-    public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, RestTemplate restTemplate) {
+    public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
         this.skillRepository = skillRepository;
         this.companyRepository = companyRepository;
+        this.firebaseStorageService = firebaseStorageService;
         this.restTemplate = restTemplate;
     }
 
     public AdminResumesResponseDTO getAllResumes(int page, int size) {
-        PageRequest pageable = PageRequest.of(page-1, size);
+        PageRequest pageable = PageRequest.of(page - 1, size);
         Page resumeList = resumeRepository.findAllWithPage(pageable);
 
         List<ResumeCreateResponseDTO> resumeListResponse = mapToResumeCreateResponseDTOList(resumeList.getContent());
@@ -265,9 +271,9 @@ public class ResumeService {
     }
 
     public AdminResumesResponseDTO getAllResumesWithSearch(int page, int size, String keywords) {
-        PageRequest pageable = PageRequest.of(page-1, size);
+        PageRequest pageable = PageRequest.of(page - 1, size);
         System.out.println("Check keyword again: " + keywords);
-        Page resumeList = resumeRepository.findAllWithSearchPage(keywords,pageable);
+        Page resumeList = resumeRepository.findAllWithSearchPage(keywords, pageable);
         System.out.println(resumeList.getContent());
         List<ResumeCreateResponseDTO> resumeListResponse = mapToResumeCreateResponseDTOList(resumeList.getContent());
         AdminResumesResponseDTO adminResumeResponse = new AdminResumesResponseDTO(resumeList.getTotalPages(), page, resumeListResponse);
@@ -303,7 +309,7 @@ public class ResumeService {
             throw new ResourceNotFoundException("Resume not found");
         }
 
-        if(!checkIsAdmin()){
+        if (!checkIsAdmin()) {
             checkResumeBelongToUser(resume.get());
         }
 
@@ -381,9 +387,12 @@ public class ResumeService {
 //            System.out.println(resume);
 //            System.out.println("========================= Break =======================");
 //        });
+        String fileExt = FileUtil.getFileExtension(resumeCreateRequest.file().getOriginalFilename());
+        String fileUrl = firebaseStorageService.uploadFile(resumeCreateRequest.file(), resumeCreateRequest.fileName(), fileExt);
 
         Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
         resume.setFileName(resumeCreateRequest.fileName());
+        resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         user.get().setResumeLimit(user.get().getResumeLimit() + 1);
@@ -393,6 +402,39 @@ public class ResumeService {
 
         return chatGPTResponseToResumeCreateResponse(savedResume);
     }
+
+    // Use Multithreading
+//    public List<String> resumesListParse(ResumeListCreateRequestDTO resumeCreateRequest) {
+    public void resumesListParse(ResumeListCreateRequestDTO resumeCreateRequest) {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByEmail(principal.getName());
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
+        List<Future<String>> futures = new ArrayList<>();
+        for (MultipartFile file : resumeCreateRequest.getFileList()) {
+            Callable<String> callable = new ChatGPTCallable(userRepository, resumeRepository, firebaseStorageService, restTemplate, file, user);
+            Future<String> future = executorService.submit(callable);
+            futures.add(future);
+        }
+
+        List<String> responses = new ArrayList<>();
+
+        for (Future<String> future : futures) {
+            try {
+                responses.add(future.get()); // This will block until the response is available
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        executorService.shutdown();
+        System.out.println("Done resumes parsing with multithreading");
+    }
+
 
     public ResumeCreateResponseDTO parseAndCreateResume(ResumeCreateRequestDTO resumeCreateRequest) {
 
@@ -496,14 +538,20 @@ public class ResumeService {
             throw new UsernameNotFoundException("User not found");
         }
 
+        String fbFileId = resume.get().getResumeStorageRef();
+
         System.out.println("deleting.....");
         user.get().getResumes().remove(resume.get());
         user.get().setResumeLimit(user.get().getResumeLimit() - 1);
         userRepository.save(user.get());
         resumeRepository.delete(resume.get());
+
+        firebaseStorageService.deleteFile(fbFileId);
+
+        System.out.println("Deleted from file from fb");
     }
 
-    public void deleteUserResume(long userId,long resumeId) {
+    public void deleteUserResume(long userId, long resumeId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Resume> resume = resumeRepository.findById(resumeId);
 
@@ -565,6 +613,7 @@ public class ResumeService {
                 companies,
                 resume.getEducation(),
                 resume.getCompaniesDetails(),
+                resume.getResumeStorageRef(),
                 resume.getCreatedAt(),
                 resume.getUpdatedAt(),
                 userToUserResponseDTO(resume.getUser()),
@@ -596,6 +645,7 @@ public class ResumeService {
                 resume.getYearsOfExperience(),
                 resume.getEducation(),
                 resume.getCompaniesDetails(),
+                resume.getResumeStorageRef(),
                 skills,
                 companies,
                 // Updated 12072023
@@ -626,6 +676,7 @@ public class ResumeService {
                     companies,
                     resumeCreateResponse.getEducation(),
                     resumeCreateResponse.getCompaniesDetails(),
+                    resumeCreateResponse.getResumeStorageRef(),
                     resumeCreateResponse.getCreatedAt(),
                     resumeCreateResponse.getUpdatedAt(),
                     userToUserResponseDTO(resumeCreateResponse.getUser()),

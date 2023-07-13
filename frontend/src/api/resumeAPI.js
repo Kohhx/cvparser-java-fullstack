@@ -32,4 +32,9 @@ export const resumeAPI = {
     return axiosInstance.delete(`admin/users/${userId}/resumes/${resumeId}`);
   },
 
+  uploadResumeList: async (resumeDetails) => {
+    return axiosInstance
+      .post("resumeslist", resumeDetails)
+  },
+
 };
