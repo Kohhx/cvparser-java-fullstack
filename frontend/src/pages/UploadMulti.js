@@ -123,7 +123,6 @@ const UploadMulti = () => {
       if (!checkFileExtension(files[i])) return;
     }
 
-
     setIsValidAttachment(true);
     setTotalUploadCount(files.length);
 
@@ -280,7 +279,7 @@ const UploadMulti = () => {
             <p className="subscription-type">Paid</p>
             <p className="subscription-price">$20.00 per month</p>
             <div>
-            <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center">
                 <TiTick className="tick-icon" />
                 <p>Unlimited resume upload and parsing</p>
               </div>
@@ -302,12 +301,15 @@ const UploadMulti = () => {
           </div>
         </Modal>
       </CSSTransition>
+
       <div className="upload-container">
         <div className="upload-left-section">
           <form onSubmit={handleSubmit}>
             <h1>
               Upload Multiple Resumes
               <MdUploadFile className="upload-header-icon" />
+              <div>
+    </div>
             </h1>
             <div
               className={`drop-outer-border ${isDragOver && "drag-over"} mb-3`}
