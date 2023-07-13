@@ -202,4 +202,6 @@ public class ChatGPTMappedDTO {
     public void setSecondarySkills(List<String> secondarySkills) {
         this.secondarySkills = secondarySkills;
     }
+
+
 }
