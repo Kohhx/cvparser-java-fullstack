@@ -161,3 +161,45 @@ input:disabled {
   padding: 0;
   margin-left: 1.3rem;
 }
+
+.textarea-input:disabled{
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.textarea-input{
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background-color: white;
+}
+
+.flex-form{
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.select-input:disabled{
+  padding:5px;
+  border-radius: 100vh;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  color: rgb(67, 67, 67);
+}
+
+.select-input{
+  padding:5px;
+  border-radius: 100vh;
+  width: 100%;
+  border: none;
+  background-color: white;
+}
