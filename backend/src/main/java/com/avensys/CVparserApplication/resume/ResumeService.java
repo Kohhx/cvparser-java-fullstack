@@ -450,6 +450,17 @@ public class ResumeService {
         resumeUpdated.get().setMobile(resumeUpdateRequest.mobile());
         resumeUpdated.get().setEducation(resumeUpdateRequest.education());
         resumeUpdated.get().setYearsOfExperience(resumeUpdateRequest.yearsOfExperience());
+        // Updated field 12072023
+        resumeUpdated.get().setFirstName(resumeUpdateRequest.firstName());
+        resumeUpdated.get().setLastName(resumeUpdateRequest.lastName());
+        resumeUpdated.get().setGender(resumeUpdateRequest.gender());
+        resumeUpdated.get().setNationality(resumeUpdateRequest.nationality());
+        resumeUpdated.get().setCurrentLocation(resumeUpdateRequest.location());
+        resumeUpdated.get().setProfile(resumeUpdateRequest.profile());
+        resumeUpdated.get().setJobTitle(resumeUpdateRequest.jobTitle());
+        resumeUpdated.get().setPrimarySkills(resumeUpdateRequest.primarySkills());
+        resumeUpdated.get().setSecondarySkills(resumeUpdateRequest.secondarySkills());
+        resumeUpdated.get().setSpokenLanguages(resumeUpdateRequest.spokenLanguages());
 
         // Update Skills & Companies
         resumeUpdated.get().getSkills().clear();
@@ -466,6 +477,8 @@ public class ResumeService {
         }
 
         Resume savedResume = resumeRepository.save(resumeUpdated.get());
+
+        System.out.println("Updated Resume");
 
         return resumeToResumeUpdateResponseDTO(savedResume);
     }

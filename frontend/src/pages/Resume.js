@@ -12,6 +12,8 @@ import { AiFillCaretDown } from "react-icons/ai";
 // import ReactPDF from '@react-pdf/renderer';
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFDocument from "../utility/PDFDocument";
+import ResumeFieldList from "../components/shared/ResumeFieldList";
+import ResumeFieldInput from "../components/shared/ResumeFieldInput";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -100,26 +102,27 @@ const Resume = () => {
     value: "",
     isEditing: false,
   });
-  const [primaryskill, setPrimarySkill] = useState({
+
+  //Primary Skills
+  const [primarySkill, setPrimarySkill] = useState({
     value: "",
     isEditing: false,
   });
-  const [primarySkills, setPrimarySkills] = useState({
-    value: [],
-    isEditing: false,
-  });
+  const [primarySkills, setPrimarySkills] = useState([]);
+
+  //Secondary Skills
   const [secondarySkill, setSecondarySkill] = useState({
     value: "",
     isEditing: false,
   });
-  const [secondarySkills, setSecondarySkills] = useState({
-    value: [],
+  const [secondarySkills, setSecondarySkills] = useState([]);
+
+  // Spoken Languages
+  const [spokenLanguage, setSpokenLanguage] = useState({
+    value: "",
     isEditing: false,
   });
-  const [spokenLanguages, setSpokenLanguages] = useState({
-    value: [],
-    isEditing: false,
-  });
+  const [spokenLanguages, setSpokenLanguages] = useState([]);
 
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
@@ -157,12 +160,28 @@ const Resume = () => {
       yearsOfExperience: +yearsOfExp.value,
       skills: skills,
       companies: [company1.value, company2.value, company3.value],
+      // Updated fields 12072023
+      firstName: firstName.value,
+      lastName: lastName.value,
+      gender: gender.value,
+      nationality: nationality.value,
+      location: location.value,
+      profile: profile.value,
+      jobTitle: jobTitle.value,
+      primarySkills: JSON.stringify(primarySkills),
+      secondarySkills: JSON.stringify(secondarySkills),
+      spokenLanguages: JSON.stringify(spokenLanguages),
     };
+
+    console.log(resumeDetails);
 
     resumeAPI.updateResume(resumeDetails).then((res) => {
       console.log(res.data);
       const resumeGet = { ...res.data };
       resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+      resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
+      resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
+      resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
       setResume(resumeGet);
       setAllEditableToFalse();
       toast.success("Resume updated successfully.");
@@ -196,6 +215,9 @@ const Resume = () => {
     setLocation((prev) => ({ ...prev, isEditing: false }));
     setProfile((prev) => ({ ...prev, isEditing: false }));
     setJobTitle((prev) => ({ ...prev, isEditing: false }));
+    setPrimarySkill((prev) => ({ ...prev, isEditing: false }));
+    setSecondarySkill((prev) => ({ ...prev, isEditing: false }));
+    setSpokenLanguage((prev) => ({ ...prev, isEditing: false }));
   };
 
   const setFields = (resume) => {
@@ -217,9 +239,12 @@ const Resume = () => {
     setLastName((prev) => ({ ...prev, value: resume?.lastName }));
     setGender((prev) => ({ ...prev, value: resume?.gender }));
     setProfile((prev) => ({ ...prev, value: resume?.profile }));
-    setLocation((prev) => ({ ...prev, value: resume?.location }));
+    setLocation((prev) => ({ ...prev, value: resume?.currentLocation }));
     setNationality((prev) => ({ ...prev, value: resume?.nationality }));
     setJobTitle((prev) => ({ ...prev, value: resume?.jobTitle }));
+    setSpokenLanguages((prev) => [...prev, ...resume?.spokenLanguages]);
+    setPrimarySkills((prev) => [...prev, ...resume?.primarySkills]);
+    setSecondarySkills((prev) => [...prev, ...resume?.secondarySkills]);
   };
 
   useEffect(() => {
@@ -251,6 +276,8 @@ const Resume = () => {
 
   return (
     <div className="container resume-container w-50">
+
+      {/* File Name */}
       <div class="resume-filename-section">
         <div>
           <div className="d-flex align-items-center gap-2">
@@ -569,9 +596,27 @@ const Resume = () => {
               />
             </div>
           </div>
+
+          {/* Spoken Languages */}
+          <div class="resume-skills-section">
+          <div className="d-flex align-items-center gap-2">
+            <h3>Spoken Languages</h3>
+            <AiFillEdit
+              className="edit-icons-md"
+              onClick={() =>
+                setSpokenLanguage((prev) => ({
+                  ...prev,
+                  isEditing: !prev.isEditing,
+                }))
+              }
+            />
+          </div>
+          <ResumeFieldInput data={spokenLanguage} setData={setSpokenLanguage} setDatas={setSpokenLanguages}/>
+          <ResumeFieldList data={spokenLanguages} deleteData={ (selectedIndex) =>  setSpokenLanguages((prev) => prev.filter((spokenLanguage, index) => index !== selectedIndex))}/>
         </div>
 
 
+        </div>
       </div>
 
       {/* Companies */}
@@ -680,7 +725,7 @@ const Resume = () => {
 
       {/* Skills */}
       <div className="resume-main-section mt-4">
-        <div class="resume-skills-section">
+        {/* <div class="resume-skills-section">
           <div className="d-flex align-items-center gap-2">
             <h3>Skills</h3>
             <AiFillEdit
@@ -693,50 +738,43 @@ const Resume = () => {
               }
             />
           </div>
-          <div>
-            {skill.isEditing && (
-              <div className="d-flex gap-2 align-items-center">
-                <input
-                  type="text"
-                  value={skill.value}
-                  onChange={(e) =>
-                    setSkill((prev) => ({ ...prev, value: e.target.value }))
-                  }
-                  disabled={!skill.isEditing}
-                  placeholder="Add a skill"
-                  className="mt-1 mb-1"
-                />
-                <RiAddCircleFill
-                  className="edit-icons-md"
-                  onClick={() => {
-                    setSkill((prev) => ({ ...prev, value: "" }));
-                    setSkills((prev) => [...prev, skill.value]);
-                  }}
-                />
-              </div>
-            )}
+          <ResumeFieldInput data={skill} setData={setSkill} setDatas={setSkills}/>
+          <ResumeFieldList data={skills} deleteData={deleteSkill}/>
+        </div> */}
+
+        <div class="resume-skills-section">
+          <div className="d-flex align-items-center gap-2">
+            <h3>Primary Skills</h3>
+            <AiFillEdit
+              className="edit-icons-md"
+              onClick={() =>
+                setPrimarySkill((prev) => ({
+                  ...prev,
+                  isEditing: !prev.isEditing,
+                }))
+              }
+            />
           </div>
-          <div class="skill-list d-flex gap-3 mt-3 flex-wrap">
-            {skills.length === 0 && !skill.isEditing && (
-              <div>No skills added</div>
-            )}
-            {skills.map((skill, index) => {
-              return (
-                <div class="skill-item d-flex gap-1 align-items-center">
-                  <span>{skill}</span>
-                  <RxCross2
-                    class="skill-delete-icon"
-                    onClick={() => deleteSkill(index)}
-                  />
-                </div>
-              );
-            })}
-          </div>
+          <ResumeFieldInput data={primarySkill} setData={setPrimarySkill} setDatas={setPrimarySkills}/>
+          <ResumeFieldList data={primarySkills} deleteData={(selectedIndex) =>  setPrimarySkills((prev) => prev.filter((setPrimarySkill, index) => index !== selectedIndex))}/>
         </div>
 
-
-
-
+        <div class="resume-skills-section mt-4">
+          <div className="d-flex align-items-center gap-2">
+            <h3>Secondary Skills</h3>
+            <AiFillEdit
+              className="edit-icons-md"
+              onClick={() =>
+                setSecondarySkill((prev) => ({
+                  ...prev,
+                  isEditing: !prev.isEditing,
+                }))
+              }
+            />
+          </div>
+          <ResumeFieldInput data={secondarySkill} setData={setSecondarySkill} setDatas={setSecondarySkills}/>
+          <ResumeFieldList data={secondarySkills} deleteData={(selectedIndex) => setSecondarySkills((prev) => prev.filter((setSecondarySkill, index) => index !== selectedIndex))}/>
+        </div>
 
         {/* Buttons */}
         <div className="text-center mt-5 d-flex gap-3 justify-content-center">
@@ -765,6 +803,8 @@ const Resume = () => {
           )}
         </div>
       </div>
+
+
 
 
 
