@@ -39,12 +39,20 @@ public class FileUtil {
         return "";
     }
 
-    private static String getFileExtension(String fileName) {
+    public static String getFileExtension(String fileName) {
         int dotIndex = fileName.lastIndexOf('.');
         if (dotIndex == -1) {
             return "";
         }
         return fileName.substring(dotIndex);
+    }
+
+    public static String getFileName(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex == -1) {
+            return "";
+        }
+        return fileName.substring(0,dotIndex);
     }
 
 

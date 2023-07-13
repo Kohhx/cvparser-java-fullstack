@@ -14,6 +14,8 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFDocument from "../utility/PDFDocument";
 import ResumeFieldList from "../components/shared/ResumeFieldList";
 import ResumeFieldInput from "../components/shared/ResumeFieldInput";
+import { projectStorage } from "../firebase/config";
+import { fileUtil } from "../utility/fileUtil";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -73,8 +75,8 @@ const Resume = () => {
 
   const [showCompaniesDetails, setShowCompaniesDetails] = useState(false);
 
-  // Updated fields 12072023
-  const [firstName, setFirstName] = useState({
+   // Updated fields 12072023
+   const [firstName, setFirstName] = useState({
     value: "",
     isEditing: false,
   });
@@ -272,6 +274,12 @@ const Resume = () => {
 
   const exportToExcel = () => {
     excelUtil.exportToExcelCustom(resume);
+  };
+
+
+
+  const downloadResume = async() => {
+    fileUtil.firebaseFileDownload(resume.fileRef);
   };
 
   return (
@@ -801,13 +809,15 @@ const Resume = () => {
               }
             </PDFDownloadLink>
           )}
+
+          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+            ctx.getUserRole() === "ROLE_PAID") && (
+            <button className="btn btn-secondary" onClick={downloadResume}>
+              Download Resume
+            </button>
+          )}
         </div>
       </div>
-
-
-
-
-
     </div>
   );
 };
