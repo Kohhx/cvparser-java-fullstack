@@ -332,6 +332,8 @@ public class Resume {
         this.secondarySkills = secondarySkills;
     }
 
+
+
     @Override
     public String toString() {
         return "Resume{" +
