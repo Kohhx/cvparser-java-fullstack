@@ -37,16 +37,16 @@ import java.util.stream.Collectors;
 public class ChatGPTCallable implements Callable<String> {
 
     public boolean showMessage = false;
-    public  UserRepository userRepository;
-    public  ResumeRepository resumeRepository;
-    public  FirebaseStorageService firebaseStorageService;
-    public  RestTemplate restTemplate;
+    public UserRepository userRepository;
+    public ResumeRepository resumeRepository;
+    public FirebaseStorageService firebaseStorageService;
+    public RestTemplate restTemplate;
     public Optional<User> user;
 
     public final double chatGPTTemperature = 0.9;
     private static final int NUM_THREADS = 10;
 
-    private String chatModel ="gpt-3.5-turbo";
+    private String chatModel = "gpt-3.5-turbo";
 
     private String openAiUrl = "https://api.openai.com/v1/chat/completions";
     private String extractText;
@@ -90,7 +90,6 @@ public class ChatGPTCallable implements Callable<String> {
                             """;
 
 
-
     public ChatGPTCallable(UserRepository userRepository, ResumeRepository resumeRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate, MultipartFile file, Optional<User> user) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
@@ -129,11 +128,11 @@ public class ChatGPTCallable implements Callable<String> {
             System.out.println("Calling ChatGPT.......");
             StringBuilder sbTemp = new StringBuilder();
             if (index == 0) {
-                sbTemp.append(GPTPROMPT3);
+                sbTemp.append(ChatGPTPrompt.GPTPROMPT3);
             } else {
                 sbTemp.append(storedResponses.get(index - 1));
-                sbTemp.append(GPTPROMPT3_2);
-                sbTemp.append(GPTPROMPT3);
+                sbTemp.append(ChatGPTPrompt.GPTPROMPT3_2);
+                sbTemp.append(ChatGPTPrompt.GPTPROMPT3);
             }
             sbTemp.append(chunk);
             if (showMessage) {
@@ -210,7 +209,18 @@ public class ChatGPTCallable implements Callable<String> {
                 resume.getResumeStorageRef(),
                 resume.getCreatedAt(),
                 resume.getUpdatedAt(),
-                userToUserResponseDTO(resume.getUser())
+                userToUserResponseDTO(resume.getUser()),
+                // Updated 12072023
+                resume.getFirstName(),
+                resume.getLastName(),
+                resume.getGender(),
+                resume.getCurrentLocation(),
+                resume.getNationality(),
+                resume.getJobTitle(),
+                resume.getSpokenLanguages(),
+                resume.getPrimarySkills(),
+                resume.getSecondarySkills(),
+                resume.getProfile()
         );
     }
 
@@ -230,7 +240,18 @@ public class ChatGPTCallable implements Callable<String> {
                 resume.getCompaniesDetails(),
                 resume.getResumeStorageRef(),
                 skills,
-                companies);
+                companies,
+                // Updated 12072023
+                resume.getFirstName(),
+                resume.getLastName(),
+                resume.getGender(),
+                resume.getCurrentLocation(),
+                resume.getNationality(),
+                resume.getJobTitle(),
+                resume.getSpokenLanguages(),
+                resume.getPrimarySkills(),
+                resume.getSecondarySkills(),
+                resume.getProfile());
     }
 
     private List<ResumeCreateResponseDTO> mapToResumeCreateResponseDTOList(List<Resume> resumes) {
@@ -251,10 +272,21 @@ public class ChatGPTCallable implements Callable<String> {
                     resumeCreateResponse.getResumeStorageRef(),
                     resumeCreateResponse.getCreatedAt(),
                     resumeCreateResponse.getUpdatedAt(),
-                    userToUserResponseDTO(resumeCreateResponse.getUser())
+                    userToUserResponseDTO(resumeCreateResponse.getUser()),
+                    resumeCreateResponse.getFirstName(),
+                    resumeCreateResponse.getLastName(),
+                    resumeCreateResponse.getGender(),
+                    resumeCreateResponse.getCurrentLocation(),
+                    resumeCreateResponse.getNationality(),
+                    resumeCreateResponse.getJobTitle(),
+                    resumeCreateResponse.getSpokenLanguages(),
+                    resumeCreateResponse.getPrimarySkills(),
+                    resumeCreateResponse.getSecondarySkills(),
+                    resumeCreateResponse.getProfile()
             );
         }).collect(Collectors.toList());
     }
+
 
     private Resume chatGPTResponseToResume(String jsonOutput) {
 
@@ -277,8 +309,14 @@ public class ChatGPTCallable implements Callable<String> {
 //        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
         // Create an ObjectMapper instance
         String companiesDetail;
+        String primarySkills;
+        String secondarySkills;
+        String spokenLanguages;
         try {
             companiesDetail = objectMapper.writeValueAsString(chatGPTMappedResults.getCompaniesDetails());
+            primarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getPrimarySkills());
+            secondarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getSecondarySkills());
+            spokenLanguages = objectMapper.writeValueAsString(chatGPTMappedResults.getSpokenLanguages());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -295,6 +333,18 @@ public class ChatGPTCallable implements Callable<String> {
             resume.addCompany(new Company(company));
         }
 
+        // Updated details 12072023
+        resume.setPrimarySkills(primarySkills);
+        resume.setSecondarySkills(secondarySkills);
+        resume.setSpokenLanguages(spokenLanguages);
+        resume.setFirstName(chatGPTMappedResults.getFirstName());
+        resume.setLastName(chatGPTMappedResults.getLastName());
+        resume.setGender(chatGPTMappedResults.getGender());
+        resume.setCurrentLocation(chatGPTMappedResults.getCurrentLocation());
+        resume.setNationality(chatGPTMappedResults.getNationality());
+        resume.setJobTitle(chatGPTMappedResults.getJobTitle());
+        resume.setProfile(chatGPTMappedResults.getProfile());
+        System.out.println("I am here");
         return resume;
     }
 
