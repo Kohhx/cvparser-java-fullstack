@@ -71,6 +71,56 @@ const Resume = () => {
 
   const [showCompaniesDetails, setShowCompaniesDetails] = useState(false);
 
+  // Updated fields 12072023
+  const [firstName, setFirstName] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [lastName, setLastName] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [gender, setGender] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [nationality, setNationality] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [location, setLocation] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [profile, setProfile] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [jobTitle, setJobTitle] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [primaryskill, setPrimarySkill] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [primarySkills, setPrimarySkills] = useState({
+    value: [],
+    isEditing: false,
+  });
+  const [secondarySkill, setSecondarySkill] = useState({
+    value: "",
+    isEditing: false,
+  });
+  const [secondarySkills, setSecondarySkills] = useState({
+    value: [],
+    isEditing: false,
+  });
+  const [spokenLanguages, setSpokenLanguages] = useState({
+    value: [],
+    isEditing: false,
+  });
+
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
   };
@@ -138,6 +188,14 @@ const Resume = () => {
     setCompany2((prev) => ({ ...prev, isEditing: false }));
     setCompany3((prev) => ({ ...prev, isEditing: false }));
     setQualification((prev) => ({ ...prev, isEditing: false }));
+    // Updated fields 12072023
+    setFirstName((prev) => ({ ...prev, isEditing: false }));
+    setLastName((prev) => ({ ...prev, isEditing: false }));
+    setGender((prev) => ({ ...prev, isEditing: false }));
+    setNationality((prev) => ({ ...prev, isEditing: false }));
+    setLocation((prev) => ({ ...prev, isEditing: false }));
+    setProfile((prev) => ({ ...prev, isEditing: false }));
+    setJobTitle((prev) => ({ ...prev, isEditing: false }));
   };
 
   const setFields = (resume) => {
@@ -154,6 +212,14 @@ const Resume = () => {
     setCompany2((prev) => ({ ...prev, value: resume?.companies?.[1] }));
     setCompany3((prev) => ({ ...prev, value: resume?.companies?.[2] }));
     setQualification((prev) => ({ ...prev, value: resume?.education }));
+    // Updated fields 12072023
+    setFirstName((prev) => ({ ...prev, value: resume?.firstName }));
+    setLastName((prev) => ({ ...prev, value: resume?.lastName }));
+    setGender((prev) => ({ ...prev, value: resume?.gender }));
+    setProfile((prev) => ({ ...prev, value: resume?.profile }));
+    setLocation((prev) => ({ ...prev, value: resume?.location }));
+    setNationality((prev) => ({ ...prev, value: resume?.nationality }));
+    setJobTitle((prev) => ({ ...prev, value: resume?.jobTitle }));
   };
 
   useEffect(() => {
@@ -163,6 +229,9 @@ const Resume = () => {
         console.log(res.data);
         const resumeGet = { ...res.data };
         resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+        resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
+        resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
+        resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
         setResume(resumeGet);
         // const resume = res.data;
         // Set Initial state
@@ -183,31 +252,107 @@ const Resume = () => {
   return (
     <div className="container resume-container w-50">
       <div class="resume-filename-section">
-        <div className="d-flex align-items-center gap-2">
-          <h3>Resume Name</h3>
-          <AiFillEdit
-            className="edit-icons-md"
-            onClick={() =>
-              setFileName((prev) => ({ ...prev, isEditing: !prev.isEditing }))
-            }
-          />
-        </div>
-        <input
-          disabled={!fileName.isEditing}
-          className="fileName-input"
-          type="text"
-          value={fileName.value}
-          onChange={handleFileNameChange}
-        />
-        {!fileName.valid && (
-          <div className="alert alert-danger mt-3">
-            Resume Filename cannot be null
+        <div>
+          <div className="d-flex align-items-center gap-2">
+            <h3>Resume Name</h3>
+            <AiFillEdit
+              className="edit-icons-md"
+              onClick={() =>
+                setFileName((prev) => ({ ...prev, isEditing: !prev.isEditing }))
+              }
+            />
           </div>
-        )}
+          <input
+            disabled={!fileName.isEditing}
+            className="fileName-input"
+            type="text"
+            value={fileName.value}
+            onChange={handleFileNameChange}
+          />
+          {!fileName.valid && (
+            <div className="alert alert-danger mt-3">
+              Resume Filename cannot be null
+            </div>
+          )}
+        </div>
       </div>
+
       <div className="resume-main-section">
         <div class="resume-personal-details-section">
+          {/* About me */}
           <div class="resume-details-part">
+            <div className="d-flex align-items-center gap-2">
+              <h3>About Me</h3>
+              <AiFillEdit
+                className="edit-icons-md"
+                onClick={() =>
+                  setProfile((prev) => ({
+                    ...prev,
+                    isEditing: !prev.isEditing,
+                  }))
+                }
+              />
+            </div>
+            <textarea
+              disabled={!profile.isEditing}
+              className="textarea-input"
+              type="text"
+              value={profile.value}
+              onChange={(e) =>
+                setProfile((prev) => ({ ...prev, value: e.target.value }))
+              }
+            ></textarea>
+          </div>
+
+          {/* Firstname and lastname */}
+          <div className="flex-form">
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>First Name</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setFirstName((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <input
+                disabled={!firstName.isEditing}
+                type="text"
+                value={firstName.value}
+                onChange={(e) =>
+                  setFirstName((prev) => ({ ...prev, value: e.target.value }))
+                }
+              />
+            </div>
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Last Name</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setLastName((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <input
+                disabled={!lastName.isEditing}
+                type="text"
+                value={lastName.value}
+                onChange={(e) =>
+                  setLastName((prev) => ({ ...prev, value: e.target.value }))
+                }
+              />
+            </div>
+          </div>
+
+          {/* <div class="resume-details-part">
             <div className="d-flex align-items-center gap-2">
               <h3>Name</h3>
               <AiFillEdit
@@ -228,78 +373,175 @@ const Resume = () => {
               }
               disabled={!name.isEditing}
             />
-          </div>
-          <div class="resume-details-part">
-            <div className="d-flex align-items-center gap-2">
-              <h3>Email</h3>
-              <AiFillEdit
-                className="edit-icons-md"
-                onClick={() =>
-                  setEmail((prev) => ({
-                    ...prev,
-                    isEditing: !prev.isEditing,
-                  }))
-                }
-              />
-            </div>
-            <input
-              type="text"
-              value={email.value}
-              onChange={(e) =>
-                setEmail((prev) => ({ ...prev, value: e.target.value }))
-              }
-              disabled={!email.isEditing}
-            />
-          </div>
-          <div class="resume-details-part">
-            <div className="d-flex align-items-center gap-2">
-              <h3>Mobile</h3>
-              <AiFillEdit
-                className="edit-icons-md"
-                onClick={() =>
-                  setMobile((prev) => ({
-                    ...prev,
-                    isEditing: !prev.isEditing,
-                  }))
-                }
-              />
-            </div>
-            <div className="d-flex align-items-center justify-content-between gap-5">
+          </div> */}
+
+          {/* //Email and mobile */}
+          <div className="flex-form">
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Email</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setEmail((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
               <input
                 type="text"
-                value={mobile.value}
+                value={email.value}
                 onChange={(e) =>
-                  setMobile((prev) => ({ ...prev, value: e.target.value }))
+                  setEmail((prev) => ({ ...prev, value: e.target.value }))
                 }
-                disabled={!mobile.isEditing}
+                disabled={!email.isEditing}
               />
             </div>
-          </div>
-          <div class="resume-details-part">
-            <div className="d-flex align-items-center gap-2">
-              <h3>Years of Experience</h3>
-              <AiFillEdit
-                className="edit-icons-md"
-                onClick={() =>
-                  setYearsOfExp((prev) => ({
-                    ...prev,
-                    isEditing: !prev.isEditing,
-                  }))
-                }
-              />
-            </div>
-            <div className="d-flex align-items-center justify-content-between gap-5">
-              <input
-                type="number"
-                value={yearsOfExp.value}
-                onChange={(e) =>
-                  setYearsOfExp((prev) => ({ ...prev, value: e.target.value }))
-                }
-                disabled={!yearsOfExp.isEditing}
-              />
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Mobile</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setMobile((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <div className="d-flex align-items-center justify-content-between gap-5">
+                <input
+                  type="text"
+                  value={mobile.value}
+                  onChange={(e) =>
+                    setMobile((prev) => ({ ...prev, value: e.target.value }))
+                  }
+                  disabled={!mobile.isEditing}
+                />
+              </div>
             </div>
           </div>
 
+          {/* Gender and nationality */}
+          <div className="flex-form">
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Gender</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setGender((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <select
+                className="select-input"
+                value={gender.value}
+                onChange={(e) =>
+                  setGender((prev) => ({ ...prev, value: e.target.value }))
+                }
+                disabled={!gender.isEditing}
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Nationality</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setNationality((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <div className="d-flex align-items-center justify-content-between gap-5">
+                <input
+                  type="text"
+                  value={nationality.value}
+                  onChange={(e) =>
+                    setNationality((prev) => ({
+                      ...prev,
+                      value: e.target.value,
+                    }))
+                  }
+                  disabled={!nationality.isEditing}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Current Location and Years of experience */}
+          <div className="flex-form">
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Current Location</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setLocation((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <div className="d-flex align-items-center justify-content-between gap-5">
+                <input
+                  type="text"
+                  value={location.value}
+                  onChange={(e) =>
+                    setLocation((prev) => ({
+                      ...prev,
+                      value: e.target.value,
+                    }))
+                  }
+                  disabled={!location.isEditing}
+                />
+              </div>
+            </div>
+
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Years of Experience</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setYearsOfExp((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <div className="d-flex align-items-center justify-content-between gap-5">
+                <input
+                  type="number"
+                  value={yearsOfExp.value}
+                  onChange={(e) =>
+                    setYearsOfExp((prev) => ({
+                      ...prev,
+                      value: e.target.value,
+                    }))
+                  }
+                  disabled={!yearsOfExp.isEditing}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Highest Qualification */}
           <div class="resume-details-part">
             <div className="d-flex align-items-center gap-2">
               <h3>Highest Qualification</h3>
@@ -329,60 +571,12 @@ const Resume = () => {
           </div>
         </div>
 
-        <div class="resume-skills-section">
-          <div className="d-flex align-items-center gap-2">
-            <h3>Skills</h3>
-            <AiFillEdit
-              className="edit-icons-md"
-              onClick={() =>
-                setSkill((prev) => ({
-                  ...prev,
-                  isEditing: !prev.isEditing,
-                }))
-              }
-            />
-          </div>
-          <div>
-            {skill.isEditing && (
-              <div className="d-flex gap-2 align-items-center">
-                <input
-                  type="text"
-                  value={skill.value}
-                  onChange={(e) =>
-                    setSkill((prev) => ({ ...prev, value: e.target.value }))
-                  }
-                  disabled={!skill.isEditing}
-                  placeholder="Add a skill"
-                  className="mt-1 mb-1"
-                />
-                <RiAddCircleFill
-                  className="edit-icons-md"
-                  onClick={() => {
-                    setSkill((prev) => ({ ...prev, value: "" }));
-                    setSkills((prev) => [...prev, skill.value]);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-          <div class="skill-list d-flex gap-3 mt-3 flex-wrap">
-            {skills.length === 0 && !skill.isEditing && (
-              <div>No skills added</div>
-            )}
-            {skills.map((skill, index) => {
-              return (
-                <div class="skill-item d-flex gap-1 align-items-center">
-                  <span>{skill}</span>
-                  <RxCross2
-                    class="skill-delete-icon"
-                    onClick={() => deleteSkill(index)}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <div class="resume-companies-section mt-4">
+
+      </div>
+
+      {/* Companies */}
+      <div className="resume-main-section mt-4">
+        <div class="resume-companies-section mt-2">
           <div className="companies-container">
             <h3>Companies</h3>
             <button
@@ -472,6 +666,7 @@ const Resume = () => {
                       {index + 1}) Company Name: {company.name}
                     </p>
                     <div className="companies-details-card-details">
+                      <p>Designation: {company.jobTitle}</p>
                       <p>Start Date: {company.startDate}</p>
                       <p>End Date: {company.endDate}</p>
                       <p>No of Years: {company.noOfYears.toFixed(1)}</p>
@@ -481,8 +676,70 @@ const Resume = () => {
               })}
           </div>
         )}
+      </div>
 
-        <div className="text-center mt-3 d-flex gap-3 justify-content-center">
+      {/* Skills */}
+      <div className="resume-main-section mt-4">
+        <div class="resume-skills-section">
+          <div className="d-flex align-items-center gap-2">
+            <h3>Skills</h3>
+            <AiFillEdit
+              className="edit-icons-md"
+              onClick={() =>
+                setSkill((prev) => ({
+                  ...prev,
+                  isEditing: !prev.isEditing,
+                }))
+              }
+            />
+          </div>
+          <div>
+            {skill.isEditing && (
+              <div className="d-flex gap-2 align-items-center">
+                <input
+                  type="text"
+                  value={skill.value}
+                  onChange={(e) =>
+                    setSkill((prev) => ({ ...prev, value: e.target.value }))
+                  }
+                  disabled={!skill.isEditing}
+                  placeholder="Add a skill"
+                  className="mt-1 mb-1"
+                />
+                <RiAddCircleFill
+                  className="edit-icons-md"
+                  onClick={() => {
+                    setSkill((prev) => ({ ...prev, value: "" }));
+                    setSkills((prev) => [...prev, skill.value]);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          <div class="skill-list d-flex gap-3 mt-3 flex-wrap">
+            {skills.length === 0 && !skill.isEditing && (
+              <div>No skills added</div>
+            )}
+            {skills.map((skill, index) => {
+              return (
+                <div class="skill-item d-flex gap-1 align-items-center">
+                  <span>{skill}</span>
+                  <RxCross2
+                    class="skill-delete-icon"
+                    onClick={() => deleteSkill(index)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+
+
+
+
+        {/* Buttons */}
+        <div className="text-center mt-5 d-flex gap-3 justify-content-center">
           <button className="btn btn-success" onClick={handleUpdateResume}>
             Update
           </button>
@@ -508,6 +765,9 @@ const Resume = () => {
           )}
         </div>
       </div>
+
+
+
     </div>
   );
 };
