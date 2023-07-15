@@ -74,10 +74,13 @@ public class Resume {
     @Column(columnDefinition = "TEXT")
     private String secondarySkills;
 
+    @Column(columnDefinition = "TEXT")
+    private String educationDetails;
+
     public Resume() {
     }
 
-    public Resume(long id, String fileName, String name, String email, String mobile, double yearsOfExperience, String education, String resumeStorageRef, String companiesDetails, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies, String firstName, String lastName, String gender, String spokenLanguages, String currentLocation, String nationality, String jobTitle, String profile, String primarySkills, String secondarySkills) {
+    public Resume(long id, String fileName, String name, String email, String mobile, double yearsOfExperience, String education, String resumeStorageRef, String companiesDetails, LocalDateTime createdAt, LocalDateTime updatedAt, User user, List<Skill> skills, List<Company> companies, String firstName, String lastName, String gender, String spokenLanguages, String currentLocation, String nationality, String jobTitle, String profile, String primarySkills, String secondarySkills, String educationDetails) {
         this.id = id;
         this.fileName = fileName;
         this.name = name;
@@ -102,6 +105,7 @@ public class Resume {
         this.profile = profile;
         this.primarySkills = primarySkills;
         this.secondarySkills = secondarySkills;
+        this.educationDetails = educationDetails;
     }
 
     public String getResumeStorageRef() {
@@ -332,7 +336,13 @@ public class Resume {
         this.secondarySkills = secondarySkills;
     }
 
+    public String getEducationDetails() {
+        return educationDetails;
+    }
 
+    public void setEducationDetails(String educationDetails) {
+        this.educationDetails = educationDetails;
+    }
 
     @Override
     public String toString() {

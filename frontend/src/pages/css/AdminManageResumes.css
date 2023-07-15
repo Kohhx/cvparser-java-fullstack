@@ -124,3 +124,19 @@
 .excel-icon{
   font-size: 1.9rem;
 }
+
+.dots-icon{
+  font-size: 1.7rem;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.dots-icon:hover{
+  font-size: 1.7rem;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.hidden{
+  display: none;
+}

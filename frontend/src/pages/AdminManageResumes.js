@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./css/AdminManageResumes.css";
 import { AiOutlineSearch } from "react-icons/ai";
 import { resumeAPI } from "../api/resumeAPI";
@@ -13,8 +13,14 @@ import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
 import { toast } from "react-toastify";
 import ResumeStatistics from "./Chart";
 import { fileUtil } from "../utility/fileUtil";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PDFDocument from "../utility/PDFDocument";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import DotMenu from "../components/DotMenu";
+import DotMenu2 from "../components/DotMenu2";
 
 const AdminManageResumes = () => {
+  const pdfLinkRef = useRef([]);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams("");
   const [searchInput, setSearchInput] = useState("");
@@ -24,11 +30,23 @@ const AdminManageResumes = () => {
   const [resumeExportData, setResumeExportData] = useState([]);
   const [size, setSize] = useState(5);
   const [showStats, setShowStats] = useState(false);
+  const [dotMenu, setDotMenu] = useState(false);
 
   // console.log(searchParams.get("page"));
 
   const handleShowStats = () => {
     setShowStats((prevShowStats) => !prevShowStats);
+  };
+
+  const mapResumes = (resumes) => {
+    return resumes.map((resume) => {
+      resume.companiesDetails = JSON.parse(resume.companiesDetails);
+      resume.primarySkills = JSON.parse(resume.primarySkills);
+      resume.secondarySkills = JSON.parse(resume.secondarySkills);
+      resume.spokenLanguages = JSON.parse(resume.spokenLanguages);
+      resume.educationDetails = JSON.parse(resume.educationDetails);
+      return resume;
+    });
   };
 
   useEffect(() => {
@@ -37,7 +55,7 @@ const AdminManageResumes = () => {
       .adminGetAllResumes(+searchParams.get("page"), searchInput, size)
       .then((res) => {
         console.log(res.data);
-        setResumes(res.data.resumeList);
+        setResumes(mapResumes(res.data.resumeList));
         setTotalPages(res.data.totalPages);
         // setSize(+searchParams.get("size"))
       });
@@ -57,7 +75,7 @@ const AdminManageResumes = () => {
     setSearchInput(e.target.value);
     resumeAPI.adminGetAllResumesSearch(1, e.target.value, size).then((res) => {
       console.log(res.data);
-      setResumes(res.data.resumeList);
+      setResumes(mapResumes(res.data.resumeList));
       setTotalPages(res.data.totalPages);
       setPage(1);
       navigate(`/admin/resumes?page=1&keywords=${e.target.value}&size=${size}`);
@@ -143,7 +161,7 @@ const AdminManageResumes = () => {
     resumeAPI.adminDeleteResume(userId, resumeId).then((res) => {
       resumeAPI.adminGetAllResumes(page, searchInput, size).then((res) => {
         console.log(res.data);
-        setResumes(res.data.resumeList);
+        setResumes(mapResumes(res.data.resumeList));
         setTotalPages(res.data.totalPages);
       });
       toast.success("Resume deleted successfully.");
@@ -164,7 +182,7 @@ const AdminManageResumes = () => {
       )
       .then((res) => {
         console.log(res.data);
-        setResumes(res.data.resumeList);
+        setResumes(mapResumes(res.data.resumeList));
         setTotalPages(res.data.totalPages);
       });
   };
@@ -248,7 +266,8 @@ const AdminManageResumes = () => {
                 <th></th>
                 <th></th>
                 <th></th>
-                <th></th>
+                {/* <th></th>
+                <th></th> */}
               </tr>
             </thead>
             <tbody>
@@ -269,20 +288,6 @@ const AdminManageResumes = () => {
                     </Link>
                   </td>
                   <td class="text-center">
-                    <BsFillFileEarmarkArrowDownFill
-                      className="icon"
-                      onClick={() =>
-                        fileUtil.firebaseFileDownload(resume.fileRef)
-                      }
-                    />
-                  </td>
-                  <td class="text-center">
-                    <PiMicrosoftExcelLogoFill
-                      className="icon excel-icon"
-                      onClick={() => handleSingleExcelDownload(resume)}
-                    />
-                  </td>
-                  <td class="text-center">
                     <AiTwotoneDelete
                       className="icon icon-delete"
                       onClick={() =>
@@ -290,6 +295,56 @@ const AdminManageResumes = () => {
                       }
                     />
                   </td>
+
+                  <td class="text-center">
+                    <DotMenu2>
+                      <div
+                        className="dot-menu"
+                        onMouseLeave={() => setDotMenu(false)}
+                      >
+                        <p
+                          onClick={() => handleSingleExcelDownload(resume)}
+                          className="border-b"
+                        >
+                          Download Excel
+                        </p>
+                        <p
+                          onClick={() =>
+                            fileUtil.firebaseFileDownload(resume.fileRef)
+                          }
+                          className="border-b"
+                        >
+                          Download Resume
+                        </p>
+                        <p onClick={() => pdfLinkRef.current[index].click()}>
+                          Download Avensys Resume2
+                        </p>
+                      </div>
+                    </DotMenu2>
+                  </td>
+                  <div className="hidden">
+                    {resume && (
+                      <PDFDownloadLink
+                        document={<PDFDocument data={resume} />}
+                        fileName={resume.filename + ".pdf"}
+                      >
+                        {({ blob, url, loading, error }) =>
+                          loading ? (
+                            "Loading document..."
+                          ) : (
+                            <div
+                              ref={(element) =>
+                                (pdfLinkRef.current[index] = element)
+                              }
+                            >
+                              <BsFillFileEarmarkArrowDownFill className="icon" />
+                            </div>
+                          )
+                        }
+                      </PDFDownloadLink>
+                    )}
+                  </div>
+
                 </tr>
               ))}
             </tbody>

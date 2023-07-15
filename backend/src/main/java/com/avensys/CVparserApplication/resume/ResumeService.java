@@ -6,15 +6,13 @@ import com.avensys.CVparserApplication.exceptions.ResourceAccessDeniedException;
 import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
 import com.avensys.CVparserApplication.exceptions.UploadFileException;
 import com.avensys.CVparserApplication.firebase.FirebaseStorageService;
-import com.avensys.CVparserApplication.openai.ChatGPTCallable;
-import com.avensys.CVparserApplication.openai.ChatGPTMappedDTO;
-import com.avensys.CVparserApplication.openai.ChatGPTRequestDTO;
-import com.avensys.CVparserApplication.openai.ChatGPTResponseDTO;
+import com.avensys.CVparserApplication.openai.*;
 import com.avensys.CVparserApplication.skill.Skill;
 import com.avensys.CVparserApplication.skill.SkillRepository;
 import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
 import com.avensys.CVparserApplication.user.UserResponseDTO;
+import com.avensys.CVparserApplication.utility.ComparatorUtil;
 import com.avensys.CVparserApplication.utility.FileUtil;
 import com.avensys.CVparserApplication.utility.GPTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,9 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -100,7 +96,7 @@ public class ResumeService {
                                                      spokenLanguages (array): All the languages that the candidate speaks. If not present, return the language used to write this resume. \s
                                                      email (string): The email address of the candidate.\s
                                                      mobile (string): The mobile number of the candidate.\s
-                                                     skills (array): The skills possessed by the candidate. All skills. \s
+                                                     skills (array): The skills possessed by the candidate. All skills. If cannot find, infer his skills from resume content. \s
                                                      primarySkills (array): The skills possessed by the candidate, frequently appearing throughout the resume. Just technical skills and software skills, no linguistic languages.\s
                                                      secondarySkills (array): The skills possessed by the candidate, but doesn't show up in the primary skills.\s
                                                      currentLocation (string): return the candidate's current country he/she resides in. If not available, just use the location of the candidate latest employment.\s 
@@ -124,7 +120,7 @@ public class ResumeService {
                                                      companies (array): The names of the recent 3 companies the candidate has worked for. Do not return duplicate companies.
                                                      education (string): Give me the candidate highest education qualification in the resume.
                                                      jobTitle (string): return the candidate's job title of his/her latest job in the companiesDetail.
-                                                     profile (string): return the description/about me section about the candidate from the resume. 
+                                                     profile (string): return the about me section about the candidate from the resume else summarize into a readable paragraph. 
                                                      Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid and complete according to the above requirements.The following is a chunk of a CV.
                                                      Complete the response before returning the response. For any empty results, reparse the resume again and get a result.
                     """;
@@ -326,7 +322,6 @@ public class ResumeService {
     }
 
     public ResumeCreateResponseDTO resumeTest(ResumeCreateRequestDTO resumeCreateRequest) {
-        System.out.println("Hello World");
 
         if (!FileUtil.checkFileIsDocument(resumeCreateRequest.file().getOriginalFilename())) {
             throw new UploadFileException("Incorrect file extension");
@@ -344,12 +339,13 @@ public class ResumeService {
 //        System.out.println( GPTUtil.countTokens(extractText));
 //        System.out.println(GPTUtil.countTokens(GPTUtil.truncateString(extractText,3000)));
 //        System.out.println(GPTUtil.truncateString(extractText,3500));
-        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2700);
+        System.out.println("Splitting chunk now....");
+        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2000);
+        System.out.println("Total Chunks: " + chunks.size());
         chunks.stream().forEach(textC -> {
             System.out.println(textC);
             System.out.println("========================= Break =======================");
         });
-        System.out.println("Total Chunks: " + chunks.size());
 
         // Let OpenAI do the work
         List<Resume> resumeDataset = new ArrayList<>();
@@ -359,11 +355,11 @@ public class ResumeService {
             System.out.println("Calling ChatGPT.......");
             StringBuilder sbTemp = new StringBuilder();
             if (index == 0) {
-                sbTemp.append(GPTPROMPT3);
+                sbTemp.append(ChatGPTPrompt.GPTPROMPT3);
             } else {
                 sbTemp.append(storedResponses.get(index - 1));
-                sbTemp.append(GPTPROMPT3_2);
-                sbTemp.append(GPTPROMPT3);
+                sbTemp.append(ChatGPTPrompt.GPTPROMPT3_2);
+                sbTemp.append(ChatGPTPrompt.GPTPROMPT3);
             }
             sbTemp.append(chunk);
             System.out.println("Show CHATGPT INPUT: ");
@@ -397,7 +393,7 @@ public class ResumeService {
         user.get().addResume(savedResume);
         user.get().setResumeLimit(user.get().getResumeLimit() + 1);
         User savedUser = userRepository.save(user.get());
-        System.out.println(savedResume.getCompanies().get(0).getName());
+//        System.out.println(savedResume.getCompanies().get(0).getName());
 
 
         return chatGPTResponseToResumeCreateResponse(savedResume);
@@ -627,7 +623,8 @@ public class ResumeService {
                 resume.getSpokenLanguages(),
                 resume.getPrimarySkills(),
                 resume.getSecondarySkills(),
-                resume.getProfile()
+                resume.getProfile(),
+                resume.getEducationDetails()
         );
     }
 
@@ -658,7 +655,9 @@ public class ResumeService {
                 resume.getSpokenLanguages(),
                 resume.getPrimarySkills(),
                 resume.getSecondarySkills(),
-                resume.getProfile());
+                resume.getProfile(),
+                resume.getEducationDetails()
+        );
     }
 
     private List<ResumeCreateResponseDTO> mapToResumeCreateResponseDTOList(List<Resume> resumes) {
@@ -689,7 +688,8 @@ public class ResumeService {
                     resumeCreateResponse.getSpokenLanguages(),
                     resumeCreateResponse.getPrimarySkills(),
                     resumeCreateResponse.getSecondarySkills(),
-                    resumeCreateResponse.getProfile()
+                    resumeCreateResponse.getProfile(),
+                    resumeCreateResponse.getEducationDetails()
             );
         }).collect(Collectors.toList());
     }
@@ -713,16 +713,36 @@ public class ResumeService {
 //        System.out.println("skills: " + Arrays.toString(chatGPTMappedResults.getSkills()));
 //        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
 //        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
+
+        // Sort companiedetails and educationdetails in Descending order
+        List<CompaniesDetails> companiesDetailsList = chatGPTMappedResults.getCompaniesDetails();
+        try {
+            Collections.sort(companiesDetailsList, new ComparatorUtil.DescendingCompaniesDateComparator());
+        } catch (Exception e) {
+            System.out.println("Error in sorting companiesDetailsList");
+        }
+
+        List<EducationDetails> educationDetailsList = chatGPTMappedResults.getEducationDetails();
+        System.out.println(educationDetailsList);
+        try {
+            Collections.sort(educationDetailsList, new ComparatorUtil.DescendingEducationDateComparator());
+        } catch (Exception e) {
+            System.out.println("Error in sorting educationDetailsList");
+        }
+
+
         // Create an ObjectMapper instance
         String companiesDetail;
         String primarySkills;
         String secondarySkills;
         String spokenLanguages;
+        String educationDetails;
         try {
-            companiesDetail = objectMapper.writeValueAsString(chatGPTMappedResults.getCompaniesDetails());
+            companiesDetail = objectMapper.writeValueAsString(companiesDetailsList);
             primarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getPrimarySkills());
             secondarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getSecondarySkills());
             spokenLanguages = objectMapper.writeValueAsString(chatGPTMappedResults.getSpokenLanguages());
+            educationDetails = objectMapper.writeValueAsString(educationDetailsList);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -741,6 +761,7 @@ public class ResumeService {
         }
 
         // Updated details 12072023
+        resume.setEducationDetails(educationDetails);
         resume.setPrimarySkills(primarySkills);
         resume.setSecondarySkills(secondarySkills);
         resume.setSpokenLanguages(spokenLanguages);
@@ -777,6 +798,44 @@ public class ResumeService {
         Optional<User> user = userRepository.findByEmail(principal.getName());
         if (resume.getUser().getId() != user.get().getId()) {
             throw new ResourceAccessDeniedException("Access denied to resource");
+        }
+    }
+
+    static class DescendingCompaniesDateComparator implements Comparator<CompaniesDetails> {
+        @Override
+        public int compare(CompaniesDetails obj1, CompaniesDetails obj2) {
+            String[] parts1 = obj1.getEndDate().split("/");
+            String[] parts2 = obj2.getEndDate().split("/");
+
+            int month1 = Integer.parseInt(parts1[0]);
+            int year1 = Integer.parseInt(parts1[1]);
+            int month2 = Integer.parseInt(parts2[0]);
+            int year2 = Integer.parseInt(parts2[1]);
+
+            if (year1 != year2) {
+                return Integer.compare(year2, year1); // Compare years in descending order
+            } else {
+                return Integer.compare(month2, month1); // If years are equal, compare months in descending order
+            }
+        }
+    }
+
+    static class DescendingEducationDateComparator implements Comparator<EducationDetails> {
+        @Override
+        public int compare(EducationDetails obj1, EducationDetails obj2) {
+            String[] parts1 = obj1.getEndDate().split("/");
+            String[] parts2 = obj2.getEndDate().split("/");
+
+            int month1 = Integer.parseInt(parts1[0]);
+            int year1 = Integer.parseInt(parts1[1]);
+            int month2 = Integer.parseInt(parts2[0]);
+            int year2 = Integer.parseInt(parts2[1]);
+
+            if (year1 != year2) {
+                return Integer.compare(year2, year1); // Compare years in descending order
+            } else {
+                return Integer.compare(month2, month1); // If years are equal, compare months in descending order
+            }
         }
     }
 

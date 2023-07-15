@@ -4,14 +4,12 @@ import com.avensys.CVparserApplication.company.Company;
 import com.avensys.CVparserApplication.exceptions.ResourceAccessDeniedException;
 import com.avensys.CVparserApplication.exceptions.UploadFileException;
 import com.avensys.CVparserApplication.firebase.FirebaseStorageService;
-import com.avensys.CVparserApplication.resume.Resume;
-import com.avensys.CVparserApplication.resume.ResumeCreateResponseDTO;
-import com.avensys.CVparserApplication.resume.ResumeRepository;
-import com.avensys.CVparserApplication.resume.ResumeUpdateResponseDTO;
+import com.avensys.CVparserApplication.resume.*;
 import com.avensys.CVparserApplication.skill.Skill;
 import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
 import com.avensys.CVparserApplication.user.UserResponseDTO;
+import com.avensys.CVparserApplication.utility.ComparatorUtil;
 import com.avensys.CVparserApplication.utility.FileUtil;
 import com.avensys.CVparserApplication.utility.GPTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -112,7 +111,7 @@ public class ChatGPTCallable implements Callable<String> {
             throw new RuntimeException(e);
         }
         String extractText = extractTextFromFile(file);
-        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2700);
+        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2000);
         if (showMessage) {
             chunks.stream().forEach(textC -> {
                 System.out.println(textC);
@@ -220,7 +219,8 @@ public class ChatGPTCallable implements Callable<String> {
                 resume.getSpokenLanguages(),
                 resume.getPrimarySkills(),
                 resume.getSecondarySkills(),
-                resume.getProfile()
+                resume.getProfile(),
+                resume.getEducationDetails()
         );
     }
 
@@ -251,7 +251,9 @@ public class ChatGPTCallable implements Callable<String> {
                 resume.getSpokenLanguages(),
                 resume.getPrimarySkills(),
                 resume.getSecondarySkills(),
-                resume.getProfile());
+                resume.getProfile(),
+                resume.getEducationDetails()
+        );
     }
 
     private List<ResumeCreateResponseDTO> mapToResumeCreateResponseDTOList(List<Resume> resumes) {
@@ -282,7 +284,8 @@ public class ChatGPTCallable implements Callable<String> {
                     resumeCreateResponse.getSpokenLanguages(),
                     resumeCreateResponse.getPrimarySkills(),
                     resumeCreateResponse.getSecondarySkills(),
-                    resumeCreateResponse.getProfile()
+                    resumeCreateResponse.getProfile(),
+                    resumeCreateResponse.getEducationDetails()
             );
         }).collect(Collectors.toList());
     }
@@ -307,16 +310,27 @@ public class ChatGPTCallable implements Callable<String> {
 //        System.out.println("skills: " + Arrays.toString(chatGPTMappedResults.getSkills()));
 //        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
 //        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
+
+        // Sort the companies by end date from latest to oldest
+        // Sort companiedetails and educationdetails in Descending order
+        List<CompaniesDetails> companiesDetailsList = chatGPTMappedResults.getCompaniesDetails();
+        Collections.sort(companiesDetailsList, new ComparatorUtil.DescendingCompaniesDateComparator());
+
+        List<EducationDetails> educationDetailsList = chatGPTMappedResults.getEducationDetails();
+        Collections.sort(educationDetailsList, new ComparatorUtil.DescendingEducationDateComparator());
+
         // Create an ObjectMapper instance
         String companiesDetail;
         String primarySkills;
         String secondarySkills;
         String spokenLanguages;
+        String educationDetails;
         try {
-            companiesDetail = objectMapper.writeValueAsString(chatGPTMappedResults.getCompaniesDetails());
+            companiesDetail = objectMapper.writeValueAsString(companiesDetailsList);
             primarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getPrimarySkills());
             secondarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getSecondarySkills());
             spokenLanguages = objectMapper.writeValueAsString(chatGPTMappedResults.getSpokenLanguages());
+            educationDetails = objectMapper.writeValueAsString(educationDetailsList);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -334,6 +348,7 @@ public class ChatGPTCallable implements Callable<String> {
         }
 
         // Updated details 12072023
+        resume.setEducationDetails(educationDetails);
         resume.setPrimarySkills(primarySkills);
         resume.setSecondarySkills(secondarySkills);
         resume.setSpokenLanguages(spokenLanguages);
@@ -344,7 +359,6 @@ public class ChatGPTCallable implements Callable<String> {
         resume.setNationality(chatGPTMappedResults.getNationality());
         resume.setJobTitle(chatGPTMappedResults.getJobTitle());
         resume.setProfile(chatGPTMappedResults.getProfile());
-        System.out.println("I am here");
         return resume;
     }
 
