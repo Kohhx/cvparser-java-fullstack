@@ -10,6 +10,7 @@ import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
 import com.avensys.CVparserApplication.user.UserResponseDTO;
 import com.avensys.CVparserApplication.utility.ComparatorUtil;
+import com.avensys.CVparserApplication.utility.DateUtil;
 import com.avensys.CVparserApplication.utility.FileUtil;
 import com.avensys.CVparserApplication.utility.GPTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -292,7 +293,7 @@ public class ChatGPTCallable implements Callable<String> {
 
 
     private Resume chatGPTResponseToResume(String jsonOutput) {
-
+        boolean manualYearsCheck = true;
         Resume resume = new Resume();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -311,22 +312,65 @@ public class ChatGPTCallable implements Callable<String> {
 //        System.out.println("yearOfExperiences: " + chatGPTMappedResults.getYearsOfExperience());
 //        System.out.println("companies: " + Arrays.toString(chatGPTMappedResults.getCompanies()));
 
-        // Sort the companies by end date from latest to oldest
         // Sort companiedetails and educationdetails in Descending order
         List<CompaniesDetails> companiesDetailsList = chatGPTMappedResults.getCompaniesDetails();
-        Collections.sort(companiesDetailsList, new ComparatorUtil.DescendingCompaniesDateComparator());
+        try {
+            Collections.sort(companiesDetailsList, new ComparatorUtil.DescendingCompaniesDateComparator());
+        } catch (Exception e) {
+            System.out.println("Error in sorting companiesDetailsList");
+        }
 
         List<EducationDetails> educationDetailsList = chatGPTMappedResults.getEducationDetails();
-        Collections.sort(educationDetailsList, new ComparatorUtil.DescendingEducationDateComparator());
+        System.out.println(educationDetailsList);
+        try {
+            Collections.sort(educationDetailsList, new ComparatorUtil.DescendingEducationDateComparator());
+        } catch (Exception e) {
+            System.out.println("Error in sorting educationDetailsList");
+        }
+
 
         // Create an ObjectMapper instance
-        String companiesDetail;
+        String companiesDetails;
         String primarySkills;
         String secondarySkills;
         String spokenLanguages;
         String educationDetails;
+        double companiesSumYearsOfExperience = 0;
         try {
-            companiesDetail = objectMapper.writeValueAsString(companiesDetailsList);
+            if (manualYearsCheck) {
+                // Recheck companies years of experience based on start and end date **
+                System.out.println("Checking companies years of experience");
+                for (CompaniesDetails companiesDetail : companiesDetailsList) {
+                    String startDate = companiesDetail.getStartDate();
+                    String endDate = companiesDetail.getEndDate();
+                    double yearsOfExperience = 0;
+                    try {
+                        yearsOfExperience = DateUtil.calculateNoOfYears(startDate, endDate);
+                    } catch (Exception e) {
+                        System.out.println("Error in calculating years of experience");
+                    }
+                    companiesDetail.setNoOfYears(yearsOfExperience);
+                    companiesSumYearsOfExperience += yearsOfExperience;
+                }
+
+//                // Recheck education years of experience based on start and end date **
+//                System.out.println("Checking education years of experience");
+//                double sumEducationYearsOfExperience = 0;
+//                for (EducationDetails educationDetail : educationDetailsList) {
+//                    String startDate = educationDetail.getStartDate();
+//                    String endDate = educationDetail.getEndDate();
+//                    double yearsOfExperience = 0;
+//                    try {
+//                        yearsOfExperience = DateUtil.calculateNoOfYears(startDate, endDate);
+//                    } catch (Exception e) {
+//                        System.out.println("Error in calculating years of experience");
+//                    }
+//                    educationDetail.setNoOfYears(yearsOfExperience);
+//                    sumEducationYearsOfExperience += yearsOfExperience;
+//                }
+            }
+
+            companiesDetails = objectMapper.writeValueAsString(companiesDetailsList);
             primarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getPrimarySkills());
             secondarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getSecondarySkills());
             spokenLanguages = objectMapper.writeValueAsString(chatGPTMappedResults.getSpokenLanguages());
@@ -334,7 +378,8 @@ public class ChatGPTCallable implements Callable<String> {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        resume.setCompaniesDetails(companiesDetail);
+
+        resume.setCompaniesDetails(companiesDetails);
         resume.setName(chatGPTMappedResults.getName());
         resume.setEmail(chatGPTMappedResults.getEmail());
         resume.setMobile(chatGPTMappedResults.getMobile());
@@ -359,6 +404,13 @@ public class ChatGPTCallable implements Callable<String> {
         resume.setNationality(chatGPTMappedResults.getNationality());
         resume.setJobTitle(chatGPTMappedResults.getJobTitle());
         resume.setProfile(chatGPTMappedResults.getProfile());
+
+
+        // Overwrite values **
+        if (manualYearsCheck) {
+            resume.setYearsOfExperience(companiesSumYearsOfExperience);
+        }
+
         return resume;
     }
 

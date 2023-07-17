@@ -13,6 +13,7 @@ import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
 import com.avensys.CVparserApplication.user.UserResponseDTO;
 import com.avensys.CVparserApplication.utility.ComparatorUtil;
+import com.avensys.CVparserApplication.utility.DateUtil;
 import com.avensys.CVparserApplication.utility.FileUtil;
 import com.avensys.CVparserApplication.utility.GPTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -126,7 +127,6 @@ public class ResumeService {
                     """;
 
 
-
     private final String GPTPROMPT3_2 =
             """
                                 
@@ -217,7 +217,7 @@ public class ResumeService {
                                                      Please return only the JSON format. Please do not return any other strings. Ensure that the JSON format is valid and complete according to the above requirements.The following is a chunk of a CV.
                                                      Complete the response before returning the response.
                     """;
-    
+
     private final String GPTPROMPT3_4BK =
             """
                     Please help me extract the following fields from each CV and use the followings as the keys:\s
@@ -400,7 +400,6 @@ public class ResumeService {
     }
 
     // Use Multithreading
-//    public List<String> resumesListParse(ResumeListCreateRequestDTO resumeCreateRequest) {
     public void resumesListParse(ResumeListCreateRequestDTO resumeCreateRequest) {
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByEmail(principal.getName());
@@ -695,11 +694,13 @@ public class ResumeService {
     }
 
     private Resume chatGPTResponseToResume(String jsonOutput) {
-
+        boolean companiesManualYearsCheck = true;
+        boolean educationManualTearsCheck = false;
         Resume resume = new Resume();
 
         ObjectMapper objectMapper = new ObjectMapper();
         ChatGPTMappedDTO chatGPTMappedResults = null;
+
         try {
             chatGPTMappedResults = objectMapper.readValue(jsonOutput, ChatGPTMappedDTO.class);
         } catch (JsonProcessingException e) {
@@ -719,6 +720,7 @@ public class ResumeService {
         try {
             Collections.sort(companiesDetailsList, new ComparatorUtil.DescendingCompaniesDateComparator());
         } catch (Exception e) {
+            companiesDetailsList = chatGPTMappedResults.getCompaniesDetails();
             System.out.println("Error in sorting companiesDetailsList");
         }
 
@@ -727,18 +729,59 @@ public class ResumeService {
         try {
             Collections.sort(educationDetailsList, new ComparatorUtil.DescendingEducationDateComparator());
         } catch (Exception e) {
+            educationDetailsList = chatGPTMappedResults.getEducationDetails();
             System.out.println("Error in sorting educationDetailsList");
         }
 
 
         // Create an ObjectMapper instance
-        String companiesDetail;
+        String companiesDetails;
         String primarySkills;
         String secondarySkills;
         String spokenLanguages;
         String educationDetails;
+        double companiesSumYearsOfExperience = 0;
+
+        // Check companies years
+        if (companiesManualYearsCheck) {
+            // Recheck companies years of experience based on start and end date **
+            System.out.println("Checking companies years of experience");
+            try {
+                for (CompaniesDetails companiesDetail : companiesDetailsList) {
+                    String startDate = companiesDetail.getStartDate();
+                    String endDate = companiesDetail.getEndDate();
+                    double yearsOfExperience = 0;
+                    yearsOfExperience = DateUtil.calculateNoOfYears(startDate, endDate);
+                    companiesDetail.setNoOfYears(yearsOfExperience);
+                    companiesSumYearsOfExperience += yearsOfExperience;
+                }
+                companiesSumYearsOfExperience = companiesSumYearsOfExperience;
+            } catch (Exception e) {
+                System.out.println("Error in calculating working years of experience");
+            }
+        }
+
+        // Check education Years
+        if (educationManualTearsCheck) {
+            try {
+                // Recheck education years of experience based on start and end date **
+                System.out.println("Checking education years of experience");
+                double sumEducationYearsOfExperience = 0;
+                for (EducationDetails educationDetail : educationDetailsList) {
+                    String startDate = educationDetail.getStartDate();
+                    String endDate = educationDetail.getEndDate();
+                    double yearsOfExperience = 0;
+                    yearsOfExperience = DateUtil.calculateNoOfYears(startDate, endDate);
+                    educationDetail.setNoOfYears(yearsOfExperience);
+                    sumEducationYearsOfExperience += yearsOfExperience;
+                }
+            } catch (Exception e) {
+                System.out.println("Error in calculating education years of experience");
+            }
+        }
+
         try {
-            companiesDetail = objectMapper.writeValueAsString(companiesDetailsList);
+            companiesDetails = objectMapper.writeValueAsString(companiesDetailsList);
             primarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getPrimarySkills());
             secondarySkills = objectMapper.writeValueAsString(chatGPTMappedResults.getSecondarySkills());
             spokenLanguages = objectMapper.writeValueAsString(chatGPTMappedResults.getSpokenLanguages());
@@ -747,7 +790,8 @@ public class ResumeService {
             throw new RuntimeException(e);
         }
 
-        resume.setCompaniesDetails(companiesDetail);
+
+        resume.setCompaniesDetails(companiesDetails);
         resume.setName(chatGPTMappedResults.getName());
         resume.setEmail(chatGPTMappedResults.getEmail());
         resume.setMobile(chatGPTMappedResults.getMobile());
@@ -772,6 +816,13 @@ public class ResumeService {
         resume.setNationality(chatGPTMappedResults.getNationality());
         resume.setJobTitle(chatGPTMappedResults.getJobTitle());
         resume.setProfile(chatGPTMappedResults.getProfile());
+
+
+        // Overwrite values **
+        if (companiesManualYearsCheck) {
+            resume.setYearsOfExperience(companiesSumYearsOfExperience);
+        }
+
         return resume;
     }
 

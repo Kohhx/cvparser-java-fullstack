@@ -48,8 +48,8 @@ public class ChatGPTPrompt {
                                                      nationality (string): Return the nationality based on the country the candidate is born in. If not present, get the nationality from the currentLocation. \s
                                                      companiesDetails (array): return all the companies the candidate worked with including internships. Sort the array from the most recent to least recent in terms of endDate.\s
                                                      1)	name:(string) name of the company . If nothing, return "".
-                                                     2)	startDate: (string) start date of employment typically in the format "month/year" E.g 04/2023, if nothing, just use end date of previous job. If only year present, then return month to be jan.
-                                                     3)	endDate: (string) end date. Use this format for output "month/year" E.g 04/2023. If no end date, just use 06/2023, present == 06/2023. If only year present, then return month to be jan.
+                                                     2)	startDate: (string) convert start date of employment to this format "04/2023" E.g 04/2023, if nothing, just use end date of previous job. If only year present, then return month to be jan.
+                                                     3)	endDate: (string) end date. Convert format to output "03/2023" E.g 04/2023. If no end date, just use 06/2023, present == 06/2023. If only year present, then return month to be jan.
                                                      4)	noOfYears: (decimal) Number of employment years in the company. Else return 0.0. If start date is empty, then is 0. If there is only start date, then take it as 1 year.
                                                      5) jobTitle: The candidate's job title for this job. \s
                                                      6) responsibilities: (array) The candidate's responsibilities for this job. Get from resume. Do not paraphrase. \s
