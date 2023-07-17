@@ -21,9 +21,20 @@ const UserResumes = () => {
   const navigate = useNavigate();
   const [totalResumes, setTotalResumes] = useState(0);
 
+  const mapResumes = (resumes) => {
+    return resumes.map((resume) => {
+      resume.companiesDetails = JSON.parse(resume.companiesDetails);
+      resume.primarySkills = JSON.parse(resume.primarySkills);
+      resume.secondarySkills = JSON.parse(resume.secondarySkills);
+      resume.spokenLanguages = JSON.parse(resume.spokenLanguages);
+      resume.educationDetails = JSON.parse(resume.educationDetails);
+      return resume;
+    });
+  };
+
   const getResumes = () => {
     resumeAPI.getUserResumes(ctx.getUserId()).then((res) => {
-      setResumes(res.data);
+      setResumes(mapResumes(res.data));
       console.log(res.data)
       setTotalResumes(res.data.length);
       setFilteredArray(res.data);
@@ -34,26 +45,24 @@ const UserResumes = () => {
     console.log("userId", ctx.getUserId());
     setUserId(ctx.userDetails.id);
     getResumes();
-
-
   }, []);
 
   //Filtering useEffect
   useEffect(() => {
     const resumesArray = Object.values(resumes);
     const filteredResumes = resumesArray.filter((resume) => {
-      if (searchSkills==="" && searchName==="") { 
+      if (searchSkills==="" && searchName==="") {
         return resumes;
       }
       else if (searchSkills ==="" && searchName !="") {
         return (
         resume.filename.toLowerCase().includes(searchName.toLowerCase()));}
-      else 
+      else
         return (
         resume.skills.some((skill) =>
-        skill.toLowerCase().includes(searchSkills.toLowerCase())) 
+        skill.toLowerCase().includes(searchSkills.toLowerCase()))
         &&
-        resume.filename.toLowerCase().includes(searchName.toLowerCase()));  
+        resume.filename.toLowerCase().includes(searchName.toLowerCase()));
     })
     setFilteredArray(filteredResumes)
   },[searchName,searchSkills]);

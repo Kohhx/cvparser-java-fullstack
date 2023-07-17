@@ -18,6 +18,7 @@ import PDFDocument from "../utility/PDFDocument";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import DotMenu from "../components/DotMenu";
 import DotMenu2 from "../components/DotMenu2";
+import { excelUtil } from "../utility/excelUtil";
 
 const AdminManageResumes = () => {
   const pdfLinkRef = useRef([]);
@@ -94,67 +95,6 @@ const AdminManageResumes = () => {
     }
   };
 
-  const handleSingleExcelDownload = (resume) => {
-    exportToExcelCustom(resume);
-  };
-
-  const convertToJsonList = (resumes) => {
-    const resumeDatas = resumes.map((resume) => {
-      return {
-        email: resume.user.email,
-        firstname: resume.user.firstName,
-        lastname: resume.user.lastName,
-        resume_file_name: resume.filename,
-        resume_name: resume.name,
-        resume_email: resume.email,
-        resume_mobile: resume.mobile,
-        resume_employment_experiences: resume.yearsOfExperience,
-        resume_skills: resume.skills.join(", "),
-        resume_companies: resume.companies.join(", "),
-        resume_createdAt: resume.createdAt,
-        resume_updatedAt: resume.UpdatedAt,
-      };
-    });
-    setResumeExportData(resumeDatas);
-    return resumeDatas;
-  };
-
-  const convertToJson = (resume) => {
-    return [
-      {
-        email: resume.user.email,
-        firstname: resume.user.firstName,
-        lastname: resume.user.lastName,
-        resume_file_name: resume.filename,
-        resume_name: resume.name,
-        resume_email: resume.email,
-        resume_mobile: resume.mobile,
-        resume_employment_experiences: resume.yearsOfExperience,
-        resume_skills: resume.skills.join(", "),
-        resume_companies: resume.companies.join(", "),
-        resume_createdAt: resume.createdAt,
-        resume_updatedAt: resume.UpdatedAt,
-      },
-    ];
-  };
-
-  const exportToExcelCustom = (resume) => {
-    const worksheet = utils.json_to_sheet(convertToJson(resume));
-    const workbook = utils.book_new();
-    utils.book_append_sheet(workbook, worksheet, "Sheet 1");
-    const excelData = write(workbook, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelData], { type: "application/octet-stream" });
-    saveAs(data, `${resume.filename}.xlsx`);
-  };
-
-  const exportToExcel = () => {
-    const worksheet = utils.json_to_sheet(convertToJsonList(resumes));
-    const workbook = utils.book_new();
-    utils.book_append_sheet(workbook, worksheet, "Sheet 1");
-    const excelData = write(workbook, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelData], { type: "application/octet-stream" });
-    saveAs(data, "Resume_data.xlsx");
-  };
 
   const handleResumeDelete = (userId, resumeId) => {
     // console.log("Resume id: ",id)
@@ -188,7 +128,7 @@ const AdminManageResumes = () => {
   };
 
   return (
-    <div className=" admin-resume-container">
+    <div className=" admin-resume-container ">
       <div class="table-card mt-4">
         <div className="table-card-container">
           <h1>Manage Resumes</h1>
@@ -232,7 +172,7 @@ const AdminManageResumes = () => {
               />
               <button
                 className="btn btn-secondary btn-custom"
-                onClick={exportToExcel}
+                onClick={() => excelUtil.exportToExcel(resumes)}
               >
                 Export to excel
               </button>
@@ -250,8 +190,8 @@ const AdminManageResumes = () => {
 
         <br></br>
 
-        <div class="table-responsive">
-          <table class="table table-striped-columns custom-table">
+        <div class="table-responsive back">
+          <table class="table table-striped-columns custom-table back">
             <thead>
               <tr class="table-secondary">
                 {/* <th>Id</th> */}
@@ -299,11 +239,11 @@ const AdminManageResumes = () => {
                   <td class="text-center">
                     <DotMenu2>
                       <div
-                        className="dot-menu"
+                        className={index+1 !== resumes.length ? "dot-menu" : "dot-menu dot-menu-flip"}
                         onMouseLeave={() => setDotMenu(false)}
                       >
                         <p
-                          onClick={() => handleSingleExcelDownload(resume)}
+                          onClick={() => excelUtil.exportToExcelCustom(resume)}
                           className="border-b"
                         >
                           Download Excel

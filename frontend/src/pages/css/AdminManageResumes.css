@@ -140,3 +140,15 @@
 .hidden{
   display: none;
 }
+
+.dot-menu {
+  z-index: 10000000;
+}
+
+.back{
+  z-index:-100000 !important;
+}
+
+.why {
+  position: relative;
+}
