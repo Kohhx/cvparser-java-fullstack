@@ -18,6 +18,12 @@ import ResumeFieldInput from "../components/shared/ResumeFieldInput";
 import { projectStorage } from "../firebase/config";
 import { fileUtil } from "../utility/fileUtil";
 import Modal from "../components/shared/Modal";
+import { wordUtil } from "../utility/wordUtil";
+
+import Docxtemplater from "docxtemplater";
+import PizZip from "pizzip";
+import PizZipUtils from "pizzip/utils/index.js";
+import { saveAs } from "file-saver";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -596,7 +602,8 @@ const Resume = () => {
                 className="show-companies"
                 onClick={() => setShowEducationDetails(!showEducationDetails)}
               >
-                Show more {showEducationDetails? <AiFillCaretUp /> :<AiFillCaretDown />}
+                Show more{" "}
+                {showEducationDetails ? <AiFillCaretUp /> : <AiFillCaretDown />}
               </button>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-5">
@@ -677,7 +684,8 @@ const Resume = () => {
               className="show-companies"
               onClick={() => setShowCompaniesDetails(!showCompaniesDetails)}
             >
-              Show more {showCompaniesDetails? <AiFillCaretUp /> :<AiFillCaretDown />}
+              Show more{" "}
+              {showCompaniesDetails ? <AiFillCaretUp /> : <AiFillCaretDown />}
             </button>
           </div>
 
@@ -867,6 +875,13 @@ const Resume = () => {
           <button className="btn btn-danger" onClick={handleDeleteResume}>
             Delete
           </button>
+
+          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+            ctx.getUserRole() === "ROLE_PAID") && (
+            <button className="btn btn-secondary" onClick={downloadResume}>
+              Download Original Resume
+            </button>
+          )}
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
             <button className="btn btn-secondary" onClick={exportToExcel}>
@@ -880,15 +895,18 @@ const Resume = () => {
               fileName={resume.filename + ".pdf"}
             >
               {({ blob, url, loading, error }) =>
-                loading ? "Loading document..." : "Download Avensys Resume"
+                loading ? "Loading document..." : "Download PDF Resume"
               }
             </PDFDownloadLink>
           )}
 
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
-            <button className="btn btn-secondary" onClick={downloadResume}>
-              Download Resume
+            <button
+              className="btn btn-secondary"
+              onClick={() => wordUtil.generateDocx(resume)}
+            >
+              Download Word Resume
             </button>
           )}
         </div>
