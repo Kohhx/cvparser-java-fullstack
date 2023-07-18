@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { excelUtil } from "../utility/excelUtil";
 import { UserContext } from "../context/userContext";
 import { AiFillCaretDown } from "react-icons/ai";
+import { AiFillCaretUp } from "react-icons/ai";
 // import ReactPDF from '@react-pdf/renderer';
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFDocument from "../utility/PDFDocument";
@@ -16,6 +17,7 @@ import ResumeFieldList from "../components/shared/ResumeFieldList";
 import ResumeFieldInput from "../components/shared/ResumeFieldInput";
 import { projectStorage } from "../firebase/config";
 import { fileUtil } from "../utility/fileUtil";
+import Modal from "../components/shared/Modal";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -75,8 +77,8 @@ const Resume = () => {
 
   const [showCompaniesDetails, setShowCompaniesDetails] = useState(false);
 
-   // Updated fields 12072023
-   const [firstName, setFirstName] = useState({
+  // Updated fields 12072023
+  const [firstName, setFirstName] = useState({
     value: "",
     isEditing: false,
   });
@@ -125,6 +127,8 @@ const Resume = () => {
     isEditing: false,
   });
   const [spokenLanguages, setSpokenLanguages] = useState([]);
+
+  const [showEducationDetails, setShowEducationDetails] = useState(false);
 
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
@@ -184,6 +188,7 @@ const Resume = () => {
       resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
       resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
       resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
+      resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
       setResume(resumeGet);
       setAllEditableToFalse();
       toast.success("Resume updated successfully.");
@@ -259,9 +264,8 @@ const Resume = () => {
         resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
         resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
         resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
+        resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
         setResume(resumeGet);
-        // const resume = res.data;
-        // Set Initial state
         setFields(resumeGet);
         console.log(resumeGet);
       })
@@ -272,19 +276,18 @@ const Resume = () => {
       });
   }, []);
 
+  console.log(resume);
+
   const exportToExcel = () => {
     excelUtil.exportToExcelCustom(resume);
   };
 
-
-
-  const downloadResume = async() => {
+  const downloadResume = async () => {
     fileUtil.firebaseFileDownload(resume.fileRef);
   };
 
   return (
     <div className="container resume-container w-50">
-
       {/* File Name */}
       <div class="resume-filename-section">
         <div>
@@ -589,6 +592,12 @@ const Resume = () => {
                   }))
                 }
               />
+              <button
+                className="show-companies"
+                onClick={() => setShowEducationDetails(!showEducationDetails)}
+              >
+                Show more {showEducationDetails? <AiFillCaretUp /> :<AiFillCaretDown />}
+              </button>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-5">
               <input
@@ -604,26 +613,58 @@ const Resume = () => {
               />
             </div>
           </div>
+          {showEducationDetails && (
+            <div className="companies-details-card mb-3">
+              {resume &&
+                resume.educationDetails.length > 0 &&
+                resume.educationDetails.map((education, index) => {
+                  return (
+                    <div className="companies-details-single">
+                      <p>
+                        {index + 1}) Institution Name: {education.name}
+                      </p>
+                      <div className="companies-details-card-details">
+                        <p>Qualification: {education.qualification}</p>
+                        <p>Start Date: {education.startDate}</p>
+                        <p>End Date: {education.endDate}</p>
+                        <p>No of Years: {education.noOfYears.toFixed(1)}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
 
           {/* Spoken Languages */}
           <div class="resume-skills-section">
-          <div className="d-flex align-items-center gap-2">
-            <h3>Spoken Languages</h3>
-            <AiFillEdit
-              className="edit-icons-md"
-              onClick={() =>
-                setSpokenLanguage((prev) => ({
-                  ...prev,
-                  isEditing: !prev.isEditing,
-                }))
+            <div className="d-flex align-items-center gap-2">
+              <h3>Spoken Languages</h3>
+              <AiFillEdit
+                className="edit-icons-md"
+                onClick={() =>
+                  setSpokenLanguage((prev) => ({
+                    ...prev,
+                    isEditing: !prev.isEditing,
+                  }))
+                }
+              />
+            </div>
+            <ResumeFieldInput
+              data={spokenLanguage}
+              setData={setSpokenLanguage}
+              setDatas={setSpokenLanguages}
+            />
+            <ResumeFieldList
+              data={spokenLanguages}
+              deleteData={(selectedIndex) =>
+                setSpokenLanguages((prev) =>
+                  prev.filter(
+                    (spokenLanguage, index) => index !== selectedIndex
+                  )
+                )
               }
             />
           </div>
-          <ResumeFieldInput data={spokenLanguage} setData={setSpokenLanguage} setDatas={setSpokenLanguages}/>
-          <ResumeFieldList data={spokenLanguages} deleteData={ (selectedIndex) =>  setSpokenLanguages((prev) => prev.filter((spokenLanguage, index) => index !== selectedIndex))}/>
-        </div>
-
-
         </div>
       </div>
 
@@ -636,11 +677,10 @@ const Resume = () => {
               className="show-companies"
               onClick={() => setShowCompaniesDetails(!showCompaniesDetails)}
             >
-              Show more <AiFillCaretDown />
+              Show more {showCompaniesDetails? <AiFillCaretUp /> :<AiFillCaretDown />}
             </button>
           </div>
 
-          {/* {company1.value === "" && company2.value === "" && company3.value &&  <div>No Compa</div>}  */}
           <div>
             <div className="d-flex align-items-center gap-2 mt-2">
               <span className="list-index">1)</span>
@@ -710,6 +750,9 @@ const Resume = () => {
 
         {showCompaniesDetails && (
           <div className="companies-details-card">
+            {/* <div>
+              <input type="text" />
+            </div> */}
             {resume &&
               resume.companiesDetails.length > 0 &&
               resume.companiesDetails.map((company, index) => {
@@ -723,6 +766,14 @@ const Resume = () => {
                       <p>Start Date: {company.startDate}</p>
                       <p>End Date: {company.endDate}</p>
                       <p>No of Years: {company.noOfYears.toFixed(1)}</p>
+                      <p className="mt-2 text-decoration-underline">
+                        Responsibilities
+                      </p>
+                      <ul className="px-5">
+                        {company.responsibilities.map((responsibility) => (
+                          <li>{responsibility}</li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 );
@@ -763,8 +814,19 @@ const Resume = () => {
               }
             />
           </div>
-          <ResumeFieldInput data={primarySkill} setData={setPrimarySkill} setDatas={setPrimarySkills}/>
-          <ResumeFieldList data={primarySkills} deleteData={(selectedIndex) =>  setPrimarySkills((prev) => prev.filter((setPrimarySkill, index) => index !== selectedIndex))}/>
+          <ResumeFieldInput
+            data={primarySkill}
+            setData={setPrimarySkill}
+            setDatas={setPrimarySkills}
+          />
+          <ResumeFieldList
+            data={primarySkills}
+            deleteData={(selectedIndex) =>
+              setPrimarySkills((prev) =>
+                prev.filter((setPrimarySkill, index) => index !== selectedIndex)
+              )
+            }
+          />
         </div>
 
         <div class="resume-skills-section mt-4">
@@ -780,8 +842,21 @@ const Resume = () => {
               }
             />
           </div>
-          <ResumeFieldInput data={secondarySkill} setData={setSecondarySkill} setDatas={setSecondarySkills}/>
-          <ResumeFieldList data={secondarySkills} deleteData={(selectedIndex) => setSecondarySkills((prev) => prev.filter((setSecondarySkill, index) => index !== selectedIndex))}/>
+          <ResumeFieldInput
+            data={secondarySkill}
+            setData={setSecondarySkill}
+            setDatas={setSecondarySkills}
+          />
+          <ResumeFieldList
+            data={secondarySkills}
+            deleteData={(selectedIndex) =>
+              setSecondarySkills((prev) =>
+                prev.filter(
+                  (setSecondarySkill, index) => index !== selectedIndex
+                )
+              )
+            }
+          />
         </div>
 
         {/* Buttons */}
@@ -802,10 +877,10 @@ const Resume = () => {
             <PDFDownloadLink
               document={<PDFDocument data={resume} />}
               className="btn btn-secondary"
-              fileName="somename.pdf"
+              fileName={resume.filename + ".pdf"}
             >
               {({ blob, url, loading, error }) =>
-                loading ? "Loading document..." : "Download now!"
+                loading ? "Loading document..." : "Download Avensys Resume"
               }
             </PDFDownloadLink>
           )}
@@ -818,6 +893,10 @@ const Resume = () => {
           )}
         </div>
       </div>
+
+      {/* {resume && (
+        <Modal isOpen={true} ><PDFDocument data={resume} /></Modal>
+      )} */}
     </div>
   );
 };

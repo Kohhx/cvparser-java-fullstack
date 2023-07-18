@@ -1,25 +1,21 @@
 package com.avensys.CVparserApplication.openai;
 
-import java.util.List;
-
-public class CompaniesDetails {
+public class EducationDetails {
     private String name;
     private String startDate;
     private String endDate;
     private double noOfYears;
-    private String jobTitle;
-    private List<String> responsibilities;
+    private String qualification;
 
-    public CompaniesDetails() {
+    public EducationDetails() {
     }
 
-    public CompaniesDetails(String name, String startDate, String endDate, double noOfYears, String jobTitle, List<String> responsibilities) {
+    public EducationDetails(String name, String startDate, String endDate, double noOfYears, String qualification) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.noOfYears = noOfYears;
-        this.jobTitle = jobTitle;
-        this.responsibilities = responsibilities;
+        this.qualification = qualification;
     }
 
     public String getName() {
@@ -54,19 +50,11 @@ public class CompaniesDetails {
         this.noOfYears = noOfYears;
     }
 
-    public String getJobTitle() {
-        return jobTitle;
+    public String getQualification() {
+        return qualification;
     }
 
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public List<String> getResponsibilities() {
-        return responsibilities;
-    }
-
-    public void setResponsibilities(List<String> responsibilities) {
-        this.responsibilities = responsibilities;
+    public void setQualification(String qualification) {
+        this.qualification = qualification;
     }
 }

@@ -35,9 +35,11 @@ public class ChatGPTMappedDTO {
 
     private List<String> secondarySkills = new ArrayList<>();
 
+    private List<EducationDetails> educationDetails = new ArrayList<>();
+
     public ChatGPTMappedDTO() {};
 
-    public ChatGPTMappedDTO(String name, String email, String mobile, double yearsOfExperience, String[] skills, String[] companies, List<CompaniesDetails> companiesDetails, String education, String firstName, String lastName, String gender, String currentLocation, String nationality, String jobTitle, String profile, List<String> spokenLanguages, List<String> primarySkills, List<String> secondarySkills) {
+    public ChatGPTMappedDTO(String name, String email, String mobile, double yearsOfExperience, String[] skills, String[] companies, List<CompaniesDetails> companiesDetails, String education, String firstName, String lastName, String gender, String currentLocation, String nationality, String jobTitle, String profile, List<String> spokenLanguages, List<String> primarySkills, List<String> secondarySkills, List<EducationDetails> educationDetails) {
         this.name = name;
         this.email = email;
         this.mobile = mobile;
@@ -56,6 +58,7 @@ public class ChatGPTMappedDTO {
         this.spokenLanguages = spokenLanguages;
         this.primarySkills = primarySkills;
         this.secondarySkills = secondarySkills;
+        this.educationDetails = educationDetails;
     }
 
     public String getName() {
@@ -203,5 +206,11 @@ public class ChatGPTMappedDTO {
         this.secondarySkills = secondarySkills;
     }
 
+    public List<EducationDetails> getEducationDetails() {
+        return educationDetails;
+    }
 
+    public void setEducationDetails(List<EducationDetails> educationDetails) {
+        this.educationDetails = educationDetails;
+    }
 }

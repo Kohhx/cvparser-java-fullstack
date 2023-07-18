@@ -23,7 +23,8 @@ public record ResumeUpdateResponseDTO(
         String spokenLanguages,
         String primarySkills,
         String secondarySkills,
-        String profile
+        String profile,
+        String educationDetails
 ) {
 
 }

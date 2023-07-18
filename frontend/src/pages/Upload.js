@@ -217,13 +217,17 @@ const Upload = () => {
             <p className="subscription-type">Paid</p>
             <p className="subscription-price">$20.00 per month</p>
             <div>
-              <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center">
                 <TiTick className="tick-icon" />
-                <p>Unlimited resume upload</p>
+                <p>Unlimited resume upload and parsing</p>
               </div>
               <div className="d-flex align-items-center">
                 <TiTick className="tick-icon" />
-                <p>Unlimited resume parsing</p>
+                <p>Export to excel function</p>
+              </div>
+              <div className="d-flex align-items-center">
+                <TiTick className="tick-icon" />
+                <p>Multiple resumes upload function</p>
               </div>
             </div>
             <button
@@ -303,10 +307,12 @@ const Upload = () => {
           <div className="viewer-container">
             {fileUrl && (
               <object
+                // data={fileUrl + "#toolbar=0"}
                 data={fileUrl}
                 type="application/pdf"
                 width="100%"
                 height="100%"
+                // style={{pointerEvents: "none"}}
               ></object>
             )}
             {/*
