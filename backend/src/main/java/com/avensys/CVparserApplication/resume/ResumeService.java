@@ -384,11 +384,11 @@ public class ResumeService {
 //            System.out.println("========================= Break =======================");
 //        });
         String fileExt = FileUtil.getFileExtension(resumeCreateRequest.file().getOriginalFilename());
-        String fileUrl = firebaseStorageService.uploadFile(resumeCreateRequest.file(), resumeCreateRequest.fileName(), fileExt);
+//        String fileUrl = firebaseStorageService.uploadFile(resumeCreateRequest.file(), resumeCreateRequest.fileName(), fileExt);
 
         Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
         resume.setFileName(resumeCreateRequest.fileName());
-        resume.setResumeStorageRef(fileUrl);
+//        resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         user.get().setResumeLimit(user.get().getResumeLimit() + 1);
@@ -541,7 +541,7 @@ public class ResumeService {
         userRepository.save(user.get());
         resumeRepository.delete(resume.get());
 
-        firebaseStorageService.deleteFile(fbFileId);
+//        firebaseStorageService.deleteFile(fbFileId);
 
         System.out.println("Deleted from file from fb");
     }

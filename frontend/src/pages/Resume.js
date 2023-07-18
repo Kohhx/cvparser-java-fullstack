@@ -17,6 +17,8 @@ import ResumeFieldList from "../components/shared/ResumeFieldList";
 import ResumeFieldInput from "../components/shared/ResumeFieldInput";
 import { projectStorage } from "../firebase/config";
 import { fileUtil } from "../utility/fileUtil";
+import { ... } from "docx";
+
 import Modal from "../components/shared/Modal";
 
 const Resume = () => {
@@ -885,12 +887,12 @@ const Resume = () => {
             </PDFDownloadLink>
           )}
 
-          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+          {/* {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
             <button className="btn btn-secondary" onClick={downloadResume}>
               Download Resume
             </button>
-          )}
+          )} */}
         </div>
       </div>
 

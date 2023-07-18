@@ -1,0 +1,14 @@
+1. Name -> FirstName/LastName
+2. Nationality
+3. Gender (M/F)
+4. Spoken Languages
+5. Differentiate skills by Primary/Secondary skills
+6. Skills by Frequency
+7. Current Location
+8. Job Title (Latest)
+
+a. Introduction
+b. Re-format to Avensys Format/Template
+	-Single Page Format
+	-Detailed Format (depends on CV)
+c. Exportable to PDF/WordDoc
