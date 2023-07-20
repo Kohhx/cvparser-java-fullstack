@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class ChatGPTCallable implements Callable<String> {
 
-    public boolean showMessage = false;
+    public boolean showMessage = true;
     public UserRepository userRepository;
     public ResumeRepository resumeRepository;
     public FirebaseStorageService firebaseStorageService;
@@ -112,7 +112,7 @@ public class ChatGPTCallable implements Callable<String> {
             throw new RuntimeException(e);
         }
         String extractText = extractTextFromFile(file);
-        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2000);
+        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2500);
         if (showMessage) {
             chunks.stream().forEach(textC -> {
                 System.out.println(textC);
@@ -293,7 +293,7 @@ public class ChatGPTCallable implements Callable<String> {
 
 
     private Resume chatGPTResponseToResume(String jsonOutput) {
-        boolean manualYearsCheck = true;
+        boolean manualYearsCheck = false;
         Resume resume = new Resume();
 
         ObjectMapper objectMapper = new ObjectMapper();
