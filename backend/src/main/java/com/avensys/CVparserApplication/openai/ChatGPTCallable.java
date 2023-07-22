@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class ChatGPTCallable implements Callable<String> {
 
-    public boolean showMessage = true;
+    public boolean showMessage = false;
     public UserRepository userRepository;
     public ResumeRepository resumeRepository;
     public FirebaseStorageService firebaseStorageService;
@@ -153,7 +153,13 @@ public class ChatGPTCallable implements Callable<String> {
         String fileExt = FileUtil.getFileExtension(file.getOriginalFilename());
         String fileUrl = firebaseStorageService.uploadFile(file, FileUtil.getFileName(file.getOriginalFilename()), fileExt);
 
-        Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
+        // Extract JSON
+        String JSON = FileUtil.extractJsonFromString(storedResponses.get(storedResponses.size() - 1));
+        System.out.println("My JSON");
+        System.out.println(JSON);
+
+        Resume resume = chatGPTResponseToResume(JSON);
+//        Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
         resume.setFileName(FileUtil.getFileName(file.getOriginalFilename()));
         resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
