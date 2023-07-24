@@ -16,7 +16,7 @@ const mappedResumeforWordOutput = (resume) => {
 
     return {
       ...cd,
-      noOfYears: cd.noOfYears.toFixed(1),
+      noOfYears: parseFloat(cd.noOfYears).toFixed(1),
       responsibilities: newResponsibilities,
     };
   });

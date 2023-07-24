@@ -24,6 +24,8 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import PizZipUtils from "pizzip/utils/index.js";
 import { saveAs } from "file-saver";
+import ResumeCompanyField from "../components/shared/ResumeCompanyField";
+import ResumeEducationField from "../components/shared/ResumeEducationField";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -82,6 +84,7 @@ const Resume = () => {
   });
 
   const [showCompaniesDetails, setShowCompaniesDetails] = useState(false);
+  const [companiesDetails, setCompaniesDetails] = useState([]);
 
   // Updated fields 12072023
   const [firstName, setFirstName] = useState({
@@ -135,6 +138,7 @@ const Resume = () => {
   const [spokenLanguages, setSpokenLanguages] = useState([]);
 
   const [showEducationDetails, setShowEducationDetails] = useState(false);
+  const [educationDetails, setEducationDetails] = useState([]);
 
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
@@ -150,6 +154,39 @@ const Resume = () => {
   };
 
   console.log(resume);
+
+  const convertDateFormat = (date) => {
+    const dateArray = date.split("/");
+    const dateOut = dateArray[1] + "-" + dateArray[0];
+    return dateOut;
+  };
+
+    // Convert date format from 2023`-11 to 11/2023
+    const convertDateFormatForSave = (date) => {
+      const dateArray2 = date.split("-");
+      const dateOut2 = dateArray2[1] + "/" + dateArray2[0];
+      return dateOut2;
+    };
+
+  const convertFieldsDateFormat = (fields) => {
+    return fields.map((field) => {
+      return {
+        ...field,
+        startDate: convertDateFormat(field.startDate),
+        endDate: convertDateFormat(field.endDate),
+      };
+    });
+  };
+
+  const convertFieldsDateFormatSave = (fields) => {
+    return fields.map((field) => {
+      return {
+        ...field,
+        startDate: convertDateFormatForSave(field.startDate),
+        endDate: convertDateFormatForSave(field.endDate),
+      };
+    });
+  };
 
   const handleUpdateResume = () => {
     console.log(fileName.value);
@@ -172,6 +209,8 @@ const Resume = () => {
       yearsOfExperience: +yearsOfExp.value,
       skills: skills,
       companies: [company1.value, company2.value, company3.value],
+      companiesDetails: JSON.stringify(convertFieldsDateFormatSave(companiesDetails)),
+      educationDetails: JSON.stringify(convertFieldsDateFormatSave(educationDetails)),
       // Updated fields 12072023
       firstName: firstName.value,
       lastName: lastName.value,
@@ -190,11 +229,16 @@ const Resume = () => {
     resumeAPI.updateResume(resumeDetails).then((res) => {
       console.log(res.data);
       const resumeGet = { ...res.data };
-      resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+      resumeGet.companiesDetails = convertFieldsDateFormat(
+        JSON.parse(resumeGet.companiesDetails)
+      );
       resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
       resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
       resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
-      resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+      // resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+      resumeGet.educationDetails = convertFieldsDateFormat(
+        JSON.parse(resumeGet.educationDetails)
+      );
       setResume(resumeGet);
       setAllEditableToFalse();
       toast.success("Resume updated successfully.");
@@ -247,6 +291,8 @@ const Resume = () => {
     setCompany2((prev) => ({ ...prev, value: resume?.companies?.[1] }));
     setCompany3((prev) => ({ ...prev, value: resume?.companies?.[2] }));
     setQualification((prev) => ({ ...prev, value: resume?.education }));
+    setCompaniesDetails((prev) => [...prev, ...resume?.companiesDetails]);
+    setEducationDetails((prev) => [...prev, ...resume?.educationDetails]);
     // Updated fields 12072023
     setFirstName((prev) => ({ ...prev, value: resume?.firstName }));
     setLastName((prev) => ({ ...prev, value: resume?.lastName }));
@@ -266,11 +312,16 @@ const Resume = () => {
       .then((res) => {
         console.log(res.data);
         const resumeGet = { ...res.data };
-        resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+        resumeGet.companiesDetails = convertFieldsDateFormat(
+          JSON.parse(resumeGet.companiesDetails)
+        );
         resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
         resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
         resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
-        resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+        // resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+        resumeGet.educationDetails = convertFieldsDateFormat(
+          JSON.parse(resumeGet.educationDetails)
+        );
         setResume(resumeGet);
         setFields(resumeGet);
         console.log(resumeGet);
@@ -292,8 +343,27 @@ const Resume = () => {
     fileUtil.firebaseFileDownload(resume.fileRef);
   };
 
+  const handleResumeCompaniesDetailsChange = (newCompaniesDetail, index) => {
+    const list = [...companiesDetails];
+
+    list[index] = newCompaniesDetail;
+    console.log("List", list);
+    setCompaniesDetails(list);
+  };
+
+  const handleEducationDetailsChange = (newEducationDetail, index) => {
+    const list = [...educationDetails];
+
+    list[index] = newEducationDetail;
+    console.log("List", list);
+    setEducationDetails(list);
+  };
+
+
+  console.log("CO", companiesDetails);
+
   return (
-    <div className="container resume-container w-50">
+    <div className="container resume-container">
       {/* File Name */}
       <div class="resume-filename-section">
         <div>
@@ -626,17 +696,18 @@ const Resume = () => {
                 resume.educationDetails.length > 0 &&
                 resume.educationDetails.map((education, index) => {
                   return (
-                    <div className="companies-details-single">
-                      <p>
-                        {index + 1}) Institution Name: {education.name}
-                      </p>
-                      <div className="companies-details-card-details">
-                        <p>Qualification: {education.qualification}</p>
-                        <p>Start Date: {education.startDate}</p>
-                        <p>End Date: {education.endDate}</p>
-                        <p>No of Years: {education.noOfYears.toFixed(1)}</p>
-                      </div>
-                    </div>
+                    < ResumeEducationField education={education} index={index} educationDetailsChange={handleEducationDetailsChange}/>
+                    // <div className="companies-details-single">
+                    //   <p>
+                    //     {index + 1}) Institution Name: {education.name}
+                    //   </p>
+                    //   <div className="companies-details-card-details">
+                    //     <p>Qualification: {education.qualification}</p>
+                    //     <p>Start Date: {education.startDate}</p>
+                    //     <p>End Date: {education.endDate}</p>
+                    //     <p>No of Years: {education.noOfYears.toFixed(1)}</p>
+                    //   </div>
+                    // </div>
                   );
                 })}
             </div>
@@ -765,25 +836,31 @@ const Resume = () => {
               resume.companiesDetails.length > 0 &&
               resume.companiesDetails.map((company, index) => {
                 return (
-                  <div className="companies-details-single">
-                    <p>
-                      {index + 1}) Company Name: {company.name}
-                    </p>
-                    <div className="companies-details-card-details">
-                      <p>Designation: {company.jobTitle}</p>
-                      <p>Start Date: {company.startDate}</p>
-                      <p>End Date: {company.endDate}</p>
-                      <p>No of Years: {company.noOfYears.toFixed(1)}</p>
-                      <p className="mt-2 text-decoration-underline">
-                        Responsibilities
-                      </p>
-                      <ul className="px-5">
-                        {company.responsibilities.map((responsibility) => (
-                          <li>{responsibility}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+                  <ResumeCompanyField
+                    key={index}
+                    companiesDetailChange={handleResumeCompaniesDetailsChange}
+                    company={company}
+                    index={index}
+                  />
+                  // <div className="companies-details-single">
+                  //   <p>
+                  //     {index + 1}) Company Name: {company.name}
+                  //   </p>
+                  //   <div className="companies-details-card-details">
+                  //     <p>Designation: {company.jobTitle}</p>
+                  //     <p>Start Date: {company.startDate}</p>
+                  //     <p>End Date: {company.endDate}</p>
+                  //     <p>No of Years: {company.noOfYears.toFixed(1)}</p>
+                  //     <p className="mt-2 text-decoration-underline">
+                  //       Responsibilities
+                  //     </p>
+                  //     <ul className="px-5">
+                  //       {company.responsibilities.map((responsibility) => (
+                  //         <li>{responsibility}</li>
+                  //       ))}
+                  //     </ul>
+                  //   </div>
+                  // </div>
                 );
               })}
           </div>

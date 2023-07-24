@@ -1,0 +1,126 @@
+.companies-details-card {
+  margin-top: 20px;
+  border-radius: 20px;
+  background-color: rgb(233, 233, 233);
+  padding: 2rem;
+  color: rgb(67, 67, 67);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 5px 15px;
+}
+
+.company-name {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+  font-weight: 500;
+  flex-grow:1;
+}
+
+.companies-details-card-details {
+  margin-left: 15px;
+}
+
+.companies-details-single {
+  margin-bottom: 10px;
+}
+
+.companies-details-single > p {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.companies-details-card-details p {
+  margin: 0;
+  padding: 0;
+  margin-left: 1.3rem;
+}
+
+.details-edit-icon {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.date-input:disabled {
+  border: none;
+}
+
+.date-input {
+  border: none;
+  background-color: white;
+  border-radius: 100vh;
+  padding: 2px 10px;
+}
+
+.date-fit {
+  width: 10%;
+}
+
+.field-input:disabled {
+  border: none;
+}
+
+.field-input {
+  border: none;
+  background-color: white;
+  border-radius: 100vh;
+  padding: 2px 10px;
+}
+
+.w-fit {
+  width: 20%;
+}
+
+.btn-custom {
+  border-radius: 100vh;
+}
+
+.input-custom {
+  width: 100%;
+}
+
+
+.list-container {
+  list-style-type: none;
+  padding: 0;
+}
+
+.list-container li {
+  display: flex;
+  align-items: flex-start; /* Align items at the top */
+  margin-bottom: 10px; /* Add some spacing between list items */
+
+}
+
+.list-container .bullet {
+  margin-right: 10px; /* Adjust as needed to control the space between the bullet and textarea */
+  font-size: 1.5rem;
+  padding: 0;
+  /* align-self: start; */
+}
+
+.list-container textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.extend {
+  flex-grow: 1;
+}
+
+.textarea-custom {
+  width: 100%;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.add-responsibility-icon {
+  font-size: 1.2rem;
+}
+
+.add-responsibility-icon:hover {
+  color: grey;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
