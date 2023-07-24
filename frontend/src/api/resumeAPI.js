@@ -6,9 +6,14 @@ export const resumeAPI = {
     return axiosInstance
       .post("resumes", resumeDetails)
   },
+  // Old
+  // uploadResume2: async (resumeDetails) => {
+  //   return axiosInstance
+  //     .post("resumes/test", resumeDetails)
+  // },
   uploadResume2: async (resumeDetails) => {
     return axiosInstance
-      .post("resumes/test", resumeDetails)
+      .post("resumes/test2", resumeDetails)
   },
   getUserResumes: async (userId) => {
     return axiosInstance.get(`users/${userId}/resumes`);
@@ -31,10 +36,14 @@ export const resumeAPI = {
   adminDeleteResume: async (userId, resumeId) => {
     return axiosInstance.delete(`admin/users/${userId}/resumes/${resumeId}`);
   },
-
+  // Old resumeuploadlist multithread
+  // uploadResumeList: async (resumeDetails) => {
+  //   return axiosInstance
+  //     .post("resumeslist", resumeDetails)
+  // },
   uploadResumeList: async (resumeDetails) => {
     return axiosInstance
-      .post("resumeslist", resumeDetails)
+      .post("resumeslist2", resumeDetails)
   },
 
 };
