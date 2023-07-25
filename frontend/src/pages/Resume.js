@@ -161,12 +161,12 @@ const Resume = () => {
     return dateOut;
   };
 
-    // Convert date format from 2023`-11 to 11/2023
-    const convertDateFormatForSave = (date) => {
-      const dateArray2 = date.split("-");
-      const dateOut2 = dateArray2[1] + "/" + dateArray2[0];
-      return dateOut2;
-    };
+  // Convert date format from 2023`-11 to 11/2023
+  const convertDateFormatForSave = (date) => {
+    const dateArray2 = date.split("-");
+    const dateOut2 = dateArray2[1] + "/" + dateArray2[0];
+    return dateOut2;
+  };
 
   const convertFieldsDateFormat = (fields) => {
     return fields.map((field) => {
@@ -209,8 +209,12 @@ const Resume = () => {
       yearsOfExperience: +yearsOfExp.value,
       skills: skills,
       companies: [company1.value, company2.value, company3.value],
-      companiesDetails: JSON.stringify(convertFieldsDateFormatSave(companiesDetails)),
-      educationDetails: JSON.stringify(convertFieldsDateFormatSave(educationDetails)),
+      companiesDetails: JSON.stringify(
+        convertFieldsDateFormatSave(companiesDetails)
+      ),
+      educationDetails: JSON.stringify(
+        convertFieldsDateFormatSave(educationDetails)
+      ),
       // Updated fields 12072023
       firstName: firstName.value,
       lastName: lastName.value,
@@ -324,7 +328,7 @@ const Resume = () => {
         );
         setResume(resumeGet);
         setFields(resumeGet);
-        console.log(resumeGet);
+        // console.log(resumeGet);
       })
       .catch((err) => {
         console.log(err);
@@ -345,22 +349,71 @@ const Resume = () => {
 
   const handleResumeCompaniesDetailsChange = (newCompaniesDetail, index) => {
     const list = [...companiesDetails];
-
     list[index] = newCompaniesDetail;
-    console.log("List", list);
     setCompaniesDetails(list);
   };
 
   const handleEducationDetailsChange = (newEducationDetail, index) => {
     const list = [...educationDetails];
-
     list[index] = newEducationDetail;
-    console.log("List", list);
     setEducationDetails(list);
   };
 
+  const deleteCompany = (index) => {
+    console.log("deleting...");
+    setCompaniesDetails((prev) => {
+      const updatedList = prev.filter((company, i) => index !== i);
+      return updatedList;
+    });
+  };
 
-  console.log("CO", companiesDetails);
+  const deleteEducation = (index) => {
+    console.log("deleting...");
+    setEducationDetails((prev) => {
+      const updatedList = prev.filter((education, i) => index !== i);
+      return updatedList;
+    });
+  };
+
+  const handleCompaniesSwitch = (index, type) => {
+    if (type === "UP") {
+      if (index === 0) return;
+      const list = [...companiesDetails];
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+      setCompaniesDetails(list);
+    }
+
+    if (type === "DOWN") {
+      if (index === companiesDetails.length - 1) return;
+      const list = [...companiesDetails];
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+      setCompaniesDetails(list);
+    }
+  };
+
+  const handleEducationSwitch = (index, type) => {
+    if (type === "UP") {
+      if (index === 0) return;
+      const list = [...educationDetails];
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+      setEducationDetails(list);
+    }
+
+    if (type === "DOWN") {
+      if (index === educationDetails.length - 1) return;
+      const list = [...educationDetails];
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+      setEducationDetails(list);
+    }
+  };
 
   return (
     <div className="container resume-container">
@@ -672,7 +725,7 @@ const Resume = () => {
                 className="show-companies"
                 onClick={() => setShowEducationDetails(!showEducationDetails)}
               >
-                Show more{" "}
+                Show more
                 {showEducationDetails ? <AiFillCaretUp /> : <AiFillCaretDown />}
               </button>
             </div>
@@ -692,11 +745,38 @@ const Resume = () => {
           </div>
           {showEducationDetails && (
             <div className="companies-details-card mb-3">
+              <div className="text-end mb-3">
+                <button
+                  onClick={() =>
+                    setEducationDetails((prev) => {
+                      return [
+                        {
+                          name: "",
+                          startDate: "",
+                          endDate: "",
+                          noOfYears: 0,
+                          qualification: "",
+                        },
+                        ...prev,
+                      ];
+                    })
+                  }
+                  className="btn btn-secondary btn-sm"
+                >
+                  + Add an education
+                </button>
+              </div>
               {resume &&
                 resume.educationDetails.length > 0 &&
-                resume.educationDetails.map((education, index) => {
+                educationDetails.map((education, index) => {
                   return (
-                    < ResumeEducationField education={education} index={index} educationDetailsChange={handleEducationDetailsChange}/>
+                    <ResumeEducationField
+                      education={education}
+                      index={index}
+                      educationDetailsChange={handleEducationDetailsChange}
+                      deleteEducation={deleteEducation}
+                      switchContent={handleEducationSwitch}
+                    />
                     // <div className="companies-details-single">
                     //   <p>
                     //     {index + 1}) Institution Name: {education.name}
@@ -755,7 +835,7 @@ const Resume = () => {
               className="show-companies"
               onClick={() => setShowCompaniesDetails(!showCompaniesDetails)}
             >
-              Show more{" "}
+              Show more
               {showCompaniesDetails ? <AiFillCaretUp /> : <AiFillCaretDown />}
             </button>
           </div>
@@ -829,18 +909,39 @@ const Resume = () => {
 
         {showCompaniesDetails && (
           <div className="companies-details-card">
-            {/* <div>
-              <input type="text" />
-            </div> */}
-            {resume &&
-              resume.companiesDetails.length > 0 &&
-              resume.companiesDetails.map((company, index) => {
+            <div className="text-end mb-3">
+              <button
+                onClick={() =>
+                  setCompaniesDetails((prev) => {
+                    return [
+                      {
+                        name: "",
+                        startDate: "",
+                        endDate: "",
+                        noOfYears: 0,
+                        jobTitle: "",
+                        responsibilities: [],
+                      },
+                      ...prev,
+                    ];
+                  })
+                }
+                className="btn btn-secondary btn-sm"
+              >
+                + Add a company
+              </button>
+            </div>
+
+            {companiesDetails.length > 0 &&
+              companiesDetails.map((company, index) => {
                 return (
                   <ResumeCompanyField
-                    key={index}
+                    // key={index}
                     companiesDetailChange={handleResumeCompaniesDetailsChange}
                     company={company}
                     index={index}
+                    deleteCompany={deleteCompany}
+                    switchContent={handleCompaniesSwitch}
                   />
                   // <div className="companies-details-single">
                   //   <p>

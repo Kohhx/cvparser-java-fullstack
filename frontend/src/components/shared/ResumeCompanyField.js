@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AiFillEdit } from "react-icons/ai";
 import "./ResumeCompanyField.css";
 import { AiFillDelete } from "react-icons/ai";
 import { RiAddCircleFill } from "react-icons/ri";
+import { AiOutlineDown } from "react-icons/ai";
+import { AiOutlineUp } from "react-icons/ai";
 
 const monthTable = {
   1: "Jan",
@@ -19,8 +21,17 @@ const monthTable = {
   12: "Dec",
 };
 
-const ResumeCompanyField = ({ company, index, companiesDetailChange }) => {
+const ResumeCompanyField = ({
+  company,
+  index,
+  companiesDetailChange,
+  deleteCompany,
+  switchContent
+}) => {
   // Convert date format from  Nov 2023 to 2023-11
+  console.log("I Render");
+  console.log("Company", company);
+
   const convertDateFormat = (date) => {
     const dateArray = date.split("/");
     const dateOut = dateArray[1] + "-" + dateArray[0];
@@ -45,6 +56,20 @@ const ResumeCompanyField = ({ company, index, companiesDetailChange }) => {
     jobTitle: company.jobTitle,
     responsibilities: company.responsibilities,
   });
+
+    // Set company detail state when company props changes
+  useEffect(() => {
+    if (company) {
+      setCompanyDetail({
+        name: company.name,
+        startDate: company.startDate,
+        endDate: company.endDate,
+        noOfYears: parseFloat(company.noOfYears).toFixed(1),
+        jobTitle: company.jobTitle,
+        responsibilities: company.responsibilities,
+      });
+    }
+  }, [company]); // Add "company" as a dependency here
 
   const computeDuration = (startDate, endDate) => {
     if (startDate == null || endDate == null) {
@@ -111,12 +136,11 @@ const ResumeCompanyField = ({ company, index, companiesDetailChange }) => {
     setAddNew(addNew + 1);
   };
 
-
   useEffect(() => {
     // Replace 'targetElementId' with the ID of the element you want to scroll to.
     const id = `last-responsibility-${index}`;
     const targetElement = document.getElementById(id);
-    console.log(targetElement)
+    console.log(targetElement);
     if (targetElement == null) return;
 
     // Scroll to the target element.
@@ -127,12 +151,21 @@ const ResumeCompanyField = ({ company, index, companiesDetailChange }) => {
     targetElement.focus();
   }, [addNew]);
 
+  // Store the previous companyDetail state using useRef
+  const prevCompanyDetailRef = useRef();
   useEffect(() => {
-    console.log("Change CO", companyDetail)
-    companiesDetailChange(companyDetail, index)
-  },[companyDetail])
+    // Check if the companyDetail state actually changed
+    if (
+      JSON.stringify(companyDetail) !==
+      JSON.stringify(prevCompanyDetailRef.current)
+    ) {
+      companiesDetailChange(companyDetail, index);
+      prevCompanyDetailRef.current = companyDetail;
+    }
+  }, [companyDetail, companiesDetailChange, index]);
 
-  console.log(companyDetail.responsibilities);
+
+
 
   return (
     <div className="companies-details-single">
@@ -151,10 +184,18 @@ const ResumeCompanyField = ({ company, index, companiesDetailChange }) => {
             }
           />
         </p>
-        <AiFillEdit
-          className="details-edit-icon"
-          onClick={() => setEditable(!editable)}
-        />
+        <div className="d-flex gap-3">
+          <AiFillEdit
+            className="details-edit-icon"
+            onClick={() => setEditable(!editable)}
+          />
+          <AiFillDelete
+            className="details-edit-icon"
+            onClick={() => deleteCompany(index)}
+          />
+          <AiOutlineUp  className="details-edit-icon" onClick={() => switchContent(index,"UP")}/>
+          <AiOutlineDown  className="details-edit-icon" onClick={() => switchContent(index,"DOWN")}/>
+        </div>
       </div>
 
       <div className="companies-details-card-details">
@@ -277,3 +318,5 @@ const ResumeCompanyField = ({ company, index, companiesDetailChange }) => {
 };
 
 export default ResumeCompanyField;
+
+// export default React.memo(ResumeCompanyField);
