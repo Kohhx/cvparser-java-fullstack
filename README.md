@@ -12,9 +12,16 @@ This project aims to develop a CV Parsing application using Java Fullstack techn
   - Name (string): The name of the candidate.
   - Email ID (string): The email address of the candidate.
   - Mobile No. (string): The mobile number of the candidate.
-  - Skills (string or array): The skills possessed by the candidate.
+  - Nationality
+  - Current location
+  - Primary Skills (string or array): The primary skills possessed by the candidate.
+  - Secondary Skills (string or array): The secondary skills possessed by the candidate.
   - Years of Experience (number): The number of years of experience of the candidate.
+  - Candidate highest qualification
+  - Candidate last job title
   - Recent 3 Companies (string or array): The names of the recent 3 companies the candidate has worked for.
+  - Every candiate companies detail information (Comany name, Start date, End date, Job title and Responsibilities)
+  - Candidate education details (Instituition name, Start date, End date, Qualification)
 - Store the extracted information in a database for further processing.
 - Implement validation and error handling in the backend.
 
@@ -33,6 +40,7 @@ This project aims to develop a CV Parsing application using Java Fullstack techn
 - Ensure data consistency between the frontend and backend.
 
 ### Features
+
 - Applications accepts 2 main roles
   - Free role
     - As a free subscriber to the application, free user can upload a maximum of 5 CV to be parsed.
@@ -40,10 +48,15 @@ This project aims to develop a CV Parsing application using Java Fullstack techn
     - As a paid subscriber to the application, paid user can upload unlimited number of CVs to be parsed. User can view all his CVs, filter them based on name or skills. User also have the options to export filtered data to excel or single resume details to excel for further processing.
 
 ### Additional Features 
+
 - Admin role
   - As an admin of the application, user have access to all the features available for a paid subscriber. In addition to that, an admin user can view all users resume, filter resumes by name and skills, perform crud functions, export to excel and plot visual statistical charts to facilitate data processing and filtering.
  
-- User are able to view a preview of the PDF CV attached prior to uploading.
+- Allow paid and admin users to perform multi-resumes upload
+- Added multi-threading feature to optimize parsing of multiple resumes in the backend
+- Connected firebase storage backend to store uploaded resumes, which is available for download by users and admin
+- Added feature to generate and download custom PDF and word.doc based on extracted resume information
+- Users are able to view a preview of the PDF CV attached for single and multi-upload, prior to uploading
 
 ## Installation and Setup
 
