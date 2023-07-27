@@ -487,6 +487,7 @@ public class ResumeService {
         resumeUpdated.get().setMobile(resumeUpdateRequest.mobile());
         resumeUpdated.get().setEducation(resumeUpdateRequest.education());
         resumeUpdated.get().setYearsOfExperience(resumeUpdateRequest.yearsOfExperience());
+        resumeUpdated.get().setCompaniesDetails(resumeUpdateRequest.companiesDetails());
         // Updated field 12072023
         resumeUpdated.get().setFirstName(resumeUpdateRequest.firstName());
         resumeUpdated.get().setLastName(resumeUpdateRequest.lastName());
@@ -498,6 +499,7 @@ public class ResumeService {
         resumeUpdated.get().setPrimarySkills(resumeUpdateRequest.primarySkills());
         resumeUpdated.get().setSecondarySkills(resumeUpdateRequest.secondarySkills());
         resumeUpdated.get().setSpokenLanguages(resumeUpdateRequest.spokenLanguages());
+        resumeUpdated.get().setEducationDetails(resumeUpdateRequest.educationDetails());
 
         // Update Skills & Companies
         resumeUpdated.get().getSkills().clear();

@@ -18,6 +18,14 @@ import ResumeFieldInput from "../components/shared/ResumeFieldInput";
 import { projectStorage } from "../firebase/config";
 import { fileUtil } from "../utility/fileUtil";
 import Modal from "../components/shared/Modal";
+import { wordUtil } from "../utility/wordUtil";
+
+import Docxtemplater from "docxtemplater";
+import PizZip from "pizzip";
+import PizZipUtils from "pizzip/utils/index.js";
+import { saveAs } from "file-saver";
+import ResumeCompanyField from "../components/shared/ResumeCompanyField";
+import ResumeEducationField from "../components/shared/ResumeEducationField";
 
 const Resume = () => {
   const ctx = useContext(UserContext);
@@ -76,6 +84,7 @@ const Resume = () => {
   });
 
   const [showCompaniesDetails, setShowCompaniesDetails] = useState(false);
+  const [companiesDetails, setCompaniesDetails] = useState([]);
 
   // Updated fields 12072023
   const [firstName, setFirstName] = useState({
@@ -129,6 +138,7 @@ const Resume = () => {
   const [spokenLanguages, setSpokenLanguages] = useState([]);
 
   const [showEducationDetails, setShowEducationDetails] = useState(false);
+  const [educationDetails, setEducationDetails] = useState([]);
 
   const deleteSkill = (skillIndex) => {
     setSkills((prev) => prev.filter((skill, index) => index !== skillIndex));
@@ -144,6 +154,39 @@ const Resume = () => {
   };
 
   console.log(resume);
+
+  const convertDateFormat = (date) => {
+    const dateArray = date.split("/");
+    const dateOut = dateArray[1] + "-" + dateArray[0];
+    return dateOut;
+  };
+
+  // Convert date format from 2023`-11 to 11/2023
+  const convertDateFormatForSave = (date) => {
+    const dateArray2 = date.split("-");
+    const dateOut2 = dateArray2[1] + "/" + dateArray2[0];
+    return dateOut2;
+  };
+
+  const convertFieldsDateFormat = (fields) => {
+    return fields.map((field) => {
+      return {
+        ...field,
+        startDate: convertDateFormat(field.startDate),
+        endDate: convertDateFormat(field.endDate),
+      };
+    });
+  };
+
+  const convertFieldsDateFormatSave = (fields) => {
+    return fields.map((field) => {
+      return {
+        ...field,
+        startDate: convertDateFormatForSave(field.startDate),
+        endDate: convertDateFormatForSave(field.endDate),
+      };
+    });
+  };
 
   const handleUpdateResume = () => {
     console.log(fileName.value);
@@ -166,6 +209,12 @@ const Resume = () => {
       yearsOfExperience: +yearsOfExp.value,
       skills: skills,
       companies: [company1.value, company2.value, company3.value],
+      companiesDetails: JSON.stringify(
+        convertFieldsDateFormatSave(companiesDetails)
+      ),
+      educationDetails: JSON.stringify(
+        convertFieldsDateFormatSave(educationDetails)
+      ),
       // Updated fields 12072023
       firstName: firstName.value,
       lastName: lastName.value,
@@ -184,11 +233,16 @@ const Resume = () => {
     resumeAPI.updateResume(resumeDetails).then((res) => {
       console.log(res.data);
       const resumeGet = { ...res.data };
-      resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+      resumeGet.companiesDetails = convertFieldsDateFormat(
+        JSON.parse(resumeGet.companiesDetails)
+      );
       resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
       resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
       resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
-      resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+      // resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+      resumeGet.educationDetails = convertFieldsDateFormat(
+        JSON.parse(resumeGet.educationDetails)
+      );
       setResume(resumeGet);
       setAllEditableToFalse();
       toast.success("Resume updated successfully.");
@@ -241,6 +295,8 @@ const Resume = () => {
     setCompany2((prev) => ({ ...prev, value: resume?.companies?.[1] }));
     setCompany3((prev) => ({ ...prev, value: resume?.companies?.[2] }));
     setQualification((prev) => ({ ...prev, value: resume?.education }));
+    setCompaniesDetails((prev) => [...prev, ...resume?.companiesDetails]);
+    setEducationDetails((prev) => [...prev, ...resume?.educationDetails]);
     // Updated fields 12072023
     setFirstName((prev) => ({ ...prev, value: resume?.firstName }));
     setLastName((prev) => ({ ...prev, value: resume?.lastName }));
@@ -260,14 +316,19 @@ const Resume = () => {
       .then((res) => {
         console.log(res.data);
         const resumeGet = { ...res.data };
-        resumeGet.companiesDetails = JSON.parse(resumeGet.companiesDetails);
+        resumeGet.companiesDetails = convertFieldsDateFormat(
+          JSON.parse(resumeGet.companiesDetails)
+        );
         resumeGet.primarySkills = JSON.parse(resumeGet.primarySkills);
         resumeGet.secondarySkills = JSON.parse(resumeGet.secondarySkills);
         resumeGet.spokenLanguages = JSON.parse(resumeGet.spokenLanguages);
-        resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+        // resumeGet.educationDetails = JSON.parse(resumeGet.educationDetails);
+        resumeGet.educationDetails = convertFieldsDateFormat(
+          JSON.parse(resumeGet.educationDetails)
+        );
         setResume(resumeGet);
         setFields(resumeGet);
-        console.log(resumeGet);
+        // console.log(resumeGet);
       })
       .catch((err) => {
         console.log(err);
@@ -286,8 +347,76 @@ const Resume = () => {
     fileUtil.firebaseFileDownload(resume.fileRef);
   };
 
+  const handleResumeCompaniesDetailsChange = (newCompaniesDetail, index) => {
+    const list = [...companiesDetails];
+    list[index] = newCompaniesDetail;
+    setCompaniesDetails(list);
+  };
+
+  const handleEducationDetailsChange = (newEducationDetail, index) => {
+    const list = [...educationDetails];
+    list[index] = newEducationDetail;
+    setEducationDetails(list);
+  };
+
+  const deleteCompany = (index) => {
+    console.log("deleting...");
+    setCompaniesDetails((prev) => {
+      const updatedList = prev.filter((company, i) => index !== i);
+      return updatedList;
+    });
+  };
+
+  const deleteEducation = (index) => {
+    console.log("deleting...");
+    setEducationDetails((prev) => {
+      const updatedList = prev.filter((education, i) => index !== i);
+      return updatedList;
+    });
+  };
+
+  const handleCompaniesSwitch = (index, type) => {
+    if (type === "UP") {
+      if (index === 0) return;
+      const list = [...companiesDetails];
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+      setCompaniesDetails(list);
+    }
+
+    if (type === "DOWN") {
+      if (index === companiesDetails.length - 1) return;
+      const list = [...companiesDetails];
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+      setCompaniesDetails(list);
+    }
+  };
+
+  const handleEducationSwitch = (index, type) => {
+    if (type === "UP") {
+      if (index === 0) return;
+      const list = [...educationDetails];
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+      setEducationDetails(list);
+    }
+
+    if (type === "DOWN") {
+      if (index === educationDetails.length - 1) return;
+      const list = [...educationDetails];
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+      setEducationDetails(list);
+    }
+  };
+
   return (
-    <div className="container resume-container w-50">
+    <div className="container resume-container">
       {/* File Name */}
       <div class="resume-filename-section">
         <div>
@@ -596,7 +725,8 @@ const Resume = () => {
                 className="show-companies"
                 onClick={() => setShowEducationDetails(!showEducationDetails)}
               >
-                Show more {showEducationDetails? <AiFillCaretUp /> :<AiFillCaretDown />}
+                Show more
+                {showEducationDetails ? <AiFillCaretUp /> : <AiFillCaretDown />}
               </button>
             </div>
             <div className="d-flex align-items-center justify-content-between gap-5">
@@ -615,21 +745,49 @@ const Resume = () => {
           </div>
           {showEducationDetails && (
             <div className="companies-details-card mb-3">
+              <div className="text-end mb-3">
+                <button
+                  onClick={() =>
+                    setEducationDetails((prev) => {
+                      return [
+                        {
+                          name: "",
+                          startDate: "",
+                          endDate: "",
+                          noOfYears: 0,
+                          qualification: "",
+                        },
+                        ...prev,
+                      ];
+                    })
+                  }
+                  className="btn btn-secondary btn-sm"
+                >
+                  + Add an education
+                </button>
+              </div>
               {resume &&
                 resume.educationDetails.length > 0 &&
-                resume.educationDetails.map((education, index) => {
+                educationDetails.map((education, index) => {
                   return (
-                    <div className="companies-details-single">
-                      <p>
-                        {index + 1}) Institution Name: {education.name}
-                      </p>
-                      <div className="companies-details-card-details">
-                        <p>Qualification: {education.qualification}</p>
-                        <p>Start Date: {education.startDate}</p>
-                        <p>End Date: {education.endDate}</p>
-                        <p>No of Years: {education.noOfYears.toFixed(1)}</p>
-                      </div>
-                    </div>
+                    <ResumeEducationField
+                      education={education}
+                      index={index}
+                      educationDetailsChange={handleEducationDetailsChange}
+                      deleteEducation={deleteEducation}
+                      switchContent={handleEducationSwitch}
+                    />
+                    // <div className="companies-details-single">
+                    //   <p>
+                    //     {index + 1}) Institution Name: {education.name}
+                    //   </p>
+                    //   <div className="companies-details-card-details">
+                    //     <p>Qualification: {education.qualification}</p>
+                    //     <p>Start Date: {education.startDate}</p>
+                    //     <p>End Date: {education.endDate}</p>
+                    //     <p>No of Years: {education.noOfYears.toFixed(1)}</p>
+                    //   </div>
+                    // </div>
                   );
                 })}
             </div>
@@ -677,7 +835,8 @@ const Resume = () => {
               className="show-companies"
               onClick={() => setShowCompaniesDetails(!showCompaniesDetails)}
             >
-              Show more {showCompaniesDetails? <AiFillCaretUp /> :<AiFillCaretDown />}
+              Show more
+              {showCompaniesDetails ? <AiFillCaretUp /> : <AiFillCaretDown />}
             </button>
           </div>
 
@@ -750,32 +909,59 @@ const Resume = () => {
 
         {showCompaniesDetails && (
           <div className="companies-details-card">
-            {/* <div>
-              <input type="text" />
-            </div> */}
-            {resume &&
-              resume.companiesDetails.length > 0 &&
-              resume.companiesDetails.map((company, index) => {
+            <div className="text-end mb-3">
+              <button
+                onClick={() =>
+                  setCompaniesDetails((prev) => {
+                    return [
+                      {
+                        name: "",
+                        startDate: "",
+                        endDate: "",
+                        noOfYears: 0,
+                        jobTitle: "",
+                        responsibilities: [],
+                      },
+                      ...prev,
+                    ];
+                  })
+                }
+                className="btn btn-secondary btn-sm"
+              >
+                + Add a company
+              </button>
+            </div>
+
+            {companiesDetails.length > 0 &&
+              companiesDetails.map((company, index) => {
                 return (
-                  <div className="companies-details-single">
-                    <p>
-                      {index + 1}) Company Name: {company.name}
-                    </p>
-                    <div className="companies-details-card-details">
-                      <p>Designation: {company.jobTitle}</p>
-                      <p>Start Date: {company.startDate}</p>
-                      <p>End Date: {company.endDate}</p>
-                      <p>No of Years: {company.noOfYears.toFixed(1)}</p>
-                      <p className="mt-2 text-decoration-underline">
-                        Responsibilities
-                      </p>
-                      <ul className="px-5">
-                        {company.responsibilities.map((responsibility) => (
-                          <li>{responsibility}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+                  <ResumeCompanyField
+                    // key={index}
+                    companiesDetailChange={handleResumeCompaniesDetailsChange}
+                    company={company}
+                    index={index}
+                    deleteCompany={deleteCompany}
+                    switchContent={handleCompaniesSwitch}
+                  />
+                  // <div className="companies-details-single">
+                  //   <p>
+                  //     {index + 1}) Company Name: {company.name}
+                  //   </p>
+                  //   <div className="companies-details-card-details">
+                  //     <p>Designation: {company.jobTitle}</p>
+                  //     <p>Start Date: {company.startDate}</p>
+                  //     <p>End Date: {company.endDate}</p>
+                  //     <p>No of Years: {company.noOfYears.toFixed(1)}</p>
+                  //     <p className="mt-2 text-decoration-underline">
+                  //       Responsibilities
+                  //     </p>
+                  //     <ul className="px-5">
+                  //       {company.responsibilities.map((responsibility) => (
+                  //         <li>{responsibility}</li>
+                  //       ))}
+                  //     </ul>
+                  //   </div>
+                  // </div>
                 );
               })}
           </div>
@@ -867,6 +1053,13 @@ const Resume = () => {
           <button className="btn btn-danger" onClick={handleDeleteResume}>
             Delete
           </button>
+
+          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+            ctx.getUserRole() === "ROLE_PAID") && (
+            <button className="btn btn-secondary" onClick={downloadResume}>
+              Download Original Resume
+            </button>
+          )}
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
             <button className="btn btn-secondary" onClick={exportToExcel}>
@@ -876,19 +1069,22 @@ const Resume = () => {
           {resume && (
             <PDFDownloadLink
               document={<PDFDocument data={resume} />}
-              className="btn btn-secondary"
+              className="btn btn-secondary btn"
               fileName={resume.filename + ".pdf"}
             >
               {({ blob, url, loading, error }) =>
-                loading ? "Loading document..." : "Download Avensys Resume"
+                loading ? "Loading document..." :"PDF Resume"
               }
             </PDFDownloadLink>
           )}
 
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
-            <button className="btn btn-secondary" onClick={downloadResume}>
-              Download Resume
+            <button
+              className="btn btn-secondary"
+              onClick={() => wordUtil.generateDocx(resume)}
+            >
+              Word Resume
             </button>
           )}
         </div>

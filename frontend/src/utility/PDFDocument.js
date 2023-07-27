@@ -151,7 +151,7 @@ const PDFDocument = ({ data }) => {
                   </View>
                   <Text>
                     {company.startDate} - {company.endDate} (
-                    {`${company.noOfYears.toFixed(1)} years`})
+                    {`${parseFloat(company.noOfYears).toFixed(1)} years`})
                   </Text>
                   <View style={{ marginTop: "8px", marginBottom: "4px" }}>
                     {company.responsibilities.map((responsibility) => {
@@ -180,7 +180,7 @@ const PDFDocument = ({ data }) => {
                   </View>
                   <Text>
                     {education.startDate} - {education.endDate} (
-                    {`${education.noOfYears.toFixed(1)} years`})
+                    {`${parseFloat(education.noOfYears).toFixed(1)} years`})
                   </Text>
                 </View>
               );

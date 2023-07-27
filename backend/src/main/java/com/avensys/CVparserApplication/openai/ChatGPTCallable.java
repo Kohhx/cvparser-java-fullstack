@@ -112,7 +112,7 @@ public class ChatGPTCallable implements Callable<String> {
             throw new RuntimeException(e);
         }
         String extractText = extractTextFromFile(file);
-        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2000);
+        List<String> chunks = GPTUtil.splitTextToChunks(extractText.split("\n"), 2500);
         if (showMessage) {
             chunks.stream().forEach(textC -> {
                 System.out.println(textC);
@@ -153,7 +153,13 @@ public class ChatGPTCallable implements Callable<String> {
         String fileExt = FileUtil.getFileExtension(file.getOriginalFilename());
         String fileUrl = firebaseStorageService.uploadFile(file, FileUtil.getFileName(file.getOriginalFilename()), fileExt);
 
-        Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
+        // Extract JSON
+        String JSON = FileUtil.extractJsonFromString(storedResponses.get(storedResponses.size() - 1));
+        System.out.println("My JSON");
+        System.out.println(JSON);
+
+        Resume resume = chatGPTResponseToResume(JSON);
+//        Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
         resume.setFileName(FileUtil.getFileName(file.getOriginalFilename()));
         resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
@@ -293,7 +299,7 @@ public class ChatGPTCallable implements Callable<String> {
 
 
     private Resume chatGPTResponseToResume(String jsonOutput) {
-        boolean manualYearsCheck = true;
+        boolean manualYearsCheck = false;
         Resume resume = new Resume();
 
         ObjectMapper objectMapper = new ObjectMapper();

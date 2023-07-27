@@ -19,6 +19,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import DotMenu from "../components/DotMenu";
 import DotMenu2 from "../components/DotMenu2";
 import { excelUtil } from "../utility/excelUtil";
+import { wordUtil } from "../utility/wordUtil";
 
 const AdminManageResumes = () => {
   const pdfLinkRef = useRef([]);
@@ -94,7 +95,6 @@ const AdminManageResumes = () => {
         });
     }
   };
-
 
   const handleResumeDelete = (userId, resumeId) => {
     // console.log("Resume id: ",id)
@@ -239,7 +239,11 @@ const AdminManageResumes = () => {
                   <td class="text-center">
                     <DotMenu2>
                       <div
-                        className={index+1 !== resumes.length ? "dot-menu" : "dot-menu dot-menu-flip"}
+                        className={
+                          index + 1 !== resumes.length
+                            ? "dot-menu"
+                            : "dot-menu dot-menu-flip"
+                        }
                         onMouseLeave={() => setDotMenu(false)}
                       >
                         <p
@@ -256,8 +260,14 @@ const AdminManageResumes = () => {
                         >
                           Download Resume
                         </p>
-                        <p onClick={() => pdfLinkRef.current[index].click()}>
-                          Download Avensys Resume2
+                        <p
+                          className="border-b"
+                          onClick={() => pdfLinkRef.current[index].click()}
+                        >
+                          Download Resume PDF
+                        </p>
+                        <p onClick={() => wordUtil.generateDocx(resume)}>
+                          Download Resume Word
                         </p>
                       </div>
                     </DotMenu2>
@@ -284,7 +294,6 @@ const AdminManageResumes = () => {
                       </PDFDownloadLink>
                     )}
                   </div>
-
                 </tr>
               ))}
             </tbody>

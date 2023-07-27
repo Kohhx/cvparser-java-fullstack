@@ -13,12 +13,14 @@ import java.util.List;
 public class ResumeController {
 
     private final ResumeService resumeService;
+    private final Resume2Service resume2Service;
 
-    public ResumeController(ResumeService resumeService) {
+    public ResumeController(ResumeService resumeService, Resume2Service resume2Service) {
         this.resumeService = resumeService;
+        this.resume2Service = resume2Service;
     }
 
-////    @PreAuthorize("hasRole('ROLE_USER')")
+    ////    @PreAuthorize("hasRole('ROLE_USER')")
 //    @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
 //    @GetMapping("/users/{userId}/resumes/{resumeId}")
 //    public ResponseEntity<ResumeUpdateResponseDTO> getResume(@PathVariable long userId, @PathVariable long resumeId) {
@@ -59,10 +61,25 @@ public class ResumeController {
         return new ResponseEntity<ResumeCreateResponseDTO>(chatResponse, HttpStatus.OK);
     }
 
+    // Newer algo for chat GPT
+    @PostMapping("resumes/test2")
+    @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
+    public ResponseEntity<ResumeCreateResponseDTO> createResumeTest2(@ModelAttribute ResumeCreateRequestDTO resumeCreateRequest) {
+        ResumeCreateResponseDTO chatResponse = resume2Service.parseResumeConcurrent(resumeCreateRequest);
+        System.out.println("OUT");
+        return new ResponseEntity<ResumeCreateResponseDTO>(chatResponse, HttpStatus.OK);
+    }
+
     @PostMapping("resumeslist")
     @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
     public void createResumeList(@ModelAttribute ResumeListCreateRequestDTO resumeCreateRequest) {
          resumeService.resumesListParse(resumeCreateRequest);
+    }
+
+    @PostMapping("resumeslist2")
+    @PreAuthorize("hasAnyRole('ROLE_FREE','ROLE_PAID','ROLE_ADMIN')")
+    public void createResumeList2(@ModelAttribute ResumeListCreateRequestDTO resumeCreateRequest) {
+        resume2Service.parseResumeConcurrentList(resumeCreateRequest);
     }
     
 
