@@ -1069,11 +1069,11 @@ const Resume = () => {
           {resume && (
             <PDFDownloadLink
               document={<PDFDocument data={resume} />}
-              className="btn btn-secondary"
+              className="btn btn-secondary btn"
               fileName={resume.filename + ".pdf"}
             >
               {({ blob, url, loading, error }) =>
-                loading ? "Loading document..." : "Download PDF Resume"
+                loading ? "Loading document..." :"PDF Resume"
               }
             </PDFDownloadLink>
           )}
@@ -1084,7 +1084,7 @@ const Resume = () => {
               className="btn btn-secondary"
               onClick={() => wordUtil.generateDocx(resume)}
             >
-              Download Word Resume
+              Word Resume
             </button>
           )}
         </div>
