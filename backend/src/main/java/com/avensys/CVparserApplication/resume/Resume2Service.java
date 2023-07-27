@@ -438,7 +438,11 @@ public class Resume2Service {
         for (String skill : chatGPTMappedResults.getSkills()) {
             resume.addSkill(new Skill(skill));
         }
-        resume.setYearsOfExperience(chatGPTMappedResults.getYearsOfExperience());
+        if (companiesManualYearsCheck) {
+            resume.setYearsOfExperience(companiesSumYearsOfExperience);
+        } else {
+            resume.setYearsOfExperience(chatGPTMappedResults.getYearsOfExperience());
+        }
         for (String company : chatGPTMappedResults.getCompanies()) {
             resume.addCompany(new Company(company));
         }
