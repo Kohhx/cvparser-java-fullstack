@@ -3,8 +3,10 @@ package com.avensys.CVparserApplication.openai;
 import com.avensys.CVparserApplication.company.Company;
 import com.avensys.CVparserApplication.exceptions.ResourceAccessDeniedException;
 import com.avensys.CVparserApplication.exceptions.UploadFileException;
-import com.avensys.CVparserApplication.firebase.FirebaseStorageService;
-import com.avensys.CVparserApplication.resume.*;
+import com.avensys.CVparserApplication.resume.Resume;
+import com.avensys.CVparserApplication.resume.ResumeCreateResponseDTO;
+import com.avensys.CVparserApplication.resume.ResumeRepository;
+import com.avensys.CVparserApplication.resume.ResumeUpdateResponseDTO;
 import com.avensys.CVparserApplication.skill.Skill;
 import com.avensys.CVparserApplication.user.User;
 import com.avensys.CVparserApplication.user.UserRepository;
@@ -39,7 +41,7 @@ public class ChatGPTCallable implements Callable<String> {
     public boolean showMessage = false;
     public UserRepository userRepository;
     public ResumeRepository resumeRepository;
-    public FirebaseStorageService firebaseStorageService;
+//    public FirebaseStorageService firebaseStorageService;
     public RestTemplate restTemplate;
     public Optional<User> user;
 
@@ -89,11 +91,21 @@ public class ChatGPTCallable implements Callable<String> {
                            
                             """;
 
+// With firebase
+//    public ChatGPTCallable(UserRepository userRepository, ResumeRepository resumeRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate, MultipartFile file, Optional<User> user) {
+//        this.userRepository = userRepository;
+//        this.resumeRepository = resumeRepository;
+//        this.firebaseStorageService = firebaseStorageService;
+//        this.restTemplate = restTemplate;
+//        this.file = file;
+//        this.user = user;
+//    }
 
-    public ChatGPTCallable(UserRepository userRepository, ResumeRepository resumeRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate, MultipartFile file, Optional<User> user) {
+
+    //No firebase
+    public ChatGPTCallable(UserRepository userRepository, ResumeRepository resumeRepository, RestTemplate restTemplate, MultipartFile file, Optional<User> user) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
-        this.firebaseStorageService = firebaseStorageService;
         this.restTemplate = restTemplate;
         this.file = file;
         this.user = user;
@@ -151,7 +163,7 @@ public class ChatGPTCallable implements Callable<String> {
         }
 
         String fileExt = FileUtil.getFileExtension(file.getOriginalFilename());
-        String fileUrl = firebaseStorageService.uploadFile(file, FileUtil.getFileName(file.getOriginalFilename()), fileExt);
+//        String fileUrl = firebaseStorageService.uploadFile(file, FileUtil.getFileName(file.getOriginalFilename()), fileExt);
 
         // Extract JSON
         String JSON = FileUtil.extractJsonFromString(storedResponses.get(storedResponses.size() - 1));
@@ -161,7 +173,7 @@ public class ChatGPTCallable implements Callable<String> {
         Resume resume = chatGPTResponseToResume(JSON);
 //        Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
         resume.setFileName(FileUtil.getFileName(file.getOriginalFilename()));
-        resume.setResumeStorageRef(fileUrl);
+//        resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         user.get().setResumeLimit(user.get().getResumeLimit() + 1);

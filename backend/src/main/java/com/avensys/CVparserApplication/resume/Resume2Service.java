@@ -2,7 +2,6 @@ package com.avensys.CVparserApplication.resume;
 
 import com.avensys.CVparserApplication.company.Company;
 import com.avensys.CVparserApplication.company.CompanyRepository;
-import com.avensys.CVparserApplication.firebase.FirebaseStorageService;
 import com.avensys.CVparserApplication.openai.*;
 import com.avensys.CVparserApplication.skill.Skill;
 import com.avensys.CVparserApplication.skill.SkillRepository;
@@ -24,7 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class Resume2Service {
@@ -32,7 +34,7 @@ public class Resume2Service {
     public final ResumeRepository resumeRepository;
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
-    public final FirebaseStorageService firebaseStorageService;
+//    public final FirebaseStorageService firebaseStorageService;
     public final RestTemplate restTemplate;
     public final double chatGPTTemperature = 0.7;
 //    private static final int NUM_THREADS = 10;
@@ -44,12 +46,22 @@ public class Resume2Service {
     private String openAiUrl;
     private String extractText;
 
-    public Resume2Service(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
+    //With Firebase
+//    public Resume2Service(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
+//        this.userRepository = userRepository;
+//        this.resumeRepository = resumeRepository;
+//        this.skillRepository = skillRepository;
+//        this.companyRepository = companyRepository;
+//        this.firebaseStorageService = firebaseStorageService;
+//        this.restTemplate = restTemplate;
+//    }
+
+    //No Firebase
+    public Resume2Service(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
         this.skillRepository = skillRepository;
         this.companyRepository = companyRepository;
-        this.firebaseStorageService = firebaseStorageService;
         this.restTemplate = restTemplate;
     }
 
@@ -289,11 +301,11 @@ public class Resume2Service {
 //        System.out.println(JSON);
 
         String fileExt = FileUtil.getFileExtension(file.getOriginalFilename());
-        String fileUrl = firebaseStorageService.uploadFile(file, fileName, fileExt);
+//        String fileUrl = firebaseStorageService.uploadFile(file, fileName, fileExt);
 
         Resume resume = chatGPTResponseToResume(JSON);
         resume.setFileName(fileName);
-        resume.setResumeStorageRef(fileUrl);
+//        resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         user.get().setResumeLimit(user.get().getResumeLimit() + 1);
@@ -396,6 +408,7 @@ public class Resume2Service {
                 }
                 companiesSumYearsOfExperience = companiesSumYearsOfExperience;
             } catch (Exception e) {
+                companiesSumYearsOfExperience = chatGPTMappedResults.getYearsOfExperience();
                 System.out.println("Error in calculating working years of experience");
             }
         }
