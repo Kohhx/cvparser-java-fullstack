@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class CVparserApplication {
                 How are you doing man? Have you started on your project?
                 Let Start!!!
                 """;
+
+        String monthValue = String.format("%02d", LocalDate.now().getMonthValue());
+        System.out.println( monthValue + "/" + LocalDate.now().getYear());
+
 
         reduceToChunkOfString(text, 20);
     }
