@@ -276,18 +276,23 @@ public class Resume2Service {
         String biosJSONFinal = "";
         String educationJSONFinal = "";
 
-        System.out.println("Show Companies JSON: ");
+//        System.out.println("Show Companies JSON: ");
         try {
-//            System.out.println(biosFuture.get());
+            System.out.println("Show Final bios JSON: ");
+            System.out.println(biosFuture.get());
             biosJSONFinal = biosFuture.get();
 
-//            System.out.println(skillsFuture.get());
+            System.out.println("Show Final skills JSON: ");
+            System.out.println(skillsFuture.get());
             skillsJSONFinal = skillsFuture.get();
 
-//            System.out.println(companiesFuture.get());
+            System.out.println("Show Final companies JSON: ");
+            System.out.println(companiesFuture.get());
             companiesJSONFinal = companiesFuture.get();
 
-//            System.out.println(educationFuture.get());
+
+            System.out.println("Show Final education JSON: ");
+            System.out.println(educationFuture.get());
             educationJSONFinal = educationFuture.get();
 
         } catch (InterruptedException e) {
@@ -297,8 +302,9 @@ public class Resume2Service {
         }
 
         String JSON = JSONUtil.mergeJsonObjects(biosJSONFinal, skillsJSONFinal, companiesJSONFinal, educationJSONFinal);
-//        System.out.println("Show JSON: ");
-//        System.out.println(JSON);
+        System.out.println("Show Merged JSON: ");
+        System.out.println(JSON);
+        System.out.println("End of merged JSON==================*****************************************");
 
         String fileExt = FileUtil.getFileExtension(file.getOriginalFilename());
 //        String fileUrl = firebaseStorageService.uploadFile(file, fileName, fileExt);
