@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class Resume2Service {
@@ -34,7 +37,7 @@ public class Resume2Service {
     public final ResumeRepository resumeRepository;
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
-//    public final FirebaseStorageService firebaseStorageService;
+    //    public final FirebaseStorageService firebaseStorageService;
     public final RestTemplate restTemplate;
     public final double chatGPTTemperature = 0.7;
 //    private static final int NUM_THREADS = 10;
@@ -372,8 +375,38 @@ public class Resume2Service {
         }
 
 
-        // Sort companiedetails and educationdetails in Descending order
         List<CompaniesDetails> companiesDetailsList = chatGPTMappedResults.getCompaniesDetails();
+
+        // Lets check through all the start and end date
+        List<CompaniesDetails> companiesDetailsListManual = new ArrayList<>();
+        for (CompaniesDetails companiesDetails : companiesDetailsList) {
+            String startDate = companiesDetails.getStartDate();
+            String endDate = companiesDetails.getEndDate();
+
+            if (endDate.equals("Present") || endDate.equals("present")) {
+                String monthValue = String.format("%02d", LocalDate.now().getMonthValue());
+                companiesDetails.setEndDate(monthValue + "/" + LocalDate.now().getYear());
+                System.out.println(LocalDate.now().getMonth() + "/" + LocalDate.now().getYear());
+            }
+
+            String yearRegex = "\\d{4}";
+            Pattern pattern = Pattern.compile(yearRegex);
+            Matcher matcher = pattern.matcher(startDate);
+            if (matcher.matches()) {
+                companiesDetails.setStartDate("01/" + startDate);
+            }
+
+            if (startDate.equals(endDate)) {
+                companiesDetails.setEndDate("12/" + endDate);
+            }
+
+            companiesDetailsListManual.add(companiesDetails);
+
+        }
+
+        companiesDetailsList = companiesDetailsListManual;
+
+        // Sort companiedetails and educationdetails in Descending order
         try {
             Collections.sort(companiesDetailsList, new ComparatorUtil.DescendingCompaniesDateComparator());
         } catch (Exception e) {
