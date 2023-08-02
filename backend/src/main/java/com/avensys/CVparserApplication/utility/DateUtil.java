@@ -21,8 +21,10 @@ public class DateUtil {
         // Output the result
         System.out.println("Year Difference: " + yearDifference);
         System.out.println("Month Difference: " + monthDifference);
-        System.out.println("Total Months Difference: " + (yearDifference +  (monthDifference/12.0)) );
+        double result = yearDifference + (monthDifference / 12.0);
+        System.out.println("Total Months Difference: " + Double.parseDouble(String.format("%.2f", result)));
 
-        return yearDifference +  (monthDifference/12.0);
+
+        return Double.parseDouble(String.format("%.2f", result));
     }
 }

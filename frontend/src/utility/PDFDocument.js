@@ -112,23 +112,23 @@ const PDFDocument = ({ data }) => {
           <View style={styles.headerContainer}>
             <View style={styles.flexBottom}>
               <Text style={styles.title}>
-                <Text style={styles.boldFont}>Name:</Text> {data.firstName}
-                {data.lastName}
+                <Text style={styles.boldFont}>Name:</Text> {data.firstName|| "-"}
+                {data.lastName|| "-"}
               </Text>
-              <Text style={styles.title}>Gender: {data.gender}</Text>
-              <Text style={styles.title}>Nationality: {data.nationality}</Text>
-              <Text style={styles.title}>Mobile: {data.mobile}</Text>
-              <Text style={styles.title}>Email: {data.email}</Text>
+              <Text style={styles.title}>Gender: {data.gender|| "-"}</Text>
+              <Text style={styles.title}>Nationality: {data.nationality|| "-"}</Text>
+              <Text style={styles.title}>Mobile: {data.mobile|| "-"}</Text>
+              <Text style={styles.title}>Email: {data.email|| "-"}</Text>
             </View>
 
             <View style={[styles.flexBottom, styles.headerRight]}>
               <Text style={styles.title}>
-                Current Location: {data.currentLocation}
+                Current Location: {data.currentLocation|| "-"}
               </Text>
               <Text style={styles.title}>
-                Highest Qualification: {data.education}
+                Highest Qualification: {data.education|| "-"}
               </Text>
-              <Text style={styles.title}>Last Job Title: {data.jobTitle}</Text>
+              <Text style={styles.title}>Last Job Title: {data.jobTitle || "-"}</Text>
             </View>
           </View>
 
@@ -136,7 +136,7 @@ const PDFDocument = ({ data }) => {
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>About Me</Text>
-            <Text>{data.profile}</Text>
+            <Text>{data.profile|| "-"}</Text>
           </View>
 
           <View style={styles.section}>

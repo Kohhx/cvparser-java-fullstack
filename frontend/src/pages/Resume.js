@@ -1054,12 +1054,12 @@ const Resume = () => {
             Delete
           </button>
 
-          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+          {/* {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
-            <button className="btn btn-secondary" onClick={downloadResume}>
-              Download Original Resume
-            </button>
-          )}
+            // <button className="btn btn-secondary" onClick={downloadResume}>
+            //   Download Original Resume
+            // </button>
+          )} */}
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
             <button className="btn btn-secondary" onClick={exportToExcel}>
