@@ -2,7 +2,6 @@ package com.avensys.CVparserApplication.resume;
 
 import com.avensys.CVparserApplication.company.Company;
 import com.avensys.CVparserApplication.company.CompanyRepository;
-import com.avensys.CVparserApplication.firebase.FirebaseStorageService;
 import com.avensys.CVparserApplication.openai.*;
 import com.avensys.CVparserApplication.skill.Skill;
 import com.avensys.CVparserApplication.skill.SkillRepository;
@@ -38,7 +37,7 @@ public class Resume2Service {
     public final ResumeRepository resumeRepository;
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
-    public final FirebaseStorageService firebaseStorageService;
+    //    public final FirebaseStorageService firebaseStorageService;
     public final RestTemplate restTemplate;
     public final double chatGPTTemperature = 0.7;
 //    private static final int NUM_THREADS = 10;
@@ -50,12 +49,22 @@ public class Resume2Service {
     private String openAiUrl;
     private String extractText;
 
-    public Resume2Service(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
+    //With Firebase
+//    public Resume2Service(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
+//        this.userRepository = userRepository;
+//        this.resumeRepository = resumeRepository;
+//        this.skillRepository = skillRepository;
+//        this.companyRepository = companyRepository;
+//        this.firebaseStorageService = firebaseStorageService;
+//        this.restTemplate = restTemplate;
+//    }
+
+    //No Firebase
+    public Resume2Service(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
         this.skillRepository = skillRepository;
         this.companyRepository = companyRepository;
-        this.firebaseStorageService = firebaseStorageService;
         this.restTemplate = restTemplate;
     }
 
@@ -270,18 +279,23 @@ public class Resume2Service {
         String biosJSONFinal = "";
         String educationJSONFinal = "";
 
-        System.out.println("Show Companies JSON: ");
+//        System.out.println("Show Companies JSON: ");
         try {
-//            System.out.println(biosFuture.get());
+            System.out.println("Show Final bios JSON: ");
+            System.out.println(biosFuture.get());
             biosJSONFinal = biosFuture.get();
 
-//            System.out.println(skillsFuture.get());
+            System.out.println("Show Final skills JSON: ");
+            System.out.println(skillsFuture.get());
             skillsJSONFinal = skillsFuture.get();
 
-//            System.out.println(companiesFuture.get());
+            System.out.println("Show Final companies JSON: ");
+            System.out.println(companiesFuture.get());
             companiesJSONFinal = companiesFuture.get();
 
-//            System.out.println(educationFuture.get());
+
+            System.out.println("Show Final education JSON: ");
+            System.out.println(educationFuture.get());
             educationJSONFinal = educationFuture.get();
 
         } catch (InterruptedException e) {
@@ -291,15 +305,16 @@ public class Resume2Service {
         }
 
         String JSON = JSONUtil.mergeJsonObjects(biosJSONFinal, skillsJSONFinal, companiesJSONFinal, educationJSONFinal);
-//        System.out.println("Show JSON: ");
-//        System.out.println(JSON);
+        System.out.println("Show Merged JSON: ");
+        System.out.println(JSON);
+        System.out.println("End of merged JSON==================*****************************************");
 
         String fileExt = FileUtil.getFileExtension(file.getOriginalFilename());
-        String fileUrl = firebaseStorageService.uploadFile(file, fileName, fileExt);
+//        String fileUrl = firebaseStorageService.uploadFile(file, fileName, fileExt);
 
         Resume resume = chatGPTResponseToResume(JSON);
         resume.setFileName(fileName);
-        resume.setResumeStorageRef(fileUrl);
+//        resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         user.get().setResumeLimit(user.get().getResumeLimit() + 1);
@@ -432,6 +447,7 @@ public class Resume2Service {
                 }
                 companiesSumYearsOfExperience = companiesSumYearsOfExperience;
             } catch (Exception e) {
+                companiesSumYearsOfExperience = chatGPTMappedResults.getYearsOfExperience();
                 System.out.println("Error in calculating working years of experience");
             }
         }

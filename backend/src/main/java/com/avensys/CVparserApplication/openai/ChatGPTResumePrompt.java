@@ -18,7 +18,7 @@ public class ChatGPTResumePrompt {
                     email (string): The email address of the candidate.
                     mobile (string): The mobile number of the candidate.
                     currentLocation (string): return the candidate's current country he/she resides in. If not available, just use the location of the candidate latest employment.
-                    nationality (string): Return the nationality based on the country the candidate is born in. If not present, get the nationality from the currentLocation.                
+                    nationality (string): Return the nationality based on the country the candidate is born in. If not present, get the nationality from the currentLocation.   
                     """;
 
     public final static String skillsPrompt =
@@ -32,20 +32,21 @@ public class ChatGPTResumePrompt {
             """
                     companiesDetails (array): return every companies the candidate worked with including internships. Sort the array from the most recent to earliest in terms of endDate.
                      1)	name:(string) name of the company . If nothing, return "".
-                     2)	startDate: (string, format "mm/yyyy") convert start date of employment to this format "04/2023" E.g 04/2023, if nothing, just use end date of previous job. If only year present, then return month to be jan.
-                     3)	endDate: (string, format "mm/yyyy") end date of the employment. Convert format to output "03/2023" E.g 04/2023. If no end date and is the candidate last job, just use 07/2023. If end date is present or Present, then take end date as 07/2023. If only year present, then return month to be jan. Do not return present or Present.
-                     4)	noOfYears: (decimal) Number of employment years in the company. If start date is empty, then is 0. If there is only start date, then take it as 1 year.
+                     2)	startDate: (string, format "mm/yyyy") convert start date of employment to this format "04/2023" E.g 04/2023, if nothing, just use end date of previous job. If only year(yyyy) without month, then return month to be jan. 
+                     3)	endDate: (string, format "mm/yyyy") end date of the employment. Convert format to output "03/2023" E.g 04/2023. If no end date and is the candidate last job, just use 07/2023. If end date is "present" or "Present", then take end date as 07/2023. If there is only year without month, then return month to be Dec. Do not return value present or Present. 
+                     4)	noOfYears: (decimal) Number of employment years in the company. Else return 0.0. If start date is empty, then is 0. If there is only start date, then take it as 1 year.
                      5) jobTitle: The candidate's job title for this job.
                      6) responsibilities: (array) The candidate's responsibilities for this job. Get from resume. Do not paraphrase.
                     yearsOfExperience (number): Total employment in years including internship based on the information in companiesDetails (array). Convert all the months to years. Return only the total value only, but if there are overlapping months, do not double count. Verify by adding up all the no of years in companiesDetails
                     companies (array): The names of the recent 3 companies the candidate has worked for. Do not return duplicate companies.
+                    jobTitle (string): return the candidate's job title of his/her latest job in the companiesDetail.
                     """;
     public final static String educationPrompt =
             """
                     educationDetails (array): return all the education, institution and qualification.
                       1) name:(string) name of the institution . If nothing, return "".
                       2) startDate: (string, format="mm/yyyy") start date education typically in the format "month/year" E.g 04/2023. If only year present, then return month to be jan.
-                      3) endDate: (string, format="mm/yyyy") end date. Use this format for output "month/year" E.g 04/2023. If no end date, just use 06/2023, present == 06/2023. If only year present, then return month to be jan.
+                      3) endDate: (string, format="mm/yyyy") end date. Use this format for output "month/year" E.g 04/2023. If no end date, just use 06/2023. If present or Present, return 07/2023. If only year present, then return month to be jan. Do not return present or Present.
                       4) noOfYears: (decimal) Number of education years in the institution. Else return 0.0. If start date is empty, then is 0. If there is only start date, then take take it as 1 year.
                       5) qualification: The qualification of the education.
                     education (string): Give me the candidate highest education qualification in the resume.

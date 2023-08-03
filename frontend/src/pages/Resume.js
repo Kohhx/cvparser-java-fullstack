@@ -793,6 +793,37 @@ const Resume = () => {
             </div>
           )}
 
+          {/* Last Job Title */}
+          <div className="flex-form">
+            <div class="resume-details-part w-100">
+              <div className="d-flex align-items-center gap-2">
+                <h3>Last Job Title</h3>
+                <AiFillEdit
+                  className="edit-icons-md"
+                  onClick={() =>
+                    setJobTitle((prev) => ({
+                      ...prev,
+                      isEditing: !prev.isEditing,
+                    }))
+                  }
+                />
+              </div>
+              <div className="d-flex align-items-center justify-content-between gap-5">
+                <input
+                  type="text"
+                  value={jobTitle.value}
+                  onChange={(e) =>
+                    setJobTitle((prev) => ({
+                      ...prev,
+                      value: e.target.value,
+                    }))
+                  }
+                  disabled={!jobTitle.isEditing}
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Spoken Languages */}
           <div class="resume-skills-section">
             <div className="d-flex align-items-center gap-2">
@@ -1054,12 +1085,12 @@ const Resume = () => {
             Delete
           </button>
 
-          {(ctx.getUserRole() === "ROLE_ADMIN" ||
+          {/* {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
-            <button className="btn btn-secondary" onClick={downloadResume}>
-              Download Original Resume
-            </button>
-          )}
+            // <button className="btn btn-secondary" onClick={downloadResume}>
+            //   Download Original Resume
+            // </button>
+          )} */}
           {(ctx.getUserRole() === "ROLE_ADMIN" ||
             ctx.getUserRole() === "ROLE_PAID") && (
             <button className="btn btn-secondary" onClick={exportToExcel}>

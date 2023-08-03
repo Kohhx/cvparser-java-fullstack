@@ -5,7 +5,6 @@ import com.avensys.CVparserApplication.company.CompanyRepository;
 import com.avensys.CVparserApplication.exceptions.ResourceAccessDeniedException;
 import com.avensys.CVparserApplication.exceptions.ResourceNotFoundException;
 import com.avensys.CVparserApplication.exceptions.UploadFileException;
-import com.avensys.CVparserApplication.firebase.FirebaseStorageService;
 import com.avensys.CVparserApplication.openai.*;
 import com.avensys.CVparserApplication.skill.Skill;
 import com.avensys.CVparserApplication.skill.SkillRepository;
@@ -44,7 +43,7 @@ public class ResumeService {
     public final ResumeRepository resumeRepository;
     public final SkillRepository skillRepository;
     public final CompanyRepository companyRepository;
-    public final FirebaseStorageService firebaseStorageService;
+//    public final FirebaseStorageService firebaseStorageService;
     public final RestTemplate restTemplate;
     public final double chatGPTTemperature = 0.9;
     private static final int NUM_THREADS = 10;
@@ -248,12 +247,22 @@ public class ResumeService {
                     """;
 
 
-    public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
+    // With Firebase
+//    public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, FirebaseStorageService firebaseStorageService, RestTemplate restTemplate) {
+//        this.userRepository = userRepository;
+//        this.resumeRepository = resumeRepository;
+//        this.skillRepository = skillRepository;
+//        this.companyRepository = companyRepository;
+//        this.firebaseStorageService = firebaseStorageService;
+//        this.restTemplate = restTemplate;
+//    }
+
+    // No Firebase
+    public ResumeService(UserRepository userRepository, ResumeRepository resumeRepository, SkillRepository skillRepository, CompanyRepository companyRepository, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
         this.skillRepository = skillRepository;
         this.companyRepository = companyRepository;
-        this.firebaseStorageService = firebaseStorageService;
         this.restTemplate = restTemplate;
     }
 
@@ -384,11 +393,11 @@ public class ResumeService {
 //            System.out.println("========================= Break =======================");
 //        });
         String fileExt = FileUtil.getFileExtension(resumeCreateRequest.file().getOriginalFilename());
-        String fileUrl = firebaseStorageService.uploadFile(resumeCreateRequest.file(), resumeCreateRequest.fileName(), fileExt);
+//        String fileUrl = firebaseStorageService.uploadFile(resumeCreateRequest.file(), resumeCreateRequest.fileName(), fileExt);
 
         Resume resume = chatGPTResponseToResume(storedResponses.get(storedResponses.size() - 1));
         resume.setFileName(resumeCreateRequest.fileName());
-        resume.setResumeStorageRef(fileUrl);
+//        resume.setResumeStorageRef(fileUrl);
         Resume savedResume = resumeRepository.save(resume);
         user.get().addResume(savedResume);
         user.get().setResumeLimit(user.get().getResumeLimit() + 1);
@@ -408,8 +417,17 @@ public class ResumeService {
         }
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
         List<Future<String>> futures = new ArrayList<>();
+
+        // With firebase
+//        for (MultipartFile file : resumeCreateRequest.getFileList()) {
+//            Callable<String> callable = new ChatGPTCallable(userRepository, resumeRepository, firebaseStorageService, restTemplate, file, user);
+//            Future<String> future = executorService.submit(callable);
+//            futures.add(future);
+//        }
+
+        // No Firebase
         for (MultipartFile file : resumeCreateRequest.getFileList()) {
-            Callable<String> callable = new ChatGPTCallable(userRepository, resumeRepository, firebaseStorageService, restTemplate, file, user);
+            Callable<String> callable = new ChatGPTCallable(userRepository, resumeRepository, restTemplate, file, user);
             Future<String> future = executorService.submit(callable);
             futures.add(future);
         }
@@ -543,7 +561,7 @@ public class ResumeService {
         userRepository.save(user.get());
         resumeRepository.delete(resume.get());
 
-        firebaseStorageService.deleteFile(fbFileId);
+//        firebaseStorageService.deleteFile(fbFileId);
 
         System.out.println("Deleted from file from fb");
     }

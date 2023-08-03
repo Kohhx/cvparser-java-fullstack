@@ -3,6 +3,28 @@ import PizZip from "pizzip";
 import PizZipUtils from "pizzip/utils/index.js";
 import { saveAs } from "file-saver";
 
+// Recursively get change all key that are null or undefined or "" to "-"
+function replaceNullAndUndefinedWithDash(data, replaceValue = '-') {
+  if (Array.isArray(data)) {
+    // If it's an array, loop through its elements and process each element
+    for (let i = 0; i < data.length; i++) {
+      data[i] = replaceNullAndUndefinedWithDash(data[i], replaceValue);
+    }
+  } else if (typeof data === 'object' && data !== null) {
+    // If it's an object, loop through its properties and process each property
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        data[key] = replaceNullAndUndefinedWithDash(data[key], replaceValue);
+      }
+    }
+  } else if (data === null || typeof data === 'undefined' || data === '') {
+    // Replace null and undefined with the specified value
+    return replaceValue;
+  }
+
+  return data;
+}
+
  // Trying out
  function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
@@ -41,9 +63,10 @@ const mappedResumeforWordOutput = (resume) => {
 
 export const wordUtil = {
   generateDocx: async (resume) => {
-    const mappedResume = mappedResumeforWordOutput(resume);
+    const mappedResume1 = mappedResumeforWordOutput(resume);
+    const mappedResume = replaceNullAndUndefinedWithDash(mappedResume1);
      await loadFile(
-      "https://res.cloudinary.com/duadcuueg/raw/upload/v1689584731/template_4_qj4qmd.docx",
+      "https://res.cloudinary.com/duadcuueg/raw/upload/v1690966472/template_5_xwihqz.docx",
       function (error, content) {
         if (error) {
           throw error;
